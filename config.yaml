@@ -1,0 +1,36 @@
+# Planck 2015 
+# https://arxiv.org/abs/1502.01589
+COSMOLOGY:
+  PARAMETERS:
+    flat: True 
+    H0: 67.3
+    Omega_m0: 0.315
+    Omega_b0: 0.045
+    sigma8: 0.83
+    ns: 0.965
+    planck_const: 6.626e-34
+    boltzman_const: 1.38e-23
+    cosmo_h: 0.7
+
+IMAGES:
+  IMAGE1:
+    PARAMETERS:
+      frequency: 150
+      numPix: 100
+      pixel_scale: 0.05
+      maxRadius: 5   
+
+  IMAGE2:
+    PARAMETERS:
+      frequency: 150
+      numPix: 100
+      pixel_scale: 0.005
+      maxRadius: 0.5
+
+  SURVEY:
+    PARAMETERS: 
+      Converter_parameter:
+      Beam_size:
+      Noise_level: 
+
+    
