@@ -1,16 +1,18 @@
 # Planck 2015 
 # https://arxiv.org/abs/1502.01589
+# https://arxiv.org/abs/1807.06209 (Planck 2018)
 COSMOLOGY:
-  PARAMETERS:
-    flat: True 
-    H0: 67.3
-    Omega_m0: 0.315
-    Omega_b0: 0.045
-    sigma8: 0.83
-    ns: 0.965
-    planck_const: 6.626e-34
-    boltzman_const: 1.38e-23
-    cosmo_h: 0.7
+  flat: True 
+  H0: 67.4
+  Omega_m0: 0.315
+  Omega_b0: 0.049
+  sigma8: 0.83
+  ns: 0.965
+  cosmo_h: 0.674
+
+CONSTANTS:
+  planck_const: 6.626e-34
+  boltzman_const: 1.38e-23
 
 IMAGES:
   IMAGE1:
@@ -33,4 +35,29 @@ IMAGES:
       Beam_size:
       Noise_level: 
 
+ACT_DR4:
+  90GHz:
+    frequency: 90
+    beam_size: 2.1
+    noise_level: 100
+  150GHz:
+    frequency: 150
+    beam_size: 1.4
+    noise_level: 75
+
+ACT_DR5:
+  90GHz:
+    frequency: 90
+    beam_size: 2.1
+    noise_level: 40
+  150GHz:
+    frequency: 150
+    beam_size: 1.3
+    noise_level: 30
+  220GHz:
+    frequency: 220
+    beam_size: 1.0
+    noise_level: 125
+
+SPT:
     
