@@ -29,12 +29,7 @@ IMAGES:
       pixel_scale: 0.005
       maxRadius: 0.5
 
-  SURVEY:
-    PARAMETERS: 
-      Converter_parameter:
-      Beam_size:
-      Noise_level: 
-
+# https://arxiv.org/pdf/2007.07290
 ACT_DR4:
   90GHz:
     frequency: 90
@@ -59,5 +54,14 @@ ACT_DR5:
     beam_size: 1.0
     noise_level: 125
 
+# https://arxiv.org/pdf/1111.7245
 SPT:
+  150GHz:
+    frequency: 150
+    beam_size: 1.15
+    noise_level: 17
+  220GHz:
+    frequency: 220
+    beam_size: 1.05
+    noise_level: 41
     
