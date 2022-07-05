@@ -137,6 +137,30 @@ def Mpc_to_arcmin(r, z):
     Mpc_per_arcmin = Kpc_per_arcmin/1000
     return r / Mpc_per_arcmin
 
+
+def convolve_map_with_gaussian_beam(pix_size,beam_size_fwhp,Map):
+    gaussian = make_2d_gaussian_beam(pix_size,beam_size_fwhp)
+  
+    FT_gaussian = np.fft.fft2(np.fft.fftshift(gaussian)) # first add the shift so that it is central
+    FT_Map = np.fft.fft2(np.fft.fftshift(Map)) #shift the map too
+    convolved_map = np.fft.fftshift(np.real(np.fft.ifft2(FT_gaussian*FT_Map))) 
+    
+    return(convolved_map)
+  ###############################   
+
+def make_2d_gaussian_beam(pix_size,beam_size_fwhp):
+    N=101
+    ones = np.ones(N)
+    inds  = (np.arange(N)+.5 - N/2.) * pix_size
+    X = np.outer(ones,inds)
+    Y = np.transpose(X)
+    R = np.sqrt(X**2. + Y**2.)
+  
+    beam_sigma = beam_size_fwhp / np.sqrt(8.*np.log(2))
+    gaussian = np.exp(-.5 *(R/beam_sigma)**2.)
+    gaussian = gaussian / np.sum(gaussian)
+    return(gaussian)
+
 def plot_img(image, z, mode = 1, cmb = 0, save = False, path = None):
     '''
     Input: image, mode (option of 0.5/5 Mpc, default to 0.5), cmb (option of y/delta_T, default to y)
@@ -189,7 +213,7 @@ def plot_y(r, y):
     ax[1].title.set_text("Y(Log) z="+str(z))
     plt.show()
     
-def generate_img(radius, profile, f, noise_level, z, plain_y = False, Mpc5 = False, Mpc = False, cmb = False, cmb_n = False, y_n = False, s = False, p = None):
+def generate_img(radius, profile, f, noise_level, beam_size, z, plain_y = False, Mpc5 = False, Mpc = False, cmb = False, cmb_n = False, y_n = False, s = False, p = None):
     if plain_y:
         plot_y(radius, profile)
     if Mpc5:
@@ -214,4 +238,5 @@ def generate_img(radius, profile, f, noise_level, z, plain_y = False, Mpc5 = Fal
     if cmb_n:
         plot_img(CMB_noise, z, cmb = 1, save = s, path = p)
     if y_n:
-        plot_img(y_noise, z, save = s, path = p)
+        final = convolve_map_with_gaussian_beam(Mpc_to_arcmin(0.005, z), beam_size , y_noise)
+        plot_img(final, z, save = s, path = p)
