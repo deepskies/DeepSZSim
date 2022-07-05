@@ -20,9 +20,11 @@ c = 299792458     #m/s
 Mpc_to_m = 3.09e22
 kevcm_to_jm = 1.6e-16 * 1e6
 
+# Load image parameters from the generate.yaml file
 def img_para(num):
     with open('generate.yaml') as f:
         data = yaml.load(f, Loader=SafeLoader)
+        # Parameters for image 1 or 2
         data = data[num]
         mass = data['mass']
         z = data['redshift']
@@ -30,6 +32,7 @@ def img_para(num):
         f = data['frequency']
     return mass, z, tele, f
 
+# Load comological parameters from the config.yaml file
 def cosmo_para():
     with open('config.yaml') as f:
         data = yaml.load(f, Loader=SafeLoader)
@@ -39,9 +42,11 @@ def cosmo_para():
         h = cosmo['cosmo_h']
     return omega_m, omega_b, h
 
+# Load telescope parameters from the config.yaml file
 def tele_para(tele, fre):
     with open('config.yaml') as f:
         data = yaml.load(f, Loader=SafeLoader)
+        # Parameters for type of telescope ACT_DR4/ACT_DR5/SPT
         telescope = data[tele]
         telescope_f = telescope[str(fre)+'GHz']
         beam_size = telescope_f['beam_size']
@@ -196,7 +201,7 @@ def plot_img(image, z, mode = 1, cmb = 0, save = False, path = None):
     if save:
         plt.savefig(path)
     
-def plot_y(r, y):
+def plot_y(r, y, z):
     '''
     Input: profile as function of radius
     Return: visulization (non-log & log scale)
@@ -215,9 +220,9 @@ def plot_y(r, y):
     
 def generate_img(radius, profile, f, noise_level, beam_size, z, plain_y = False, Mpc5 = False, Mpc = False, cmb = False, cmb_n = False, y_n = False, s = False, p = None):
     if plain_y:
-        plot_y(radius, profile)
+        plot_y(radius, profile, z)
     if Mpc5:
-        log_image = make_proj_image_new(radius,np.log10(y_pro),maxRadius=5,pixel_scale=0.05,extrapolate=True)
+        log_image = make_proj_image_new(radius,np.log10(profile),maxRadius=5,pixel_scale=0.05,extrapolate=True)
         plot_img(log_image, z, mode = 0, save = s, path = p)
     
     y_img = make_proj_image_new(radius,profile,extrapolate=True)
