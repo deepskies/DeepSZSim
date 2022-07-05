@@ -14,21 +14,6 @@ CONSTANTS:
   planck_const: 6.626e-34
   boltzman_const: 1.38e-23
 
-IMAGES:
-  IMAGE1:
-    PARAMETERS:
-      frequency: 150
-      numPix: 100
-      pixel_scale: 0.05
-      maxRadius: 5   
-
-  IMAGE2:
-    PARAMETERS:
-      frequency: 150
-      numPix: 100
-      pixel_scale: 0.005
-      maxRadius: 0.5
-
 # https://arxiv.org/pdf/2007.07290
 ACT_DR4:
   90GHz:
