@@ -230,7 +230,7 @@ def plot_y(r, y, z, path):
     ax[1].title.set_text("Y(Log) z="+str(z))
     plt.savefig(path)
     
-def generate_img(radius, profile, f, noise_level, beam_size, z, option, p = None):
+def generate_img(radius, profile, f, noise_level, beam_size, z, option = 0, p = None, AP = False):
     if option == 1:
         plot_y(radius, profile, z, p)
     
@@ -266,3 +266,22 @@ def generate_img(radius, profile, f, noise_level, beam_size, z, option, p = None
         plot_img(CMB_noise, z, opt = 1, path = p)
     if option == 8:
         plot_img(y_noise, z, path = p)
+
+    if AP:
+        return y_noise
+
+def tSZ_signal(Map):
+    rin = 2.1
+    rout = np.sqrt(2) * rin
+    
+    image_size = 37
+    pixel_scale = 0.5
+    x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
+    r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
+
+    # tSZ signal calculation
+    disk_mean = Map[r < rin].mean()
+    ring_mean = Map[(r >= rin) & (r < rout)].mean()
+    tSZ = disk_mean - ring_mean
+    
+    return tSZ
