@@ -1,14 +1,25 @@
 # Planck 2015 
 # https://arxiv.org/abs/1502.01589
+
 # https://arxiv.org/abs/1807.06209 (Planck 2018)
+# COSMOLOGY:
+#   flat: True 
+#   H0: 67.4
+#   Omega_m0: 0.315
+#   Omega_b0: 0.049
+#   sigma8: 0.83
+#   ns: 0.965
+#   cosmo_h: 0.674
+  
+#Battaglia et al 2012
 COSMOLOGY:
   flat: True 
-  H0: 67.4
-  Omega_m0: 0.315
-  Omega_b0: 0.049
-  sigma8: 0.83
-  ns: 0.965
-  cosmo_h: 0.674
+  H0: 70
+  Omega_m0: 0.25
+  Omega_b0: 0.043
+  sigma8: 0.8
+  ns: 0.96
+  cosmo_h: 0.7
 
 CONSTANTS:
   planck_const: 6.626e-34

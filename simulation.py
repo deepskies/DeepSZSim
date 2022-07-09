@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy import signal
 from astropy.cosmology import FlatLambdaCDM
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
@@ -102,12 +103,12 @@ def epp_to_y(profile):
     y_pro = new_battaglia * constant * Mpc_to_m
     return y_pro
 
-def make_proj_image_new(radius, profile,maxRadius=0.5,pixel_scale=0.005,extrapolate=False):
+def make_proj_image_new(radius, profile,range=18,pixel_scale=0.5,extrapolate=False):
     '''
-    Input: Profile as function of Radius, maxRadius (default to 0.5) & pixel_scale (default to 0.005) in Mpc
+    Input: Profile as function of Radius, range (default to 18) & pixel_scale (default to 0.5) in Mpc
     Return: 2D profile
     '''
-    image_size = np.int_(np.round(maxRadius*2/pixel_scale)/2+1)
+    image_size = range/pixel_scale+1
 
     if extrapolate:
         profile_spline = interp1d(radius, profile, kind = 3, bounds_error=False, fill_value="extrapolate")
@@ -137,15 +138,25 @@ def Mpc_to_arcmin(r, z):
     omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
     cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
     Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(z).value
-    Mpc_per_arcmin = Kpc_per_arcmin/1000
+    Mpc_per_arcmin = Kpc_per_arcmin/1000.
     return r / Mpc_per_arcmin
 
-def make_2d_gaussian_beam(pix_size,beam_size_fwhp):
+def arcmin_to_Mpc(r, z):
+    '''
+    Reverse of Mpc_to_arcmin
+    '''
+    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+    Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(z).value
+    arcmin_per_Mpc = 1000/Kpc_per_arcmin
+    return r / arcmin_per_Mpc
+
+def gaussian_kernal(pix_size,beam_size_fwhp):
     '''
     Input: pixel size, beam size in arcmin
     Return: gaussian beam
     '''
-    N=101
+    N=37
     ones = np.ones(N)
     inds  = (np.arange(N)+.5 - N/2.) * pix_size
     X = np.outer(ones,inds)
@@ -153,7 +164,7 @@ def make_2d_gaussian_beam(pix_size,beam_size_fwhp):
     R = np.sqrt(X**2. + Y**2.)
   
     beam_sigma = beam_size_fwhp / np.sqrt(8.*np.log(2))
-    gaussian = np.exp(-.5 *(R/beam_sigma)**2.)
+    gaussian = np.exp(-.5 *(R/beam_sigma)**2.) / (2 * np.pi * (beam_sigma ** 2))
     gaussian = gaussian / np.sum(gaussian)
     return(gaussian)
 
@@ -162,50 +173,47 @@ def convolve_map_with_gaussian_beam(pix_size, beam_size_fwhp, Map):
     Input: pixel size, beam size in arcmin, image
     Return: convolved map
     '''
-    gaussian = make_2d_gaussian_beam(pix_size, beam_size_fwhp)
+    gaussian = gaussian_kernal(pix_size, beam_size_fwhp)
   
-    FT_gaussian = np.fft.fft2(np.fft.fftshift(gaussian))
-    FT_Map = np.fft.fft2(np.fft.fftshift(Map))
-    convolved_map = np.fft.fftshift(np.real(np.fft.ifft2(FT_gaussian * FT_Map))) 
+    convolved_map = signal.fftconvolve(Map, gaussian, mode = 'same')
     
     return(convolved_map)
 
-def plot_img(image, z, mode = 1, cmb = 0, save = False, path = None):
+def plot_img(image, z, opt = 0, path = None):
     '''
     Input: image, mode (option of 0.5/5 Mpc, default to 0.5), cmb (option of y/delta_T, default to y)
     Return: angular scale
     '''
-    if mode:    # 0.5 Mpc
-        values = [-0.4, -0.2, 0, 0.2, 0.4]
-        e = [-0.5, 0.5, -0.5, 0.5]
-    else:   # 5 Mpc
-        values = [-4, -2, 0, 2, 4]
-        e = [-5, 5, -5, 5]
-    if cmb:
-        option = 'ocean'
-        title = '$\Delta$T'
-        cbar_label = r'$uK$'
-    else:
+    values = [0, 9, 18, 27, 36]
+    x_label_list = [9, 4.5, 0, 4.5, 9]
+    y_label_list = np.around(arcmin_to_Mpc(x_label_list, z), decimals = 2)
+    if opt == 0:
         option = 'hot'
         title = 'Y'
         cbar_label = r'$Y$'
-        if mode == 0:
-            cbar_label = r'$\log_{10}Y$'
+    if opt == 1:
+        option = 'ocean'
+        title = '$\Delta$T'
+        cbar_label = r'$uK$'
+    if opt == 2:
+        option = 'viridis'
+        title = 'Kernal'
+        cbar_label = r' '
+
     fig, ax = plt.subplots(1,1)
-    img = ax.imshow(image, cmap=option, extent = e)
-    x_label_list = Mpc_to_arcmin(values, z)
-    x_label_list = np.around(x_label_list, decimals = 2)
+    img = ax.imshow(image, cmap=option)
     ax.set_xticks(values)
     ax.set_xticklabels(x_label_list)
+    ax.set_yticks(values)
+    ax.set_yticklabels(y_label_list)
     cbar = fig.colorbar(img)
     cbar.ax.set_ylabel(cbar_label)
     plt.title(title)
     plt.xlabel('arcmin')
     plt.ylabel(r'Mpc')
-    if save:
-        plt.savefig(path)
+    plt.savefig(path)
     
-def plot_y(r, y, z):
+def plot_y(r, y, z, path):
     '''
     Input: profile as function of radius
     Return: visulization (non-log & log scale)
@@ -220,46 +228,41 @@ def plot_y(r, y, z):
     ax[1].set_xlabel("Mpc")
     ax[1].set_ylabel(r'Mpc$^{-1}$')
     ax[1].title.set_text("Y(Log) z="+str(z))
-    plt.show()
+    plt.savefig(path)
     
-def generate_img(radius, profile, f, noise_level, beam_size, z, option, s = False, p = None):
+def generate_img(radius, profile, f, noise_level, beam_size, z, option, p = None):
     if option == 1:
-        plot_y(radius, profile, z)
-    if option == 2:
-        log_image = make_proj_image_new(radius,np.log10(profile),maxRadius=5,pixel_scale=0.05,extrapolate=True)
-        plot_img(log_image, z, mode = 0, save = s, path = p)
+        plot_y(radius, profile, z, p)
     
     y_img = make_proj_image_new(radius,profile,extrapolate=True)
-    if option == 3:
-        plot_img(y_img, z, save = s, path = p)
+
+    if option == 2:
+        plot_img(y_img, z, path = p)
     
-    if option == 4:
-        gaussian = make_2d_gaussian_beam(Mpc_to_arcmin(0.005, z), beam_size)
-        if s:
-            fig, ax = plt.subplots(1,1)
-            img = ax.imshow(gaussian)
-            fig.colorbar(img)
-            plt.savefig(p)
-    y_con = convolve_map_with_gaussian_beam(Mpc_to_arcmin(0.005, z), beam_size , y_img)
+    if option == 3:
+        gaussian = gaussian_kernal(0.5, beam_size)
+        plot_img(gaussian, z, opt = 2, path = p)
+
+    y_con = convolve_map_with_gaussian_beam(0.5, beam_size , y_img)
     
     
     t_cmb = 2.725            #K
     fsz = f_sz(f, t_cmb)
     cmb_img = y_con * fsz * t_cmb * 1e6
     
-    noise = np.random.normal(0, 1, (101,101)) * noise_level
-    if option == 7:
-        plot_img(noise, z, cmb = 1, save = s, path = p)
+    noise = np.random.normal(0, 1, (37, 37)) * noise_level
+    if option == 6:
+        plot_img(noise, z, opt = 1, path = p)
 
     CMB_noise = cmb_img + noise
     
     y_noise = CMB_noise / fsz / t_cmb / 1e6
     
+    if option == 4:
+        plot_img(y_con, z, path = p)
     if option == 5:
-        plot_img(y_con, z, save = s, path = p)
-    if option == 6:
-        plot_img(cmb_img, z, cmb = 1, save = s, path = p)
+        plot_img(cmb_img, z, opt = 1, path = p)
+    if option == 7:
+        plot_img(CMB_noise, z, opt = 1, path = p)
     if option == 8:
-        plot_img(CMB_noise, z, cmb = 1, save = s, path = p)
-    if option == 9:
-        plot_img(y_noise, z, save = s, path = p)
+        plot_img(y_noise, z, path = p)
