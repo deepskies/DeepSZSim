@@ -187,7 +187,7 @@ def plot_img(image, z, opt = 0, path = None):
     values = [0, 9, 18, 27, 36]
     x_label_list = [9, 4.5, 0, 4.5, 9]
     y_label_list = np.around(arcmin_to_Mpc(x_label_list, z), decimals = 2)
-    if opt == 0:
+    if opt == 0 or opt == 3:
         option = 'hot'
         title = 'Y'
         cbar_label = r'$Y$'
@@ -211,6 +211,13 @@ def plot_img(image, z, opt = 0, path = None):
     plt.title(title)
     plt.xlabel('arcmin')
     plt.ylabel(r'Mpc')
+
+    if opt == 3:
+        circle_disk = plt.Circle((18, 18), radius_size(disk = True), color='green', fill=False, linewidth=2)
+        circle_ring = plt.Circle((18, 18), radius_size(ring = True), color='black', fill=False, linewidth=2)
+        ax.add_patch(circle_disk)
+        ax.add_patch(circle_ring)
+
     plt.savefig(path)
     
 def plot_y(r, y, z, path):
@@ -266,6 +273,9 @@ def generate_img(radius, profile, f, noise_level, beam_size, z, option = 0, p = 
         plot_img(CMB_noise, z, opt = 1, path = p)
     if option == 8:
         plot_img(y_noise, z, path = p)
+    
+    if option == 9:
+        plot_img(y_noise, z, opt = 3, path = p)
 
     if AP:
         return y_noise
@@ -285,3 +295,24 @@ def tSZ_signal(Map):
     tSZ = disk_mean - ring_mean
     
     return tSZ
+
+def radius_size(disk = False, ring = False):
+    rin = 2.1
+    rout = np.sqrt(2) * rin
+    
+    image_size = 37
+    pixel_scale = 0.5
+    x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
+    r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
+
+    if disk:
+        rows, columns = np.where(r < rin)
+        value = image_size//2 - rows[0]
+        return value
+    
+    if ring:
+        rows, columns = np.where(r < rout)
+        value = image_size//2 - rows[0]
+        return value
+
+    
