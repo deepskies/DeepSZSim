@@ -193,7 +193,7 @@ def plot_img(image, z, opt = 0, path = None):
         cbar_label = r'$Y$'
     if opt == 1:
         option = 'ocean'
-        title = '$\Delta$T'
+        title = 'T'
         cbar_label = r'$uK$'
     if opt == 2:
         option = 'viridis'
@@ -237,18 +237,21 @@ def plot_y(r, y, z, path):
     ax[1].title.set_text("Y(Log) z="+str(z))
     plt.savefig(path)
     
-def generate_img(radius, profile, f, noise_level, beam_size, z, option = 0, p = None, AP = False):
-    if option == 1:
-        plot_y(radius, profile, z, p)
+def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, AP = False):
+    if 1 in nums:
+        pa = p + '1' + '.png'
+        plot_y(radius, profile, z, pa)
     
     y_img = make_proj_image_new(radius,profile,extrapolate=True)
 
-    if option == 2:
-        plot_img(y_img, z, path = p)
+    if 2 in nums:
+        pa = p + '2' + '.png'
+        plot_img(y_img, z, path = pa)
     
-    if option == 3:
+    if 3 in nums:
+        pa = p + '3' + '.png'
         gaussian = gaussian_kernal(0.5, beam_size)
-        plot_img(gaussian, z, opt = 2, path = p)
+        plot_img(gaussian, z, opt = 2, path = pa)
 
     y_con = convolve_map_with_gaussian_beam(0.5, beam_size , y_img)
     
@@ -258,27 +261,31 @@ def generate_img(radius, profile, f, noise_level, beam_size, z, option = 0, p = 
     cmb_img = y_con * fsz * t_cmb * 1e6
     
     noise = np.random.normal(0, 1, (37, 37)) * noise_level
-    if option == 6:
-        plot_img(noise, z, opt = 1, path = p)
-
     CMB_noise = cmb_img + noise
     
     y_noise = CMB_noise / fsz / t_cmb / 1e6
     
-    if option == 4:
-        plot_img(y_con, z, path = p)
-    if option == 5:
-        plot_img(cmb_img, z, opt = 1, path = p)
-    if option == 7:
-        plot_img(CMB_noise, z, opt = 1, path = p)
-    if option == 8:
-        plot_img(y_noise, z, path = p)
-    
-    if option == 9:
-        plot_img(y_noise, z, opt = 3, path = p)
+    if 4 in nums:
+        pa = p + '4' + '.png'
+        plot_img(y_con, z, path = pa)
+    if 5 in nums:
+        pa = p + '5' + '.png'
+        plot_img(cmb_img, z, opt = 1, path = pa)
+    if 6 in nums:
+        pa = p + '6' + '.png'
+        plot_img(noise, z, opt = 1, path = pa)
+    if 7 in nums:
+        pa = p + '7' + '.png'
+        plot_img(CMB_noise, z, opt = 1, path = pa)
+    if 8 in nums:
+        pa = p + '8' + '.png'
+        plot_img(y_noise, z, path = pa)
+    if 9 in nums:
+        pa = p + '9' + '.png'
+        plot_img(y_noise, z, opt = 3, path = pa)
 
     if AP:
-        return y_noise
+        print("tSZ Signal: " + str(tSZ_signal(y_noise)))
 
 def tSZ_signal(Map):
     rin = 2.1
