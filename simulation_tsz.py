@@ -237,7 +237,7 @@ def plot_y(r, y, z, path):
     ax[1].title.set_text("Y(Log) z="+str(z))
     plt.savefig(path)
     
-def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, AP = False, AP4 = False):
+def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, AP = False, AP4 = False, disk = False):
     if 1 in nums:
         pa = p + '1' + '.png'
         plot_y(radius, profile, z, pa)
@@ -288,8 +288,10 @@ def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, 
         print("tSZ Signal: " + str(tSZ_signal(z, y_noise)))
     if AP4:
         print("tSZ Signal from option 4: " + str(tSZ_signal(z, y_con)))
+    if disk:
+        print("tSZ Signal disk: " + str(tSZ_signal(z, y_noise,disk=True)))
 
-def tSZ_signal(z, Map):
+def tSZ_signal(z, Map,disk=False):
     # https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
     omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
     cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
@@ -306,6 +308,10 @@ def tSZ_signal(z, Map):
 
     # tSZ signal calculation
     disk_mean = Map[r < rin].mean()
+
+    if disk:
+        return disk_mean
+
     ring_mean = Map[(r >= rin) & (r < rout)].mean()
     tSZ = disk_mean - ring_mean
     
