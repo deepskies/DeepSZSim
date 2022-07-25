@@ -213,8 +213,8 @@ def plot_img(image, z, opt = 0, path = None):
     plt.ylabel(r'Mpc')
 
     if opt == 3:
-        circle_disk = plt.Circle((18, 18), radius_size(disk = True), color='green', fill=False, linewidth=2)
-        circle_ring = plt.Circle((18, 18), radius_size(ring = True), color='black', fill=False, linewidth=2)
+        circle_disk = plt.Circle((18, 18), radius_size(z,disk = True), color='green', fill=False, linewidth=2)
+        circle_ring = plt.Circle((18, 18), radius_size(z,ring = True), color='black', fill=False, linewidth=2)
         ax.add_patch(circle_disk)
         ax.add_patch(circle_ring)
 
@@ -282,13 +282,18 @@ def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, 
         plot_img(y_noise, z, path = pa)
     if 9 in nums:
         pa = p + '9' + '.png'
-        plot_img(y_noise, z, opt = 3, path = pa)
+        plot_img(y_noise, z, opt = 3, path = pa) #vizualization starts working from z = 0.115
 
     if AP:
-        print("tSZ Signal: " + str(tSZ_signal(y_noise)))
+        print("tSZ Signal: " + str(tSZ_signal(z, y_noise)))
 
-def tSZ_signal(Map):
-    rin = 2.1
+def tSZ_signal(z, Map):
+    # https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
+    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+    angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
+    angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
+    rin = 2.1 * angular_dd_z / angular_dd # Calafut et al 2021
     rout = np.sqrt(2) * rin
     
     image_size = 37
@@ -303,8 +308,13 @@ def tSZ_signal(Map):
     
     return tSZ
 
-def radius_size(disk = False, ring = False):
-    rin = 2.1
+def radius_size(z, disk = False, ring = False):
+ 
+    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+    angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
+    angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
+    rin = 2.1 * angular_dd_z / angular_dd
     rout = np.sqrt(2) * rin
     
     image_size = 37
