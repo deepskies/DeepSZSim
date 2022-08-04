@@ -51,6 +51,7 @@ from pathlib import Path
 import pandas as pd
 import matplotlib.cm as cm
 
+
 """# **Single Redshift**"""
 
 #extract power function
@@ -93,7 +94,7 @@ def lnpo(mass, min, max, test_fun):
     return -np.inf
   return math.log(test_fun(mass)) #log likelihood is required by emcee
 
-def interpolate_MCMC(mass_array_p, mfunc_n, mass_range, sample_num, redshift):
+def interpolate_MCMC(mass_array_p, mfunc_n, mass_range, sample_num):
     """
     interpolate and normalize mfunc_n, use the result as a likelihood function and perform MCMC method to get the sample.
     
@@ -180,7 +181,7 @@ def mass_sampling(mass_range, redshift = 0.0, mdef = '200c', model = 'bocquet16'
     cosmology.setCosmology('WMAP9')
     mfunc = mass_function.massFunction(mass_arr, redshift, mdef = mdef, model = model, q_out = 'dndlnM')
     mass_arr_p = extract_power(mass_arr)
-    test_func, prim_mass_sample = interpolate_MCMC(mass_arr_p, mfunc, mass_range, sample_num, redshift)
+    test_func, prim_mass_sample = interpolate_MCMC(mass_arr_p, mfunc, mass_range, sample_num)
     return test_func, prim_mass_sample
 
 """test single redshift"""
@@ -243,34 +244,34 @@ def skew_sample(size = 10000):
     rs_sample = sample/6.6666
     return rs_sample
 
-def single_redshift_num(rs_range, sample_num, rs_dist_model):
+def single_redshift_num(z_range, sample_num, z_dist_model):
     """
     the function to give back redshifts and sample_num per redshift for multi-redshift sampling
 
     Parameters:
     ----------- 
-    rs_dist_model: a string, represent the distribution of cluster redshift
-    rs_range: a tuple of redshift range, (0.0, 1.5) by default
+    z_dist_model: a string, represent the distribution of cluster redshift
+    z_range: a tuple of redshift range, (0.0, 1.5) by default
     sample_num: an integer of number of sample, 100000 by default
     
     chop: a NumPy array of redshifts
     num_per_redshift: a NumPy array of cluster num within the corresponding redshift interval of same index number in chop
     """
-    if rs_dist_model == "skewnorm": #more option reserved for future improvement
-        rs_sample = skew_sample(size = sample_num)
+    if z_dist_model == "skewnorm": #more option reserved for future improvement
+        z_sample = skew_sample(size = sample_num)
 
-    #calculate chop_num, eg. rdshift = (0, 1.5) -> 90 chop. 1 chop take 22-25s to sample, be careful
-    chop_num = (rs_range[1] - rs_range[0]) * 60
-    chop = np.linspace(rs_range[0], rs_range[1], int(chop_num)) # an array of redshift upper & lower limit, redshift in this range will be approximate to lower limit
+    #calculate chop_num, 1 chop take 22-25s to sample, be careful
+    chop_num = (z_range[1] - z_range[0]) * 90
+    chop = np.linspace(z_range[0], z_range[1], int(chop_num)) # an array of redshift upper & lower limit, redshift in this range will be approximate to lower limit
     num_per_redshift = [] 
     for i, redshift in enumerate(chop):
         min_rs = redshift
-        condition1 = (min_rs <= rs_sample)
-        if redshift != 1.5:
-            max_rs = chop[i + 1]
+        condition1 = (min_rs <= z_sample)
+        if redshift != z_range[1]:
+            max_z = chop[i + 1]
         else:
-            max_rs = float('inf')
-        condition2 = (rs_sample < max_rs)
+            max_z = float('inf')
+        condition2 = (z_sample < max_z)
         condition = condition1 & condition2
 
         num = np.count_nonzero(condition) #num of cluster fulfill this range
@@ -278,18 +279,21 @@ def single_redshift_num(rs_range, sample_num, rs_dist_model):
 
     num_per_redshift = np.array(num_per_redshift) 
 
-    fin_chop_num = np.count_nonzero(num_per_redshift >= 20)
-    print(f"you divide redshift range {rs_range} into {fin_chop_num} chops, it will take about {round(fin_chop_num*22.5/60, 3)} minutes to complete.")
+    #fin_chop_num = np.count_nonzero(num_per_redshift >= 20)
+    print(f"you divide redshift range {z_range} into {chop_num} chops, it will take about {round(chop_num*22/60, 3)} minutes to complete.")
     return chop, num_per_redshift
 
-def mul_redshift_mass_sampling(rs_dist = "skewnorm", rs_range = (0.0, 1.5), mass_range = (14.0, 16.0), mdef = '200c', model = 'bocquet16', sample_num = 100000, store = True):
+
+
+
+def mul_redshift_mass_sampling(z_dist = "skewnorm", z_range = (0.0, 1.5), mass_range = (14.0, 16.0), mdef = '200c', model = 'bocquet16', sample_num = 100000, store = True):
     """
     the function to give back a sample of multi-redshift cluster mass distribution based on halo mass function
   
     Parameters:
     -----------
-    rs_dist: a string, representing the distribution of cluster redshift, "skewnorm" by default
-    rs_range: a tuple of redshift range, (0.0, 1.5) by default
+    z_dist: a string, representing the distribution of cluster redshift, "skewnorm" by default
+    z_range: a tuple of redshift range, (0.0, 1.5) by default
     mass_range: a tuple of cluster masses, lower limit and upper limit for sampling, [min, max] in 10^min M⨀ unit
     mdef: The mass definition in which the halo mass M is given; see colossus doc for more info (https://bdiemer.bitbucket.io/colossus/lss_mass_function.html#lss.mass_function.massFunction)
     model: the halo mass function model used by colossus; see colossus doc for more info
@@ -300,11 +304,11 @@ def mul_redshift_mass_sampling(rs_dist = "skewnorm", rs_range = (0.0, 1.5), mass
     filepath: str of file path if store=True, else None
     tot_num: a integer of final sample number, there's a small difference between sample_num and tot_num caused by conditions
     """  
-  
     t0 = time.time()
+    sample_num = int(sample_num * 1.1)
     import pandas as pd
     filepath = None
-    chop, num_per_redshift = single_redshift_num(rs_range, sample_num, rs_dist)
+    chop, num_per_redshift = single_redshift_num(z_range, sample_num, z_dist)
 
     final_mass_list = []
     tot_num = 0
@@ -313,10 +317,11 @@ def mul_redshift_mass_sampling(rs_dist = "skewnorm", rs_range = (0.0, 1.5), mass
         redshift = round(redshift, 4)
         sample_n = num_per_redshift[i]
         if sample_n < 20: #->too small
-            continue
+            sample_n = 20
         sample_n = int(math.ceil(sample_n / 10.0)) * 10 #round up
         print(f"starting sampling with redshift: {redshift}, sample_num : {sample_n}")
         test_func, chain = mass_sampling(mass_range, redshift = redshift, mdef = mdef, model = model, sample_num = sample_n)
+        chain = chain[chain < 15.25] #exclude cluster that is too massive, 1.7782794e+15
         tot_num += chain.shape[0]
         if (flag == 0):
             masses = pd.Series(reverse_extract_power(chain))
@@ -331,15 +336,30 @@ def mul_redshift_mass_sampling(rs_dist = "skewnorm", rs_range = (0.0, 1.5), mass
             redshifts = pd.concat([redshifts, new_redshift])
         #mass_sampling(mass_range, redshift = 0.0, mdef = '200c', model = 'bocquet16', sample_num = 100000):
         #final_mass_list.append(masses(test_func, redshift, chain))
-    fin_clusters = pd.DataFrame(columns = ["mass_arr", "redshift"])
-    fin_clusters["mass_arr"] = masses
+    fin_clusters = pd.DataFrame(columns = ["mass", "redshift"])
+    fin_clusters["mass"] = masses
     fin_clusters["redshift"] = redshifts
+
+    #decrease to sample size
+    row_num = fin_clusters.shape[0]
+    if sample_num < row_num:
+        dif = row_num - sample_num
+        fin_clusters = fin_clusters.drop(random.sample(range(0, row_num - 1), dif))
+        fin_clusters = fin_clusters.reset_index()
+    
+    f_sample_num = len(fin_clusters)
+    digit = len(str(f_sample_num))
+    id = np.arange(1, (f_sample_num + 1), 1)
+    id = id + int(t0)*(10**digit)
+    fin_clusters.insert(0, "id", id)
+
 
     if store:
         from pathlib import Path
-        filepath = Path(os.getcwd() + "/mass_samples/" + "rs(" + str(rs_range[0]) + "~" + str(rs_range[1]) + ")num_" + str(tot_num) + ".csv")
+        filepath = Path(os.getcwd() + "/mass_samples/" + "z(" + str(z_range[0]) + "~" + str(z_range[1]) + ")num_" + str(f_sample_num) + ".csv")
         filepath.parent.mkdir(parents = True, exist_ok = True)
         fin_clusters.to_csv(filepath, index = False)
     t1 = time.time()
-    print(f"finish running, using {t1 - t0}s, obtain {tot_num} cluster samples")
+    print(f"finish running, using {t1 - t0}s, obtain {f_sample_num} cluster samples")
     return tot_num, filepath, fin_clusters
+    
