@@ -213,8 +213,8 @@ def plot_img(image, z, opt = 0, path = None):
     plt.ylabel(r'Mpc')
 
     if opt == 3:
-        circle_disk = plt.Circle((18, 18), radius_size(z,disk = True), color='green', fill=False, linewidth=2)
-        circle_ring = plt.Circle((18, 18), radius_size(z,ring = True), color='black', fill=False, linewidth=2)
+        circle_disk = plt.Circle((18, 18), radius_size(z,disk = True), color='white', fill=False, linewidth=2)
+        circle_ring = plt.Circle((18, 18), radius_size(z,ring = True), color='aqua', fill=False, linewidth=2)
         ax.add_patch(circle_disk)
         ax.add_patch(circle_ring)
 
