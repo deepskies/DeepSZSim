@@ -10,6 +10,19 @@
 #   sigma8: 0.83
 #   ns: 0.965
 #   cosmo_h: 0.674
+
+1:
+  mass: 100    #10^13 solar mass
+  redshift: 0.1
+  telescope: ACT_DR4
+  frequency: 90     #GHz
+
+2:
+  mass: 1    #10^13 solar mass
+  redshift: 0.1
+  telescope: ACT_DR4
+  frequency: 90     #GHz
+
   
 #Battaglia et al 2012
 COSMOLOGY:
