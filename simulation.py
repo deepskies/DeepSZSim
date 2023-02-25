@@ -172,6 +172,58 @@ def convolve_map_with_gaussian_beam(pix_size, beam_size_fwhp, Map):
     
     return(convolved_map)
 
+
+def tSZ_signal(z, Map):
+    # https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
+    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+    angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
+    angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
+    rin = 2.1 * angular_dd_z / angular_dd # Calafut et al 2021
+    rout = np.sqrt(2) * rin
+    
+    image_size = 37
+    pixel_scale = 0.5
+    x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
+    r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
+
+    # tSZ signal calculation
+    disk_mean = Map[r < rin].mean()
+    ring_mean = Map[(r >= rin) & (r < rout)].mean()
+    tSZ = disk_mean - ring_mean
+    
+    return tSZ
+
+def radius_size(z, disk = False, ring = False):
+ 
+    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+    angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
+    angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
+    rin = 2.1 * angular_dd_z / angular_dd
+    rout = np.sqrt(2) * rin
+    
+    image_size = 37
+    pixel_scale = 0.5
+    x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
+    r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
+
+    if disk:
+        rows, columns = np.where(r < rin)
+        value = image_size//2 - rows[0]
+        return value
+    
+    if ring:
+        rows, columns = np.where(r < rout)
+        value = image_size//2 - rows[0]
+        return value
+
+    
+
+
+
+
+
 def plot_img(image, z, opt = 0, path = None):
     '''
     Input: image, mode (option of 0.5/5 Mpc, default to 0.5), cmb (option of y/delta_T, default to y)
@@ -279,50 +331,3 @@ def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, 
 
     if AP:
         print("tSZ Signal: " + str(tSZ_signal(z, y_noise)))
-
-def tSZ_signal(z, Map):
-    # https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
-    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
-    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
-    angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
-    angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
-    rin = 2.1 * angular_dd_z / angular_dd # Calafut et al 2021
-    rout = np.sqrt(2) * rin
-    
-    image_size = 37
-    pixel_scale = 0.5
-    x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
-    r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
-
-    # tSZ signal calculation
-    disk_mean = Map[r < rin].mean()
-    ring_mean = Map[(r >= rin) & (r < rout)].mean()
-    tSZ = disk_mean - ring_mean
-    
-    return tSZ
-
-def radius_size(z, disk = False, ring = False):
- 
-    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
-    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
-    angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
-    angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
-    rin = 2.1 * angular_dd_z / angular_dd
-    rout = np.sqrt(2) * rin
-    
-    image_size = 37
-    pixel_scale = 0.5
-    x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
-    r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
-
-    if disk:
-        rows, columns = np.where(r < rin)
-        value = image_size//2 - rows[0]
-        return value
-    
-    if ring:
-        rows, columns = np.where(r < rout)
-        value = image_size//2 - rows[0]
-        return value
-
-    
