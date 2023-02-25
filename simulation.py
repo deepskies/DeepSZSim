@@ -30,6 +30,7 @@ def battaglia_profile(r, Mvir, z):
     #Option to customize concentration, currently default, using Bullock et al. (2001)
     #cvir = concentration.concentration(Mvir, 'vir', z, model = 'ishiyama21')      #Ishiyama et al. (2021)
     M200, R200, c200 = mass_adv.changeMassDefinitionCModel(Mvir/cosmo_h, z, 'vir', '200c', c_model = 'ishiyama21')
+    M200, R200, c200 = mass_adv.changeMassDefinitionCModel(M500/cosmo_h, z, '500c', '200c', c_model = 'ishiyama21')
     M200 *= cosmo_h
     R200 = R200 / 1000 * cosmo_h
     
@@ -135,6 +136,59 @@ def convolve_map_with_gaussian_beam(pix_size, beam_size_fwhp, Map):
     convolved_map = signal.fftconvolve(Map, gaussian, mode = 'same')
     
     return(convolved_map)
+
+def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, AP = False):
+    if 1 in nums:
+        pa = p + '1' + '.png'
+        plot_y(radius, profile, z, pa)
+    
+    y_img = make_proj_image_new(radius,profile,extrapolate=True)
+
+    if 2 in nums:
+        pa = p + '2' + '.png'
+        plot_img(y_img, z, path = pa)
+    
+    if 3 in nums:
+        pa = p + '3' + '.png'
+        gaussian = gaussian_kernal(0.5, beam_size)
+        plot_img(gaussian, z, opt = 2, path = pa)
+
+    y_con = convolve_map_with_gaussian_beam(0.5, beam_size , y_img)
+    
+    
+    t_cmb = 2.725            #K
+    fsz = f_sz(f, t_cmb)
+    cmb_img = y_con * fsz * t_cmb * 1e6
+    
+    noise = np.random.normal(0, 1, (37, 37)) * noise_level
+    CMB_noise = cmb_img + noise
+    
+    y_noise = CMB_noise / fsz / t_cmb / 1e6
+    
+    if 4 in nums:
+        pa = p + '4' + '.png'
+        plot_img(y_con, z, path = pa)
+    if 5 in nums:
+        pa = p + '5' + '.png'
+        plot_img(cmb_img, z, opt = 1, path = pa)
+    if 6 in nums:
+        pa = p + '6' + '.png'
+        plot_img(noise, z, opt = 1, path = pa)
+    if 7 in nums:
+        pa = p + '7' + '.png'
+        plot_img(CMB_noise, z, opt = 1, path = pa)
+    if 8 in nums:
+        pa = p + '8' + '.png'
+        plot_img(y_noise, z, path = pa)
+    if 9 in nums:
+        pa = p + '9' + '.png'
+        plot_img(y_noise, z, opt = 3, path = pa) #vizualization starts working from z = 0.115
+
+    if AP:
+        print("tSZ Signal: " + str(tSZ_signal(z, y_noise)))
+
+    return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture    
+    
 
 
 def tSZ_signal(z, Map):
@@ -246,52 +300,3 @@ def plot_y(r, y, z, path):
     ax[1].title.set_text("Y(Log) z="+str(z))
     plt.savefig(path)
     
-def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, AP = False):
-    if 1 in nums:
-        pa = p + '1' + '.png'
-        plot_y(radius, profile, z, pa)
-    
-    y_img = make_proj_image_new(radius,profile,extrapolate=True)
-
-    if 2 in nums:
-        pa = p + '2' + '.png'
-        plot_img(y_img, z, path = pa)
-    
-    if 3 in nums:
-        pa = p + '3' + '.png'
-        gaussian = gaussian_kernal(0.5, beam_size)
-        plot_img(gaussian, z, opt = 2, path = pa)
-
-    y_con = convolve_map_with_gaussian_beam(0.5, beam_size , y_img)
-    
-    
-    t_cmb = 2.725            #K
-    fsz = f_sz(f, t_cmb)
-    cmb_img = y_con * fsz * t_cmb * 1e6
-    
-    noise = np.random.normal(0, 1, (37, 37)) * noise_level
-    CMB_noise = cmb_img + noise
-    
-    y_noise = CMB_noise / fsz / t_cmb / 1e6
-    
-    if 4 in nums:
-        pa = p + '4' + '.png'
-        plot_img(y_con, z, path = pa)
-    if 5 in nums:
-        pa = p + '5' + '.png'
-        plot_img(cmb_img, z, opt = 1, path = pa)
-    if 6 in nums:
-        pa = p + '6' + '.png'
-        plot_img(noise, z, opt = 1, path = pa)
-    if 7 in nums:
-        pa = p + '7' + '.png'
-        plot_img(CMB_noise, z, opt = 1, path = pa)
-    if 8 in nums:
-        pa = p + '8' + '.png'
-        plot_img(y_noise, z, path = pa)
-    if 9 in nums:
-        pa = p + '9' + '.png'
-        plot_img(y_noise, z, opt = 3, path = pa) #vizualization starts working from z = 0.115
-
-    if AP:
-        print("tSZ Signal: " + str(tSZ_signal(z, y_noise)))
