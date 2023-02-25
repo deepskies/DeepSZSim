@@ -10,14 +10,7 @@ import yaml
 from yaml.loader import SafeLoader
 mpl.style.use('default')
 
-# Constants
-G = 6.6743e-11        #m^3/Kg/s^2
-m_sun = 1.98847e30       #Kg
-Thomson_sec = 6.65246e-29       #m^2
-m_electron = 9.11e-31        #Kg
-c = 299792458     #m/s
-Mpc_to_m = 3.09e22
-kevcm_to_jm = 1.6e-16 * 1e6
+
 
 # Load image parameters from the generate.yaml file
 def img_para(num):
