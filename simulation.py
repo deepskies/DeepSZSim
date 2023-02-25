@@ -6,8 +6,6 @@ from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-import yaml
-from yaml.loader import SafeLoader
 mpl.style.use('default')
 
 
