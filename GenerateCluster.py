@@ -11,8 +11,74 @@ mpl.style.use('default')
 
 class GenerateCluster():
 
-    def init():
+    def __init__():
 
+
+    def tSZ_signal(z, Map):
+        # https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
+        omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+        cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+        angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
+        angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
+        rin = 2.1 * angular_dd_z / angular_dd # Calafut et al 2021
+        rout = np.sqrt(2) * rin
+        
+        image_size = 37
+        pixel_scale = 0.5
+        x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
+        r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
+
+        # tSZ signal calculation
+        disk_mean = Map[r < rin].mean()
+        ring_mean = Map[(r >= rin) & (r < rout)].mean()
+        tSZ = disk_mean - ring_mean
+        
+        return tSZ, rin
+
+     def f_sz(f, T_CMB):
+        '''
+        Input: Observation frequency f, Temperature of cmb T_CMB
+        Return: Radiation frequency
+        '''
+        planck_const = 6.626e-34         #m^2 kg/s
+        boltzman_const = 1.38e-23
+        x = planck_const * f / boltzman_const / T_CMB
+        return x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4
+
+    def radius_size(z, disk = False, ring = False):
+    
+        omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+        cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+        angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
+        angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
+        rin = 2.1 * angular_dd_z / angular_dd
+        
+        rout = np.sqrt(2) * rin
+        
+        image_size = 37
+        pixel_scale = 0.5
+        x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
+        r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
+
+        if disk:
+            rows, columns = np.where(r < rin)
+            value = image_size//2 - rows[0]
+            return value
+        
+        if ring:
+            rows, columns = np.where(r < rout)
+            value = image_size//2 - rows[0]
+            return value
+
+     def epp_to_y(profile):
+        '''
+        Input: Electron pressure profile
+        Return: Compton-y profile
+        '''
+        constant = Thomson_sec / m_electron / (c ** 2)         #s^2/kg
+        new_battaglia = profile * kevcm_to_jm
+        y_pro = new_battaglia * constant * Mpc_to_m
+        return y_pro
 
 
     def battaglia_profile(r, Mvir, z):
@@ -34,8 +100,8 @@ class GenerateCluster():
         #Option to customize concentration, currently default, using Bullock et al. (2001)
         #cvir = concentration.concentration(Mvir, 'vir', z, model = 'ishiyama21')      #Ishiyama et al. (2021)
         M200, R200, c200 = mass_adv.changeMassDefinitionCModel(Mvir/cosmo_h, z, 'vir', '200c', c_model = 'ishiyama21')
-        M200, R200, c200 = mass_adv.changeMassDefinitionCModel(Mvir/cosmo_h, z, 'vir', '200c', c_model = 'ishiyama21')
-        M200, R200, c200 = mass_adv.changeMassDefinitionCModel(M500/cosmo_h, z, '500c', '200c', c_model = 'ishiyama21')
+        #M200, R200, c200 = mass_adv.changeMassDefinitionCModel(Mvir/cosmo_h, z, 'vir', '200c', c_model = 'ishiyama21')
+        #M200, R200, c200 = mass_adv.changeMassDefinitionCModel(M500/cosmo_h, z, '500c', '200c', c_model = 'ishiyama21')
         M200 *= cosmo_h
         R200 = R200 / 1000 * cosmo_h
         
@@ -54,19 +120,10 @@ class GenerateCluster():
 
         pth *= (m_sun * 1e6 * j_to_kev  / ((Mpc_to_m*100)**3))       # keV/cm^3
         p_e = pth * 0.518       # Vikram et al (2016)
-        #return p_e
-        #return p_e
+
         return p_e, M200, R200, c200
 
-    def epp_to_y(profile):
-        '''
-        Input: Electron pressure profile
-        Return: Compton-y profile
-        '''
-        constant = Thomson_sec / m_electron / (c ** 2)         #s^2/kg
-        new_battaglia = profile * kevcm_to_jm
-        y_pro = new_battaglia * constant * Mpc_to_m
-        return y_pro
+   
 
     def make_proj_image_new(radius, profile,range=18,pixel_scale=0.5,extrapolate=False):
         '''
@@ -84,124 +141,8 @@ class GenerateCluster():
         r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
         image = profile_spline(r)
         return image
-        
-    def f_sz(f, T_CMB):
-        '''
-        Input: Observation frequency f, Temperature of cmb T_CMB
-        Return: Radiation frequency
-        '''
-        planck_const = 6.626e-34         #m^2 kg/s
-        boltzman_const = 1.38e-23
-        x = planck_const * f / boltzman_const / T_CMB
-        return x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4
 
-    def Mpc_to_arcmin(r, z):
-        '''
-        Input: distance r, redshift
-        Return: angular scale
-        '''
-        omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
-        cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
-        Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(z).value
-        Mpc_per_arcmin = Kpc_per_arcmin/1000.
-        return r / Mpc_per_arcmin
 
-    def arcmin_to_Mpc(r, z):
-        '''
-        Reverse of Mpc_to_arcmin
-        '''
-        omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
-        cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
-        Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(z).value
-        arcmin_per_Mpc = 1000/Kpc_per_arcmin
-        return r / arcmin_per_Mpc
-
-    def gaussian_kernal(pix_size,beam_size_fwhp):
-        '''
-        Input: pixel size, beam size in arcmin
-        Return: gaussian beam
-        '''
-        N=37
-        ones = np.ones(N)
-        inds  = (np.arange(N)+.5 - N/2.) * pix_size
-        X = np.outer(ones,inds)
-        Y = np.transpose(X)
-        R = np.sqrt(X**2. + Y**2.)
-    
-        beam_sigma = beam_size_fwhp / np.sqrt(8.*np.log(2))
-        gaussian = np.exp(-.5 *(R/beam_sigma)**2.) / (2 * np.pi * (beam_sigma ** 2))
-        gaussian = gaussian / np.sum(gaussian)
-        return(gaussian)
-
-    def convolve_map_with_gaussian_beam(pix_size, beam_size_fwhp, Map):
-        '''
-        Input: pixel size, beam size in arcmin, image
-        Return: convolved map
-        '''
-        gaussian = gaussian_kernal(pix_size, beam_size_fwhp)
-    
-        convolved_map = signal.fftconvolve(Map, gaussian, mode = 'same')
-        
-        return(convolved_map)
-
-    def plot_img(image, z, opt = 0, path = None):
-        '''
-        Input: image, mode (option of 0.5/5 Mpc, default to 0.5), cmb (option of y/delta_T, default to y)
-        Return: angular scale
-        '''
-        values = [0, 9, 18, 27, 36]
-        x_label_list = [9, 4.5, 0, 4.5, 9]
-        y_label_list = np.around(arcmin_to_Mpc(x_label_list, z), decimals = 2)
-        if opt == 0 or opt == 3:
-            option = 'hot'
-            title = 'Y'
-            cbar_label = r'$Y$'
-        if opt == 1:
-            option = 'ocean'
-            title = 'T'
-            cbar_label = r'$uK$'
-        if opt == 2:
-            option = 'viridis'
-            title = 'Kernal'
-            cbar_label = r' '
-
-        fig, ax = plt.subplots(1,1)
-        img = ax.imshow(image, cmap=option)
-        ax.set_xticks(values)
-        ax.set_xticklabels(x_label_list)
-        ax.set_yticks(values)
-        ax.set_yticklabels(y_label_list)
-        cbar = fig.colorbar(img)
-        cbar.ax.set_ylabel(cbar_label)
-        plt.title(title)
-        plt.xlabel('arcmin')
-        plt.ylabel(r'Mpc')
-
-        if opt == 3:
-            circle_disk = plt.Circle((18, 18), radius_size(z,disk = True), color='green', fill=False, linewidth=2)
-            circle_ring = plt.Circle((18, 18), radius_size(z,ring = True), color='black', fill=False, linewidth=2)
-            ax.add_patch(circle_disk)
-            ax.add_patch(circle_ring)
-
-        plt.savefig(path)
-        
-    def plot_y(r, y, z, path):
-        '''
-        Input: profile as function of radius
-        Return: visulization (non-log & log scale)
-        '''
-        fig,ax = plt.subplots(1,2,figsize = (12,5))
-        plt.subplots_adjust(wspace = 0.3)
-        ax[0].plot(r, y, color = "red", label = "non-log")
-        ax[0].set_xlabel("Mpc")
-        ax[0].set_ylabel(r'Mpc$^{-1}$')
-        ax[0].title.set_text("Y z="+str(z))
-        ax[1].loglog(r, y, color = "blue", label = "log")
-        ax[1].set_xlabel("Mpc")
-        ax[1].set_ylabel(r'Mpc$^{-1}$')
-        ax[1].title.set_text("Y(Log) z="+str(z))
-        plt.savefig(path)
-        
     def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None):
         if 1 in nums:
             pa = p + '1' + '.png'
@@ -252,50 +193,60 @@ class GenerateCluster():
         #return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
         return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture  
 
-    def tSZ_signal(z, Map):
-        # https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
-        omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
-        cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
-        angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
-        angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
-        rin = 2.1 * angular_dd_z / angular_dd # Calafut et al 2021
-        rout = np.sqrt(2) * rin
-        
-        image_size = 37
-        pixel_scale = 0.5
-        x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
-        r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
-
-        # tSZ signal calculation
-        disk_mean = Map[r < rin].mean()
-        ring_mean = Map[(r >= rin) & (r < rout)].mean()
-        tSZ = disk_mean - ring_mean
-        
-        return tSZ, rin
-
-    def radius_size(z, disk = False, ring = False):
     
+        
+   
+
+    def Mpc_to_arcmin(r, z):
+        '''
+        Input: distance r, redshift
+        Return: angular scale
+        '''
         omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
         cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
-        angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
-        angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
-        rin = 2.1 * angular_dd_z / angular_dd
-        
-        rout = np.sqrt(2) * rin
-        
-        image_size = 37
-        pixel_scale = 0.5
-        x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
-        r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
+        Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(z).value
+        Mpc_per_arcmin = Kpc_per_arcmin/1000.
+        return r / Mpc_per_arcmin
 
-        if disk:
-            rows, columns = np.where(r < rin)
-            value = image_size//2 - rows[0]
-            return value
-        
-        if ring:
-            rows, columns = np.where(r < rout)
-            value = image_size//2 - rows[0]
-            return value
+    def arcmin_to_Mpc(r, z):
+        '''
+        Reverse of Mpc_to_arcmin
+        '''
+        omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+        cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+        Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(z).value
+        arcmin_per_Mpc = 1000/Kpc_per_arcmin
+        return r / arcmin_per_Mpc
 
+    def gaussian_kernal(pix_size,beam_size_fwhp):
+        '''
+        Input: pixel size, beam size in arcmin
+        Return: gaussian beam
+        '''
+        N=37
+        ones = np.ones(N)
+        inds  = (np.arange(N)+.5 - N/2.) * pix_size
+        X = np.outer(ones,inds)
+        Y = np.transpose(X)
+        R = np.sqrt(X**2. + Y**2.)
+    
+        beam_sigma = beam_size_fwhp / np.sqrt(8.*np.log(2))
+        gaussian = np.exp(-.5 *(R/beam_sigma)**2.) / (2 * np.pi * (beam_sigma ** 2))
+        gaussian = gaussian / np.sum(gaussian)
+        return(gaussian)
+
+    def convolve_map_with_gaussian_beam(pix_size, beam_size_fwhp, Map):
+        '''
+        Input: pixel size, beam size in arcmin, image
+        Return: convolved map
+        '''
+        gaussian = gaussian_kernal(pix_size, beam_size_fwhp)
+    
+        convolved_map = signal.fftconvolve(Map, gaussian, mode = 'same')
+        
+        return(convolved_map)
+
+ 
+        
+    
         
