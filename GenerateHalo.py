@@ -19,14 +19,11 @@ from colossus.lss import mass_function
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'emcee'])
 import emcee
 
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
-
-
 
 class GenerateHalo():
 
-    def __init__():
+    def __init__(self, constants):
+        self.constants = constants
 
 
     """# **Single Redshift**"""
@@ -95,7 +92,6 @@ class GenerateHalo():
         from scipy import integrate
         val, err = integrate.quad(interpolate_mfunc, min, max)
         test_fun = interpolate.interp1d(test_arr, (f_test/val))
-        #plt.plot(test_arr, f_test/val, marker = 'o')
         #nval, nerr = integrate.quad(test_fun, min, max), 5000 test points will lead to error < 10^-4
 
         #create random walkers
@@ -163,35 +159,7 @@ class GenerateHalo():
 
     """test single redshift"""
 
-    #code to demonstrate the final result
-    def plot_pdf(xr, title, func=None, args=None, label='ITS method', 
-                ylog=True,
-                bins = 50, xlims=[], ylims=[], figsize=3):
-        """
-        by Andrey Kravtsov
-        wrapper convenience function for plotting  histogram of a sequence of floats xr
-        and comparing it to a theoretical distribution given by func
-        
-        Parameters:
-        -----------
-        xr: 1d numpy array of floats, values in the sequence to plot
-        func: Python function object handle
-        args: list of arguments to the function
-        other parameters are used for plotting
-        """
-        plt.figure(figsize=(figsize,figsize))
-        if ylog: plt.yscale('log') # plot y-values on a logarithmic scale
-        if ylims: plt.ylim(ylims) # set axis limits 
-        if xlims: plt.xlim(xlims)
-        # compute histogram values 
-        hist, bins, patches = plt.hist(xr, density=True, bins=bins, label=label)
-        binc = 0.5*(bins[1:] + bins[:-1]) # compute bin centers
-        plt.plot(binc, func(binc), lw=5, c='orangered', label='target pdf')
-        plt.title(title, fontsize=3*figsize)
-        plt.ylabel(r'$likelihood$') # label axis 
-        plt.xlabel(r'$mass$')
-        plt.legend(loc='best', frameon=False, fontsize=3*figsize)
-        plt.show()
+  
 
     """# **Multiple Redshift**
 

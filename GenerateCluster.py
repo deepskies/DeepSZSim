@@ -9,7 +9,8 @@ import utils
 
 class GenerateCluster():
 
-    def __init__():
+    def __init__(self, constants):
+        self.constants = constants
 
     def make_proj_image_new(radius, profile,range=18,pixel_scale=0.5,extrapolate=False):
         '''
