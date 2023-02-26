@@ -35,7 +35,6 @@ def battaglia_profile(r, Mvir, z):
     R200 = R200 / 1000 * cosmo_h
     
     R200 *= (1. + z)                            # Proper distance to Comoving distance
-    x = r / R200
     G2 = G * 1e-6 / Mpc_to_m * m_sun                               # Mpc Msun^-1 (km/s)^2 
     gamma = -0.3
     P200 =  G2 * M200 * 200. * rho_critical * (omega_b0 / omega_m0) / 2. / (R200 / (1. + z))    # Msun km^2 / s^2 / Mpc^3
@@ -43,13 +42,16 @@ def battaglia_profile(r, Mvir, z):
     P0 = 18.1 * ((M200 / 1e14)**0.154 * (1. + z)**-0.758)
     xc = 0.497 * ((M200 / 1e14)**-0.00865 * (1. + z)**0.731)
     beta = 4.35 * ((M200 / 1e14)**0.0393 * (1. + z)**0.415) 
+    x = r / R200
     pth = P200 * P0 * (x / xc)**gamma * (1. + (x/xc))**(-1. * beta)      # Msun km^2 / s^2 / Mpc^3
 
     j_to_kev = 6.242e15
 
     pth *= (m_sun * 1e6 * j_to_kev  / ((Mpc_to_m*100)**3))       # keV/cm^3
     p_e = pth * 0.518       # Vikram et al (2016)
-    return p_e
+    #return p_e
+    return p_e, M200, R200, c200
+
 
 def epp_to_y(profile):
     '''
@@ -158,9 +160,13 @@ def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None, 
     
     t_cmb = 2.725            #K
     fsz = f_sz(f, t_cmb)
+    #2d array of convolved submap (Temperature Decrement)
     cmb_img = y_con * fsz * t_cmb * 1e6
     
+    #2d array of the noise
     noise = np.random.normal(0, 1, (37, 37)) * noise_level
+
+    #Temperature Decrement with noise
     CMB_noise = cmb_img + noise
     
     y_noise = CMB_noise / fsz / t_cmb / 1e6
