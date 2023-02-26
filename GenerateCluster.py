@@ -7,53 +7,29 @@ from colossus.halo import mass_adv
 import utils
 
 
-omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
-cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
-image_size = 37
-pixel_scale = 0.5
-constant = Thomson_sec / m_electron / (c ** 2)         #s^2/kg
-j_to_kev = 6.242e15
-t_cmb = 2.725            #K
-omega_d0 = 1 - omega_m0
-H_0 = cosmo_h * 100 / (Mpc_to_m/1000) 
-G2 = G * 1e-6 / Mpc_to_m * m_sun                               # Mpc Msun^-1 (km/s)^2 
-params = {'flat': True, 'H0': cosmo_h*100, 'Om0': omega_m0, 'Ob0': omega_b0, 'sigma8':sigma8, 'ns': ns}
-cosmology.addCosmology('myCosmo', **params)
-cosmo = cosmology.setCosmology('myCosmo')
-
-
-
-def make_proj_image_new(radius, profile,range=18,pixel_scale=0.5,extrapolate=False):
-    '''
-    Input: Profile as function of Radius, range (default to 18) & pixel_scale (default to 0.5) in Mpc
-    Return: 2D profile
-    '''
-    image_size = range/pixel_scale+1
-
-    if extrapolate:
-        profile_spline = interp1d(radius, profile, kind = 3, bounds_error=False, fill_value="extrapolate")
-    else:
-        profile_spline = interp1d(radius, profile, bounds_error=False)
-
-    x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
-    r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
-    image = profile_spline(r)
-
-    return image, x, y, r
-
-
-def calc_radius(z):
-    angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
-    angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
-    rin = 2.1 * angular_dd_z / angular_dd # Calafut et al 2021
-    rout = np.sqrt(2) * rin
-
-    return rin, rout
 
 
 class GenerateCluster():
 
     def __init__():
+
+    def make_proj_image_new(radius, profile,range=18,pixel_scale=0.5,extrapolate=False):
+        '''
+        Input: Profile as function of Radius, range (default to 18) & pixel_scale (default to 0.5) in Mpc
+        Return: 2D profile
+        '''
+        image_size = range/pixel_scale+1
+
+        if extrapolate:
+            profile_spline = interp1d(radius, profile, kind = 3, bounds_error=False, fill_value="extrapolate")
+        else:
+            profile_spline = interp1d(radius, profile, bounds_error=False)
+
+        x,y=np.meshgrid(np.arange(image_size),np.arange(image_size))
+        r = np.sqrt((x-image_size//2)**2+(y-image_size//2)**2)*pixel_scale
+        image = profile_spline(r)
+
+        return image, x, y, r
 
 
     def tSZ_signal(z, Map):
@@ -63,7 +39,6 @@ class GenerateCluster():
 
         rin, rout = calc_radius(z)
 
-        # tSZ signal calculation
         disk_mean = Map[r < rin].mean()
         ring_mean = Map[(r >= rin) & (r < rout)].mean()
         tSZ = disk_mean - ring_mean
@@ -78,7 +53,6 @@ class GenerateCluster():
         '''
 
         x = planck_const * f / boltzman_const / T_CMB
-        
         fsz = x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4
 
         return fsz
@@ -142,10 +116,8 @@ class GenerateCluster():
 
         return p_e, M200, R200, c200
 
-   
 
-
-    def generate_img(radius, profile, f, noise_level, beam_size, z, nums, p = None):
+    def generate_cluster(radius, profile, f, noise_level, beam_size, z, nums, p = None):
 
         y_con = convolve_map_with_gaussian_beam(0.5, beam_size , y_img)
         fsz = f_sz(f, t_cmb)

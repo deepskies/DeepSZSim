@@ -2,54 +2,25 @@
 # https://arxiv.org/abs/1502.01589
 # https://arxiv.org/abs/1807.06209 (Planck 2018)
 
+# Constants
 UNIVERSAL_CONSTANTS:
   planck_const: 6.626e-34
   boltzman_const: 1.38e-23
+  G: 6.6743e-11        #m^3/Kg/s^2
+  m_sun: 1.98847e30       #Kg
+  Thomson_sec: 6.65246e-29       #m^2
+  m_electron: 9.11e-31        #Kg
+  c: 299792458     #m/s
+  Mpc_to_m: 3.09e22
+  kevcm_to_jm: 1.6e-16 * 1e6
+  j_to_kev: 6.242e15
+  t_cmb: 2.725            #K
 
-# Constants
-G = 6.6743e-11        #m^3/Kg/s^2
-m_sun = 1.98847e30       #Kg
-Thomson_sec = 6.65246e-29       #m^2
-m_electron = 9.11e-31        #Kg
-c = 299792458     #m/s
-Mpc_to_m = 3.09e22
-kevcm_to_jm = 1.6e-16 * 1e6
+# Images
+IMAGES:
+  image_size: 37
+  pixel_scale: 0.5
 
-# Constants
-G = 6.6743e-11        #m^3/Kg/s^2
-m_sun = 1.98847e30       #Kg
-Thomson_sec = 6.65246e-29       #m^2
-m_electron = 9.11e-31        #Kg
-c = 299792458     #m/s
-Mpc_to_m = 3.09e22
-kevcm_to_jm = 1.6e-16 * 1e6
-
-# Constants
-G = 6.6743e-11        #m^3/Kg/s^2
-m_sun = 1.98847e30       #Kg
-Thomson_sec = 6.65246e-29       #m^2
-m_electron = 9.11e-31        #Kg
-c = 299792458     #m/s
-Mpc_to_m = 3.09e22
-kevcm_to_jm = 1.6e-16 * 1e6
-
-# Constants
-G = 6.6743e-11        #m^3/Kg/s^2
-m_sun = 1.98847e30       #Kg
-Thomson_sec = 6.65246e-29       #m^2
-m_electron = 9.11e-31        #Kg
-c = 299792458     #m/s
-Mpc_to_m = 3.09e22
-kevcm_to_jm = 1.6e-16 * 1e6
-
-# Constants
-G = 6.6743e-11        #m^3/Kg/s^2
-m_sun = 1.98847e30       #Kg
-Thomson_sec = 6.65246e-29       #m^2
-m_electron = 9.11e-31        #Kg
-c = 299792458     #m/s
-Mpc_to_m = 3.09e22
-kevcm_to_jm = 1.6e-16 * 1e6
 
 COSMOLOGY:
   PLANCK2018:

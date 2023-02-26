@@ -57,3 +57,27 @@ def calc_rho_critical(a):
     rho_critical = (3 * H_0 ** 2)/(8 * np.pi * G) * (omega_m0 * a ** 3 + omega_d0) / m_sun * Mpc_to_m ** 3       #msolar / MPC^3
 
     return rho_critical
+
+def calc_radius(z):
+    angular_dd_z = cosmo.angular_diameter_distance(z).value * np.pi / 10800.0 
+    angular_dd = cosmo.angular_diameter_distance(0.5).value * np.pi / 10800.0
+    rin = 2.1 * angular_dd_z / angular_dd # Calafut et al 2021
+    rout = np.sqrt(2) * rin
+
+    return rin, rout
+
+def calc_constants():
+    constant = Thomson_sec / m_electron / (c ** 2)         #s^2/kg
+    omega_d0 = 1 - omega_m0
+    H_0 = cosmo_h * 100 / (Mpc_to_m/1000) 
+    G2 = G * 1e-6 / Mpc_to_m * m_sun               # Mpc Msun^-1 (km/s)^2 
+
+
+    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+    cosmo = cosmology.setCosmology('myCosmo')
+    params = {'flat': True, 'H0': cosmo_h*100, 'Om0': omega_m0, 'Ob0': omega_b0, 'sigma8':sigma8, 'ns': ns}
+    cosmology.addCosmology('myCosmo', **params)
+    
+    return
+
