@@ -7,8 +7,6 @@ from colossus.halo import mass_adv
 import utils
 
 
-
-
 class GenerateCluster():
 
     def __init__():
@@ -58,19 +56,6 @@ class GenerateCluster():
         return fsz
 
 
-    def radius_size(z, disk = False, ring = False):
-
-        rin, rout = calc_radius(z)
-        
-        if disk:
-            rows, columns = np.where(r < rin)
-        elif ring:
-            rows, columns = np.where(r < rout)
-
-        value = image_size//2 - rows[0]
-        
-        return value
-
 
      def epp_to_y(profile):
         '''
@@ -118,6 +103,9 @@ class GenerateCluster():
 
 
     def generate_cluster(radius, profile, f, noise_level, beam_size, z, nums, p = None):
+        """
+        combine all elements to generate a cluster object
+        """
 
         y_con = convolve_map_with_gaussian_beam(0.5, beam_size , y_img)
         fsz = f_sz(f, t_cmb)
