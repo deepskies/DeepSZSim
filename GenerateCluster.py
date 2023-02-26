@@ -249,7 +249,8 @@ class GenerateCluster():
             pa = p + '9' + '.png'
             plot_img(y_noise, z, opt = 3, path = pa) #vizualization starts working from z = 0.115
 
-        return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
+        #return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
+        return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture  
 
     def tSZ_signal(z, Map):
         # https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
@@ -270,7 +271,7 @@ class GenerateCluster():
         ring_mean = Map[(r >= rin) & (r < rout)].mean()
         tSZ = disk_mean - ring_mean
         
-        return tSZ
+        return tSZ, rin
 
     def radius_size(z, disk = False, ring = False):
     
