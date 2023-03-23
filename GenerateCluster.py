@@ -45,7 +45,7 @@ class GenerateCluster():
         return tSZ, rin
 
 
-     def f_sz(f, T_CMB):
+    def f_sz(f, T_CMB):
         '''
         Input: Observation frequency f, Temperature of cmb T_CMB
         Return: Radiation frequency
@@ -58,7 +58,7 @@ class GenerateCluster():
 
 
 
-     def epp_to_y(profile):
+    def epp_to_y(profile):
         '''
         Input: Electron pressure profile
         Return: Compton-y profile

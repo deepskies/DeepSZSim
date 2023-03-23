@@ -2,7 +2,7 @@ import yaml
 from yaml.loader import SafeLoader
 
 
-with open('generate.yaml') as f:
+with open('config.yaml') as f:
     data = yaml.load(f, Loader=SafeLoader)
 
     mass = data['mass']

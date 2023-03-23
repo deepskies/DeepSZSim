@@ -1,4 +1,4 @@
- def Mpc_to_arcmin(r, z):
+def Mpc_to_arcmin(r, z):
     '''
     Input: distance r, redshift
     Return: angular scale
