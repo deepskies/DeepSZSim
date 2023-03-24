@@ -25,6 +25,13 @@ class GenerateHalo():
     def __init__(self, constants):
         self.constants = constants
 
+        
+    def flatdist_halo(zmin,zmax,m500min,m500max,size):
+        zdist=np.random.uniform(low=zmin, high=zmax, size=size)
+        mdist=np.random.uniform(low=m500min, high=m500max, size=size)
+        
+        return zdist, mdist
+        
 
     """# **Single Redshift**"""
 
@@ -307,4 +314,5 @@ class GenerateHalo():
         t1 = time.time()
         print(f"finish running, using {t1 - t0}s, obtain {f_sample_num} cluster samples")
         return tot_num, filepath, fin_clusters
+
         
