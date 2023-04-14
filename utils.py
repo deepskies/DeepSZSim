@@ -1,4 +1,6 @@
-def Mpc_to_arcmin(r, z):
+import numpy as np
+
+def Mpc_to_arcmin(r, z, cosmo):
     '''
     Input: distance r, redshift
     Return: angular scale
@@ -9,7 +11,7 @@ def Mpc_to_arcmin(r, z):
     return r / Mpc_per_arcmin
 
 
-def arcmin_to_Mpc(r, z):
+def arcmin_to_Mpc(r, z,cosmo):
     '''
     Reverse of Mpc_to_arcmin
     '''
@@ -48,22 +50,25 @@ def convolve_map_with_gaussian_beam(pix_size, beam_size_fwhp, Map):
     return(convolved_map)
 
 
-def calc_scale_factor(z):
-    """
-    calculate the cosmic expansion scale factor
-    """
-    a = 1. + z
+#def calc_scale_factor(z): #Replace with AstroPy
+#    """
+#    calculate the cosmic expansion scale factor
+#    """
+#    a = 1. + z
 
-    return a
+#     return a
 
 
-def calc_rho_critical(a):
-    """
-    calculate critical density
-    """
-    rho_critical = (3 * H_0 ** 2)/(8 * np.pi * G) * (omega_m0 * a ** 3 + omega_d0) / m_sun * Mpc_to_m ** 3       #msolar / MPC^3
+#def calc_rho_critical(a,cosmo,m_sun):
+#    """
+#    calculate critical density
+#    """
+#    H_0=cosmo_h*100
+#    Mpc_to_m=3.09e22
+#    omega_d=1.0-(omega_m+omega_b)
+#    rho_critical = (3 * H_0 ** 2)/(8 * np.pi * G) * (omega_m * a ** 3 + omega_d) / m_sun * Mpc_to_m ** 3       #msolar / MPC^3
 
-    return rho_critical
+#    return rho_critical
 
 
 def calc_radius(z):
@@ -100,14 +105,14 @@ def calc_constants():
     """
 
     constant = Thomson_sec / m_electron / (c ** 2)         #s^2/kg
-    omega_d0 = 1 - omega_m0
+    omega_d0 = 1 - omega_m
     H_0 = cosmo_h * 100 / (Mpc_to_m/1000) 
     G2 = G * 1e-6 / Mpc_to_m * m_sun               # Mpc Msun^-1 (km/s)^2 
 
-    omega_m0, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
-    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m0)
+    omega_m, omega_b0, cosmo_h, sigma8, ns = cosmo_para()
+    cosmo = FlatLambdaCDM(H0=cosmo_h*100, Om0=omega_m)
     cosmo = cosmology.setCosmology('myCosmo')
-    params = {'flat': True, 'H0': cosmo_h*100, 'Om0': omega_m0, 'Ob0': omega_b0, 'sigma8':sigma8, 'ns': ns}
+    params = {'flat': True, 'H0': cosmo_h*100, 'Om0': omega_m, 'Ob0': omega_b0, 'sigma8':sigma8, 'ns': ns}
     cosmology.addCosmology('myCosmo', **params)
     
     return

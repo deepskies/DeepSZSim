@@ -1,76 +1,24 @@
-# Planck 2015 
-# https://arxiv.org/abs/1502.01589
-# https://arxiv.org/abs/1807.06209 (Planck 2018)
+COSMOLOGY:
+  Planck2018: #https://arxiv.org/abs/1807.06209:
+    flat: True 
+    H0: 67.4
+    Omega_m0: 0.315
+    Omega_b0: 0.049
+    Omega_d0: 0.636
+    sigma8: 0.83
+    ns: 0.965
+    cosmo_h: 0.674
+    t_cmb: 2.725 #K
 
-UNIVERSAL_CONSTANTS:
-  planck_const: 6.626e-34
-  boltzman_const: 1.38e-23
-  G: 6.6743e-11        #m^3/Kg/s^2
-  m_sun: 1.98847e30       #Kg
-  Thomson_sec: 6.65246e-29       #m^2
-  m_electron: 9.11e-31        #Kg
-  c: 299792458     #m/s
-  Mpc_to_m: 3.09e22
-  kevcm_to_jm: 1.6e-16 * 1e6
-  j_to_kev: 6.242e15
-  t_cmb: 2.725            #K
-
+SURVEYS:
+  ACTDR5:
+    150: #Observation frequency [GHz]
+      beam_size: 1.3 #From published survey properties
+      noise_level: 30 #From published survey properties
+  
 IMAGES:
   image_size: 37
   pixel_scale: 0.5
+    
 
-COSMOLOGY:
-  #PLANCK2018:
-  flat: True 
-  H0: 67.4
-  Omega_m0: 0.315
-  Omega_b0: 0.049
-  sigma8: 0.83
-  ns: 0.965
-  cosmo_h: 0.674
-  #BATTAGLIA2012:
-    #flat: True 
-    #H0: 70
-    #Omega_m0: 0.25
-    #Omega_b0: 0.043
-    #sigma8: 0.8
-    #ns: 0.96
-    #cosmo_h: 0.7
-
-SURVEYS:
-  # https://arxiv.org/pdf/2007.07290
-  #ACT_DR4:
-  #  90GHz:
-  #    frequency: 90
-  #    beam_size: 2.1
-  #    noise_level: 100
-  #  150GHz:
-  #    frequency: 150
-  #    beam_size: 1.4
-  #    noise_level: 75
-
-  #ACT_DR5:
-  #  90GHz:
-  #    frequency: 90
-  #    beam_size: 2.1
-  #    noise_level: 40
-  #  150GHz:
-  frequency: 150
-  beam_size: 1.3
-  noise_level: 30
-  #  220GHz:
-  #    frequency: 220
-  #    beam_size: 1.0
-  #    noise_level: 125
-
-  # https://arxiv.org/pdf/1111.7245
-  #SPT:
-  #  150GHz:
-  #    frequency: 150
-  #    beam_size: 1.15
-  #    noise_level: 17
-  #  220GHz:
-  #    frequency: 220
-  #    beam_size: 1.05
-  #    noise_level: 41
     

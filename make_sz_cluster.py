@@ -1,16 +1,49 @@
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy import signal
-from astropy.cosmology import FlatLambdaCDM
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 import utils
 
+from astropy.constants import M_sun
+from astropy.constants import G
+from astropy import units as u
 
 class GenerateCluster():
 
-    def __init__(self, constants):
-        self.constants = constants
+    def __init__(self):
+        self.data =[]
+        
+        
+    def P200_Battaglia2012(self,cosmo,z,M200,R200):
+        
+        P200 = G * M200*u.Msun * 200. * cosmo.critical_density(z) * (cosmo.Ob0/cosmo.Om0) / (2. * R200*u.Mpc) #From Battaglia 2012
+        P200=P200.to(u.keV/u.cm**3.) #Unit conversion to keV/cm^3
+        
+        return(P200)
+    
+    def param_Battaglia2012(self,A0,alpha_m,alpha_z,M200,z):
+        
+        A = A0 * (M200/1e14)**alpha_m * (1.+z)**alpha_z
+
+        return(A)
+    
+    def Pth_Battaglia2012(self,cosmo,r,z,R200,gamma,alpha,beta,xc,P0,P200,M200):
+        
+        x=r/R200
+        
+        Pth = P0 * (x/xc)**gamma * (1+(x/xc)**alpha)**(-beta)
+        
+        return(Pth)
+  
+
+
+#FUNCTIONS BELOW HERE HAVE NOT BEEN TESTED OR USED RECENTLY     
+
+
+
+
+
 
     def make_proj_image_new(radius, profile,range=18,pixel_scale=0.5,extrapolate=False):
         '''
@@ -70,27 +103,32 @@ class GenerateCluster():
         return y_pro
 
 
-    def battaglia_profile(r, Mvir, z):
+    def battaglia_profile(r, Mvir, z, cosmo):
         '''
         Using Battaglia et al (2012). Eq. 10. 
         Input: Virial Mass in solar mass and Radius in Mpc
         Return: Pressure profile in keV/cm^3 at radius r
         '''
+        
+        a = cosmo.scale_factor(z)
+        rho_critical = cosmo.critical_density(0.5).to(u.M_sun/u.Mpc**3) #In M_sun/Mpc^3
+        
+        
 
-        a = calc_scale_factor(z)
-        rho_crit = calc_rho_critical(a)
-
-        M200, R200, c200 = mass_adv.changeMassDefinitionCModel(Mvir/cosmo_h, z, 'vir', '200c', c_model = 'ishiyama21')
+        M200, R200, c200 = mass_adv.changeMassDefinitionCModel(Mvir/cosmo.h, z, 'vir', '200c', c_model = 'ishiyama21')
         #M200, R200, c200 = mass_adv.changeMassDefinitionCModel(Mvir/cosmo_h, z, 'vir', '200c', c_model = 'ishiyama21')
         #M200, R200, c200 = mass_adv.changeMassDefinitionCModel(M500/cosmo_h, z, '500c', '200c', c_model = 'ishiyama21')
         #cvir = concentration.concentration(Mvir, 'vir', z, model = 'ishiyama21')      #Ishiyama et al. (2021)
         #Option to customize concentration, currently default, using Bullock et al. (2001)
-
-        M200 *= cosmo_h
-        R200 = R200 / 1000 * cosmo_h * (1.+z)
+ 
+        M200 *= cosmo.h
+        R200 = R200 / 1000 * cosmo.h * (1.+z)
         x = r / R200
+        
+        G2 = G * 1e-6 / float(Mpc_to_m) * m_sun
         gamma = -0.3
-        P200 =  G2 * M200 * 200. * rho_critical * (omega_b0 / omega_m0) / 2. / (R200 / (1. + z))    # Msun km^2 / s^2 / Mpc^3
+        
+        P200 =  G2 * M200 * 200. * rho_critical * (omega_b / omega_m) / 2. / (R200 / (1. + z))    # Msun km^2 / s^2 / Mpc^3
 
         P0 = 18.1 * ((M200 / 1e14)**0.154 * (1. + z)**-0.758)
         xc = 0.497 * ((M200 / 1e14)**-0.00865 * (1. + z)**0.731)
