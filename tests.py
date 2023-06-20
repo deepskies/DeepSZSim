@@ -9,6 +9,10 @@ from astropy.cosmology import FlatLambdaCDM
 # Overall, constants close to ones used in Battaglia 2012
 # calculated expected values based off of paper, however unit problems maye still exist
 
+# Largest problem with the tests is that Ive used the same methods as the code to
+# calculate the constants/expected anwsers, so if there is a major mistake the test will replicate that mistake
+# These will be more useful in the future once we've verified these caluclations are correct
+
 # Makes a mock cosmology 
 def get_mock_cosmology():
     cosmo = FlatLambdaCDM(70, 0.25, Tcmb0=2.725, Ob0=0.043)
@@ -61,7 +65,10 @@ class TestDMHalo:
         halo = get_dm_halo.GenerateHalo()
         (cosmo, sigma8, ns) = get_mock_cosmology()
         #Figure out what this is actually doing, then come up with mock/test cases
-        print(halo.vir_to_200_colossus(cosmo,sigma8,ns,Mvir=1.5e13,z=0.5))
-
-test = TestDMHalo()
-test.test_vir_to_200()
+        M200_expected = 12979452205744.412
+        R200_expected = 0.38689299677471767
+        c200_expected = 4.046612792450555
+        (M200,R200,c200) = halo.vir_to_200_colossus(cosmo,sigma8,ns,Mvir=1.5e13,z=0.5)
+        assert np.isclose(M200_expected, M200), "Incorrect M200"
+        assert np.isclose(R200_expected, R200), "Incorrect R200"
+        assert np.isclose(c200_expected, c200), "Incorrect c200"
