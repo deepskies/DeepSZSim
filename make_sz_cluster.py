@@ -1,11 +1,7 @@
 import numpy as np
 from scipy.interpolate import interp1d
-from scipy import signal
-from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
-import utils
 
-from astropy.constants import M_sun
 from astropy.constants import G
 from astropy import units as u
 
