@@ -11,7 +11,7 @@ Tests for the make_sz_cluster and get_dm_halo files, only testing functions used
 Battaglia 2012 profile. 
 
 Constants used in testing are similiar to those used in Battaglia 2012 paper
-Can run tests with command `pytest tests.py`
+In order to run tests, use the command `pytest tests.py`
 '''
 
 def get_mock_cosmology():
@@ -44,8 +44,8 @@ class TestSZCluster:
     def test_param_Battaglia2012(self):
         '''
         Test for the method param_Battaglia2012,
-        which calculates indipendent params as defined in Battaglia 2012, Equation 11 
-        These paramters are used to make the profile as described in Eq 10
+        which calculates independent params as defined in Battaglia 2012, Equation 11 
+        These parameters are used to make the profile as described in Eq 10
         P0 is the normalization factor/amplitude,
         xc fits for the core-scale
         beta is a power law index
@@ -64,7 +64,7 @@ class TestSZCluster:
         '''
         Test for the method Pth_Battaglia2012,
         which calculates Pth using the battaglia fit profile, Battaglia 2012, Equation 10
-        Pth is the pressure profile normalized over P200
+        Pth is the thermal pressure profile normalized over P200
         P0 is the normalization factor/amplitude,
         xc fits for the core-scale
         beta is a power law index
