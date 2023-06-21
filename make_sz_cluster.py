@@ -15,22 +15,66 @@ class GenerateCluster():
         self.data =[]
         
         
-    def P200_Battaglia2012(self,cosmo,z,M200,R200):
+    def P200_Battaglia2012(self,cosmo,redshift_z,M200,R200):
+        '''
+        Calculates the P200 pressure profile of a cluster, as defined in Battaglia 2012
+
+        Parameters:
+        R200, the radius of the cluster at 200 times the critical density of the universe
+        M200, the mass contained within R200
+        redshift_z, the redshift of the cluster
+        cosmo, background cosmology for density calculation
+
+        Returns P200, the thermal pressure profile of the shell defined by R200
+        '''
         
-        P200 = G * M200*u.Msun * 200. * cosmo.critical_density(z) * (cosmo.Ob0/cosmo.Om0) / (2. * R200*u.Mpc) #From Battaglia 2012
+        P200 = G * M200*u.Msun * 200. * cosmo.critical_density(redshift_z) * (cosmo.Ob0/cosmo.Om0) / (2. * R200*u.Mpc) #From Battaglia 2012
         P200=P200.to(u.keV/u.cm**3.) #Unit conversion to keV/cm^3
         
         return(P200)
     
-    def param_Battaglia2012(self,A0,alpha_m,alpha_z,M200,z):
+    def param_Battaglia2012(self,A0,alpha_m,alpha_z,M200,redshift_z):
+        '''
+        Calculates independent params as using the formula from Battaglia 2012, Equation 11 
+        in order for use in the pressure profile defined in Equation 10
+
+        Parameters:
+        A0, normalization factor
+        alpha_m, power law index for the mass-dependent part of the function
+        alpha_z, power law index for the redshift dependent part
+        M200, the mass of the cluster at 200 times the critical density of the universe
+        redshift_z, the redshift of the cluster
         
-        A = A0 * (M200/1e14)**alpha_m * (1.+z)**alpha_z
+        Returns the parameter A given the formula from Eq 11
+        '''
+        
+        A = A0 * (M200/1e14)**alpha_m * (1.+redshift_z)**alpha_z
 
         return(A)
     
-    def Pth_Battaglia2012(self,cosmo,r,z,R200,gamma,alpha,beta,xc,P0,P200,M200):
+    def Pth_Battaglia2012(self,cosmo,radius,redshift_z,R200,gamma,alpha,beta,xc,P0,P200,M200):
+        '''
+        Calculates Pth using the battaglia fit profile, Battaglia 2012, Equation 10
+        Pth is the thermal pressure profile normalized over P200
+
+        Parameters:
+        P0 is the normalization factor/amplitude,
+        xc fits for the core-scale
+        beta is a power law index
+        gamma is a fixed paremeter defined by Battaglia 2012
+        alpha is a fixed parameter defined by Battaglia 2012
+        R200, the radius of the cluster at 200 times the critical density of the universe
+        M200, the mass contained within R200
+        redshift_z, the redshift of the cluster
+        cosmo, background cosmology for density calculation
+        radius, the raidus for the pressure to be calculated at
+        P200, the thermal pressure profile of the shell defined by R200
+
         
-        x=r/R200
+        Returns Pth, the thermal pressure profile normalized over P200
+        '''
+
+        x=radius/R200
         
         Pth = P0 * (x/xc)**gamma * (1+(x/xc)**alpha)**(-beta)
         
