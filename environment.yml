@@ -1,0 +1,6 @@
+name: szsims
+dependencies:
+  - numpy
+  - pandas
+  - astropy
+  - scipy
