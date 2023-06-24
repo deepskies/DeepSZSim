@@ -91,5 +91,8 @@ class config_obj:
             print("not a valid attribute")
 
 
-
+    def write_params_yaml_new()
+        """
+        write updated yaml file to disk
+        """
             
