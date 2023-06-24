@@ -105,3 +105,15 @@ class config_obj:
         runid = 'runid_'+dt.now().strftime('%y%m%d%H%M%S%f_')+str(_rint).zfill(random_digits)
 
         return runid
+
+    def cosmology_param(self, ref):
+        
+        for key in ref['COSMOLOGY'].keys():
+            cosmo_dict=ref['COSMOLOGY'][key] #Read in cosmological parameters
+        
+        sigma8=cosmo_dict['sigma8']
+        ns=cosmo_dict['ns']
+    
+        cosmo=FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0=cosmo_dict['t_cmb'], Ob0=cosmo_dict['Omega_b0']) 
+        
+        return (cosmo,sigma8,ns)
