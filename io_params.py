@@ -38,6 +38,8 @@ class config_obj:
             'USERPARAMS': _quick_yaml_load(user_config),
         }
 
+        self._outdir = self.UserParams['outfile_dir']
+
                 
         if len(self._all_params_dict['USERPARAMS']) > 0:
             try:
@@ -81,6 +83,10 @@ class config_obj:
         write updated yaml file to disk
         incorporate run id
         """
+        with open(os.path.join(savedir, f"{run_id}_params.yaml"), permission) as yaml_file:
+            dump = pyyaml.dump(self.dict, default_flow_style = False, allow_unicode = True, encoding = None)
+            yaml_file.write( dump )
+
             
      def _generate_run_id(random_digits=6):
         '''
@@ -90,6 +96,7 @@ class config_obj:
         runid = 'runid_'+dt.now().strftime('%y%m%d%H%M%S%f_')+str(_rint).zfill(random_digits)
 
         return runid
+
 
     def cosmology_param(self, ref):
         """
