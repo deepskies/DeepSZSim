@@ -4,21 +4,6 @@ import re
 from collections.abc import Iterable
 import os
 
-def _quick_yaml_load(infile):
-    """
-    simply load yaml files without remembering the syntax or yaml.safe_load command
-    Parameters
-    ----------
-    infile : str
-        path to yaml file that you wish to load
-    Returns
-    -------
-    dict
-        a "safe load" dictionary version of infile
-    """
-    with open(infile, "r") as f:
-        return yaml.safe_load(f)
-
 class config_obj:
     """
     configuration object that is used to obtain power spectra
@@ -52,6 +37,8 @@ class config_obj:
         self._all_params_dict = {
             'USERPARAMS': _quick_yaml_load(user_config),
         }
+
+        self._outdir = self.UserParams['outfile_dir']
 
                 
         if len(self._all_params_dict['USERPARAMS']) > 0:
@@ -96,6 +83,10 @@ class config_obj:
         write updated yaml file to disk
         incorporate run id
         """
+        with open(os.path.join(savedir, f"{run_id}_params.yaml"), permission) as yaml_file:
+            dump = pyyaml.dump(self.dict, default_flow_style = False, allow_unicode = True, encoding = None)
+            yaml_file.write( dump )
+
             
      def _generate_run_id(random_digits=6):
         '''
@@ -106,7 +97,10 @@ class config_obj:
 
         return runid
 
+
     def cosmology_param(self, ref):
+        """
+        """
         
         for key in ref['COSMOLOGY'].keys():
             cosmo_dict=ref['COSMOLOGY'][key] #Read in cosmological parameters
@@ -117,3 +111,19 @@ class config_obj:
         cosmo=FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0=cosmo_dict['t_cmb'], Ob0=cosmo_dict['Omega_b0']) 
         
         return (cosmo,sigma8,ns)
+
+
+    def _quick_yaml_load(infile):
+        """
+        simply load yaml files without remembering the syntax or yaml.safe_load command
+        Parameters
+        ----------
+        infile : str
+            path to yaml file that you wish to load
+        Returns
+        -------
+        dict
+            a "safe load" dictionary version of infile
+        """
+        with open(infile, "r") as f:
+            return yaml.safe_load(f)
