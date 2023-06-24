@@ -94,5 +94,14 @@ class config_obj:
     def write_params_yaml_new()
         """
         write updated yaml file to disk
+        incorporate run id
         """
             
+     def _generate_run_id(random_digits=6):
+        '''
+        '''
+
+        _rint = np.random.randint(10**random_digits)
+        runid = 'runid_'+dt.now().strftime('%y%m%d%H%M%S%f_')+str(_rint).zfill(random_digits)
+
+        return runid
