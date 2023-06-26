@@ -1,7 +1,7 @@
 import pytest
 import make_sz_cluster
-import get_dm_halo
-import utils
+import simsz1.get_dm_halo as get_dm_halo
+import simsz1.utils as utils
 import numpy as np
 import astropy.units as u
 from astropy.cosmology import FlatLambdaCDM
