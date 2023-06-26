@@ -104,3 +104,19 @@ class TestDMHalo:
         assert np.isclose(M200_expected, M200), "Incorrect M200"
         assert np.isclose(R200_expected, R200), "Incorrect R200"
         assert np.isclose(c200_expected, c200), "Incorrect c200"
+
+    def test_flatdist_halo(self):
+        '''
+        Test for the method flatdist_halo, generating a flat mass distribution
+        '''
+        halo = get_dm_halo.GenerateHalo()
+        redshift_z_min = 1
+        redshift_z_max = 10
+        mass_min = 1e13
+        mass_max = 5e20
+        redshift_zdist, mass_dist = halo.flatdist_halo(redshift_z_min, redshift_z_max, mass_min, mass_max, size=100)
+        assert redshift_zdist.size == 100 and mass_dist.size == 100, "size incorrect"
+        assert redshift_zdist.min() >= redshift_z_min and redshift_zdist.max() <= redshift_z_max, "redshift z out of bounds"
+        assert mass_dist.min() >= mass_min and mass_dist.max() <= mass_max, "mass out of bounds"
+        assert redshift_zdist.std() <= 4, 'redshift distribution not flat'
+        assert mass_dist.std() <= 2e20, 'mass distribution not flat'
