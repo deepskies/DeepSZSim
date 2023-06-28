@@ -77,12 +77,76 @@ class GenerateCluster():
         return(Pth)
   
 
+####Functions needed in this file:
 
-#FUNCTIONS BELOW HERE HAVE NOT BEEN TESTED OR USED RECENTLY     
+# 1) Profile to y profile 
+def epp_to_y(profile): #CHECK AND UPDATE
+        '''
+        Input: Electron pressure profile
+        Return: Compton-y profile
+        '''
 
+        new_battaglia = profile * kevcm_to_jm
+        y_pro = new_battaglia * constant * Mpc_to_m
 
+        return y_pro
+    
+# 2) Y profile to 2x2 submap
+# 3) Convolve submap with beam
+# 4) Convert y map to temperature map via fSZ
+# 5) Generate noise map
+    
+def generate_cluster(radius, profile, f, noise_level, beam_size, z, nums, p = None): #SOME OF THE ABOVE WILL BE TAKEN FROM THIS OUTDATED FUNCTION
+        """
+        combine all elements to generate a cluster object
+        """
 
+        y_con = convolve_map_with_gaussian_beam(0.5, beam_size , y_img)
+        fsz = f_sz(f, t_cmb)
+        cmb_img = y_con * fsz * t_cmb * 1e6
+        noise = np.random.normal(0, 1, (37, 37)) * noise_level
+        CMB_noise = cmb_img + noise
+        y_noise = CMB_noise / fsz / t_cmb / 1e6
+        y_img = make_proj_image_new(radius,profile,extrapolate=True)
 
+        if 1 in nums:
+            pa = p + '1' + '.png'
+            plot_y(radius, profile, z, pa)
+
+        if 2 in nums:
+            pa = p + '2' + '.png'
+            plot_img(y_img, z, path = pa)
+        
+        if 3 in nums:
+            pa = p + '3' + '.png'
+            gaussian = gaussian_kernal(0.5, beam_size)
+            plot_img(gaussian, z, opt = 2, path = pa)
+        
+        if 4 in nums:
+            pa = p + '4' + '.png'
+            plot_img(y_con, z, path = pa)
+        if 5 in nums:
+            pa = p + '5' + '.png'
+            plot_img(cmb_img, z, opt = 1, path = pa)
+        if 6 in nums:
+            pa = p + '6' + '.png'
+            plot_img(noise, z, opt = 1, path = pa)
+        if 7 in nums:
+            pa = p + '7' + '.png'
+            plot_img(CMB_noise, z, opt = 1, path = pa)
+        if 8 in nums:
+            pa = p + '8' + '.png'
+            plot_img(y_noise, z, path = pa)
+        if 9 in nums:
+            pa = p + '9' + '.png'
+            plot_img(y_noise, z, opt = 3, path = pa) #vizualization starts working from z = 0.115
+
+        #return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
+        return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture   
+   
+   
+
+#FUNCTIONS BELOW HERE HAVE NOT BEEN TESTED OR USED RECENTLY; MIGHT BE USEFUL FOR THE ABOVE TO-DO LIST     
 
 
     def make_proj_image_new(radius, profile,range=18,pixel_scale=0.5,extrapolate=False):
@@ -130,20 +194,7 @@ class GenerateCluster():
         return fsz
 
 
-
-    def epp_to_y(profile):
-        '''
-        Input: Electron pressure profile
-        Return: Compton-y profile
-        '''
-
-        new_battaglia = profile * kevcm_to_jm
-        y_pro = new_battaglia * constant * Mpc_to_m
-
-        return y_pro
-
-
-    def battaglia_profile(r, Mvir, z, cosmo):
+    def battaglia_profile(r, Mvir, z, cosmo): #THIS IS OLD; WILL LIKELY DELETE SOON
         '''
         Using Battaglia et al (2012). Eq. 10. 
         Input: Virial Mass in solar mass and Radius in Mpc
@@ -178,56 +229,7 @@ class GenerateCluster():
         pth *= (m_sun * 1e6 * j_to_kev  / ((Mpc_to_m*100)**3))       # keV/cm^3
         p_e = pth * 0.518       # Vikram et al (2016)
 
-        return p_e, M200, R200, c200
-
-
-    def generate_cluster(radius, profile, f, noise_level, beam_size, z, nums, p = None):
-        """
-        combine all elements to generate a cluster object
-        """
-
-        y_con = convolve_map_with_gaussian_beam(0.5, beam_size , y_img)
-        fsz = f_sz(f, t_cmb)
-        cmb_img = y_con * fsz * t_cmb * 1e6
-        noise = np.random.normal(0, 1, (37, 37)) * noise_level
-        CMB_noise = cmb_img + noise
-        y_noise = CMB_noise / fsz / t_cmb / 1e6
-        y_img = make_proj_image_new(radius,profile,extrapolate=True)
-
-        if 1 in nums:
-            pa = p + '1' + '.png'
-            plot_y(radius, profile, z, pa)
-
-        if 2 in nums:
-            pa = p + '2' + '.png'
-            plot_img(y_img, z, path = pa)
-        
-        if 3 in nums:
-            pa = p + '3' + '.png'
-            gaussian = gaussian_kernal(0.5, beam_size)
-            plot_img(gaussian, z, opt = 2, path = pa)
-        
-        if 4 in nums:
-            pa = p + '4' + '.png'
-            plot_img(y_con, z, path = pa)
-        if 5 in nums:
-            pa = p + '5' + '.png'
-            plot_img(cmb_img, z, opt = 1, path = pa)
-        if 6 in nums:
-            pa = p + '6' + '.png'
-            plot_img(noise, z, opt = 1, path = pa)
-        if 7 in nums:
-            pa = p + '7' + '.png'
-            plot_img(CMB_noise, z, opt = 1, path = pa)
-        if 8 in nums:
-            pa = p + '8' + '.png'
-            plot_img(y_noise, z, path = pa)
-        if 9 in nums:
-            pa = p + '9' + '.png'
-            plot_img(y_noise, z, opt = 3, path = pa) #vizualization starts working from z = 0.115
-
-        #return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
-        return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture  
+        return p_e, M200, R200, c200 
 
     
         
