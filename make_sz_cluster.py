@@ -82,14 +82,15 @@ class GenerateCluster():
 # 1) Profile to y profile 
     def epp_to_y(profile, r): 
         '''
+        Converts from an elctron pressure profile to a compton- y profile
         Parameters: 
         profile, Electron pressure profile in Kev/cm^3
         r, the array of radii corresponding to the profile in Mpc
-        Return: Compton-y profile in 
+        Return: Compton-y profile in s^2 * J / (kg * m^2)
         '''
         r = (r * u.Mpc).to(u.m)
-        new_battaglia = (profile * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
-        pressure_integrated = [np.trapz(new_battaglia[0:x+1], r[0:x+1]) for x in range(len(r))]
+        profile = (profile * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
+        pressure_integrated = [np.trapz(profile[0:x+1], r[0:x+1]) for x in range(len(r))]
         y_pro = [p_e * sigma_T/ (m_e * c**2) for p_e in pressure_integrated]
 
         return y_pro
