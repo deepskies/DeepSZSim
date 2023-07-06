@@ -2,7 +2,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 from colossus.halo import mass_adv
 
-from astropy.constants import G
+from astropy.constants import G, sigma_T, m_e, c
 from astropy import units as u
 
 class GenerateCluster():
@@ -80,14 +80,17 @@ class GenerateCluster():
 ####Functions needed in this file:
 
 # 1) Profile to y profile 
-def epp_to_y(profile): #CHECK AND UPDATE
+    def epp_to_y(profile, r): 
         '''
-        Input: Electron pressure profile
-        Return: Compton-y profile
+        Parameters: 
+        profile, Electron pressure profile in Kev/cm^3
+        r, the array of radii corresponding to the profile in Mpc
+        Return: Compton-y profile in 
         '''
-
-        new_battaglia = profile * kevcm_to_jm
-        y_pro = new_battaglia * constant * Mpc_to_m
+        r = (r * u.Mpc).to(u.m)
+        new_battaglia = (profile * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
+        pressure_integrated = [np.trapz(new_battaglia[0:x+1], r[0:x+1]) for x in range(len(r))]
+        y_pro = [p_e * sigma_T/ (m_e * c**2) for p_e in pressure_integrated]
 
         return y_pro
     
@@ -96,7 +99,7 @@ def epp_to_y(profile): #CHECK AND UPDATE
 # 4) Convert y map to temperature map via fSZ
 # 5) Generate noise map
     
-def generate_cluster(radius, profile, f, noise_level, beam_size, z, nums, p = None): #SOME OF THE ABOVE WILL BE TAKEN FROM THIS OUTDATED FUNCTION
+    def generate_cluster(radius, profile, f, noise_level, beam_size, z, nums, p = None): #SOME OF THE ABOVE WILL BE TAKEN FROM THIS OUTDATED FUNCTION
         """
         combine all elements to generate a cluster object
         """
