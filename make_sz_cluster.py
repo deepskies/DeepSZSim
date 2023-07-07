@@ -80,7 +80,7 @@ class GenerateCluster():
         Converts from an electron pressure profile to a compton-y profile,
         integrates over line of sight from -1 to 1 Mpc relative to center.
         Parameters: 
-        profile, Method to get electron pressure profile in Kev/cm^3, accepts radius then **kwargs
+        profile, Method to get thermal pressure profile in Kev/cm^3, accepts radius then **kwargs
         radii, the array of radii corresponding to the profile in Mpc
         Return: Compton-y profile in s^2 * J / (kg * m^2)
         '''
@@ -91,9 +91,11 @@ class GenerateCluster():
         l_mpc = np.linspace(-1,1,10000) # Get line of sight axis
         l = l_mpc * (1 * u.Mpc).to(u.m).value # l in meters
         keVcm_to_Jm = (1 * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
+        thermal_to_electron_pressure = 1/1.932 # from Battaglia 2012, assumes fully ionized medium
         for radius in radii:
-            pressure = profile(np.sqrt(l_mpc**2 + radius.value**2),**kwargs) #pressure as a function of l
-            pressure = pressure * keVcm_to_Jm.value #use this for efficiency reasons
+            th_pressure = profile(np.sqrt(l_mpc**2 + radius.value**2),**kwargs) #pressure as a function of l
+            th_pressure = th_pressure * keVcm_to_Jm.value # Use multiplication by a precaluated factor for efficiency
+            pressure = th_pressure * thermal_to_electron_pressure
             integral = np.trapz(pressure, l) #integrate over pressure in J/m^3 to get J/m^2
             pressure_integrated[i] = integral
             i += 1
