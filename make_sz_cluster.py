@@ -82,10 +82,9 @@ class GenerateCluster():
         Parameters: 
         profile, Method to get thermal pressure profile in Kev/cm^3, accepts radius then **kwargs
         radii, the array of radii corresponding to the profile in Mpc
-        Return: Compton-y profile in s^2 * J / (kg * m^2)
+        Return: Compton-y profile corresponding to the radii
         '''
         radii = radii * u.Mpc
-        #profile = (profile * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
         pressure_integrated = np.empty(radii.size)
         i = 0
         l_mpc = np.linspace(-1,1,10000) # Get line of sight axis
@@ -100,10 +99,10 @@ class GenerateCluster():
             pressure_integrated[i] = integral
             i += 1
         y_pro = pressure_integrated * sigma_T.value/ (m_e.value * c.value**2)
-        #y_pro = pressure_integrated
         return y_pro
     
 # 2) Y profile to 2x2 submap
+
 # 3) Convolve submap with beam
 # 4) Convert y map to temperature map via fSZ
 # 5) Generate noise map
