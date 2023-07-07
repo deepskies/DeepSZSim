@@ -48,7 +48,7 @@ class GenerateCluster():
 
         return(A)
     
-    def Pth_Battaglia2012(self,cosmo,radius,redshift_z,R200,gamma,alpha,beta,xc,P0,P200,M200):
+    def Pth_Battaglia2012(self,radius,R200,gamma,alpha,beta,xc,P0):
         '''
         Calculates Pth using the battaglia fit profile, Battaglia 2012, Equation 10
         Pth is the thermal pressure profile normalized over P200
@@ -60,13 +60,8 @@ class GenerateCluster():
         gamma is a fixed paremeter defined by Battaglia 2012
         alpha is a fixed parameter defined by Battaglia 2012
         R200, the radius of the cluster at 200 times the critical density of the universe
-        M200, the mass contained within R200
-        redshift_z, the redshift of the cluster
-        cosmo, background cosmology for density calculation
         radius, the raidus for the pressure to be calculated at
-        P200, the thermal pressure profile of the shell defined by R200
 
-        
         Returns Pth, the thermal pressure profile normalized over P200
         '''
 
@@ -80,19 +75,30 @@ class GenerateCluster():
 ####Functions needed in this file:
 
 # 1) Profile to y profile 
-    def epp_to_y(profile, r): 
+    def epp_to_y(self, profile, radii, **kwargs): 
         '''
-        Converts from an elctron pressure profile to a compton- y profile
+        Converts from an electron pressure profile to a compton-y profile,
+        integrates over line of sight from -1 to 1 Mpc relative to center.
         Parameters: 
-        profile, Electron pressure profile in Kev/cm^3
-        r, the array of radii corresponding to the profile in Mpc
+        profile, Method to get electron pressure profile in Kev/cm^3, accepts radius then **kwargs
+        radii, the array of radii corresponding to the profile in Mpc
         Return: Compton-y profile in s^2 * J / (kg * m^2)
         '''
-        r = (r * u.Mpc).to(u.m)
-        profile = (profile * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
-        pressure_integrated = [np.trapz(profile[0:x+1], r[0:x+1]) for x in range(len(r))]
-        y_pro = [p_e * sigma_T/ (m_e * c**2) for p_e in pressure_integrated]
-
+        radii = radii * u.Mpc
+        #profile = (profile * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
+        pressure_integrated = np.empty(radii.size)
+        i = 0
+        l_mpc = np.linspace(-1,1,10000) # Get line of sight axis
+        l = l_mpc * (1 * u.Mpc).to(u.m).value # l in meters
+        keVcm_to_Jm = (1 * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
+        for radius in radii:
+            pressure = profile(np.sqrt(l_mpc**2 + radius.value**2),**kwargs) #pressure as a function of l
+            pressure = pressure * keVcm_to_Jm.value #use this for efficiency reasons
+            integral = np.trapz(pressure, l) #integrate over pressure in J/m^3 to get J/m^2
+            pressure_integrated[i] = integral
+            i += 1
+        y_pro = pressure_integrated * sigma_T.value/ (m_e.value * c.value**2)
+        #y_pro = pressure_integrated
         return y_pro
     
 # 2) Y profile to 2x2 submap
@@ -100,7 +106,7 @@ class GenerateCluster():
 # 4) Convert y map to temperature map via fSZ
 # 5) Generate noise map
     
-    def generate_cluster(radius, profile, f, noise_level, beam_size, z, nums, p = None): #SOME OF THE ABOVE WILL BE TAKEN FROM THIS OUTDATED FUNCTION
+    def generate_cluster(self, radius, profile, f, noise_level, beam_size, z, nums, p = None): #SOME OF THE ABOVE WILL BE TAKEN FROM THIS OUTDATED FUNCTION
         """
         combine all elements to generate a cluster object
         """
