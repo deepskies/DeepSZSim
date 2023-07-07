@@ -72,19 +72,16 @@ class TestSZCluster:
         P200 is the thermal pressure profile of the shell defined by R200
         '''
         cluster = make_sz_cluster.GenerateCluster()
-        redshift_z = 0
         radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
         (cosmo, sigma8, ns) = get_mock_cosmology()
         radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
         P0 = 18.84628919814473
         xc = 0.49587336181740654
         beta = 4.395084514715711
-        M200 = 1.3e13
         R200 = 0.386
-        P200 = 0.00014312182 * (u.keV/u.cm**3.)
         x = radii/R200 #As defined in Battaglia 2012
         Pth_expected = P0 * (x/xc)**(-0.3) * (1 + (x/xc))**(-beta)
-        assert np.allclose(cluster.Pth_Battaglia2012(cosmo,radii,redshift_z,R200,-0.3,1.0,beta,xc,P0,P200,M200), Pth_expected), "Incorrect Pth calculations"
+        assert np.allclose(cluster.Pth_Battaglia2012(radii,R200,-0.3,1.0,beta,xc,P0), Pth_expected), "Incorrect Pth calculations"
     
 
 class TestDMHalo:
