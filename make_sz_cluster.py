@@ -2,7 +2,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 from colossus.halo import mass_adv
 
-from astropy.constants import G, sigma_T, m_e, c
+from astropy.constants import G, sigma_T, m_e, c, h, k_B
 from astropy import units as u
 
 class GenerateCluster():
@@ -105,6 +105,20 @@ class GenerateCluster():
 
 # 3) Convolve submap with beam
 # 4) Convert y map to temperature map via fSZ
+
+    def f_sz(self, freq, T_CMB, *args, **kwargs):
+        '''
+        Input: Observation frequency f in GHz, Temperature of cmb T_CMB
+        Return: Radiation frequency
+        '''
+
+        f=freq*u.GHz #Takes input in units of GHz
+        f=f.to(1/u.s) #Unit conversion
+        x = h * f / k_B / T_CMB
+        fsz = x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4
+
+        return fsz
+
 # 5) Generate noise map
     
     def generate_cluster(self, radius, profile, f, noise_level, beam_size, z, nums, p = None): #SOME OF THE ABOVE WILL BE TAKEN FROM THIS OUTDATED FUNCTION
@@ -191,18 +205,6 @@ class GenerateCluster():
         tSZ = disk_mean - ring_mean
         
         return tSZ, rin
-
-
-    def f_sz(f, T_CMB):
-        '''
-        Input: Observation frequency f, Temperature of cmb T_CMB
-        Return: Radiation frequency
-        '''
-
-        x = planck_const * f / boltzman_const / T_CMB
-        fsz = x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4
-
-        return fsz
 
 
     def battaglia_profile(r, Mvir, z, cosmo): #THIS IS OLD; WILL LIKELY DELETE SOON
