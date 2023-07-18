@@ -70,11 +70,7 @@ class GenerateCluster():
         Pth = P0 * (x/xc)**gamma * (1+(x/xc)**alpha)**(-beta)
         
         return(Pth)
-  
-
-####Functions needed in this file:
-
-# 1) Profile to y profile 
+    
     def epp_to_y(self, profile, radii, P200, R200, **kwargs): 
         '''
         Converts from an electron pressure profile to a compton-y profile,
@@ -102,11 +98,28 @@ class GenerateCluster():
         y_pro = pressure_integrated * sigma_T.value/ (m_e.value * c.value**2)
         return y_pro
     
-# 2) Y profile to 2x2 submap
+    def make_y_submap(y_pro, z, cosmo, width, *args, **kwargs):
+        X = np.arange(-width, width, 1)
+        X = utils.arcmin_to_Mpc(X, z, cosmo)
+        X[X==0] = 0.001
+        Y = np.transpose(X)
+        # radial component R
+        R = []
+        y_map = np.empty((X.size, Y.size))
+        
+        for i in X:
+            for j in Y:
+                R.append(np.sqrt(i**2 + j**2))
+    
+        R = np.array(R)
+        cy = szcluster.epp_to_y(szcluster.Pth_Battaglia2012, R, R200=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200=P200)
 
-# 3) Convolve submap with beam
-# 4) Convert y map to temperature map via fSZ
-
+        for i in range(X.size):
+            for j in range(Y.size):
+                y_map[i][j] = cy[np.where(R == np.sqrt(X[i]**2 + Y[j]**2))[0]][0]
+    
+        return y_map
+  
     def f_sz(self, freq, T_CMB, *args, **kwargs):
         '''
         Input: Observation frequency f in GHz, Temperature of cmb T_CMB
@@ -120,6 +133,12 @@ class GenerateCluster():
 
         return fsz
 
+
+
+####Functions needed in this file:
+# 3) Convolve submap with beam
+
+    
 # 5) Generate noise map
     
     def generate_cluster(self, radius, profile, f, noise_level, beam_size, z, nums, p = None): #SOME OF THE ABOVE WILL BE TAKEN FROM THIS OUTDATED FUNCTION
