@@ -75,7 +75,7 @@ class GenerateCluster():
 ####Functions needed in this file:
 
 # 1) Profile to y profile 
-    def epp_to_y(self, profile, radii, **kwargs): 
+    def epp_to_y(self, profile, radii, P200, R200, **kwargs): 
         '''
         Converts from an electron pressure profile to a compton-y profile,
         integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -87,15 +87,16 @@ class GenerateCluster():
         radii = radii * u.Mpc
         pressure_integrated = np.empty(radii.size)
         i = 0
-        l_mpc = np.linspace(-1,1,10000) # Get line of sight axis
+        l_mpc = np.linspace(0,R200,10000) # Get line of sight axis
         l = l_mpc * (1 * u.Mpc).to(u.m).value # l in meters
         keVcm_to_Jm = (1 * u.keV/(u.cm**3.)).to(u.J/(u.m**3.))
         thermal_to_electron_pressure = 1/1.932 # from Battaglia 2012, assumes fully ionized medium
         for radius in radii:
-            th_pressure = profile(np.sqrt(l_mpc**2 + radius.value**2),**kwargs) #pressure as a function of l
+            #Multiply profile by P200 specifically for Battaglia 2012 profile, since it returns Pth/P200 instead of Pth
+            th_pressure = profile(np.sqrt(l_mpc**2 + radius.value**2), R200=R200, **kwargs) * P200.value #pressure as a function of l, multiplication by P20 needed ad 
             th_pressure = th_pressure * keVcm_to_Jm.value # Use multiplication by a precaluated factor for efficiency
-            pressure = th_pressure * thermal_to_electron_pressure
-            integral = np.trapz(pressure, l) #integrate over pressure in J/m^3 to get J/m^2
+            pressure = th_pressure* thermal_to_electron_pressure
+            integral = np.trapz(pressure, l) * 2 #integrate over pressure in J/m^3 to get J/m^2, multiply by factor of 2 to get from -R200 to R200 (assuming spherical symmetry)
             pressure_integrated[i] = integral
             i += 1
         y_pro = pressure_integrated * sigma_T.value/ (m_e.value * c.value**2)
