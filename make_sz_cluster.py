@@ -1,5 +1,6 @@
 import numpy as np
 import simsz.utils as utils
+import scipy
 
 from scipy.interpolate import interp1d
 from colossus.halo import mass_adv
@@ -154,6 +155,18 @@ class GenerateCluster():
 
 ####Functions needed in this file:
 # 3) Convolve submap with beam
+
+    def convolve_map_with_gaussian_beam(self, pix_size, beam_size_fwhp, map):
+        '''
+        Input: pixel size, beam size in arcmin, image
+        Return: convolved map
+
+        Note - pixel size and beam_size need to be in the same units
+        '''
+        gaussian = utils.gaussian_kernal(pix_size, beam_size_fwhp)
+        convolved_map = scipy.signal.fftconvolve(map, gaussian, mode = 'same')
+        
+        return(convolved_map)
 
     
 # 5) Generate noise map
