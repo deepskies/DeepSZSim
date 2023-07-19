@@ -118,9 +118,9 @@ class GenerateCluster():
         '''
         X = np.arange(-width, width, pix_size)
         X = utils.arcmin_to_Mpc(X, redshift_z, cosmo)
-        X[X==0] = 0.001
+        X[X==0] = 0.001 #Solves issues of div by 0
         Y = np.transpose(X)
-        # radial component R
+
         R = []
         y_map = np.empty((X.size, Y.size))
         
@@ -129,11 +129,11 @@ class GenerateCluster():
                 R.append(np.sqrt(i**2 + j**2))
     
         R = np.array(R)
-        cy = self.epp_to_y(profile, R, **kwargs)
+        cy = self.epp_to_y(profile, R, **kwargs) #evaluate compton-y for each neccesary radius
 
         for i in range(X.size):
             for j in range(Y.size):
-                y_map[i][j] = cy[np.where(R == np.sqrt(X[i]**2 + Y[j]**2))[0]][0]
+                y_map[i][j] = cy[np.where(R == np.sqrt(X[i]**2 + Y[j]**2))[0]][0] # assign the correct compton-y to the radius
     
         return y_map
   
