@@ -1,4 +1,6 @@
 import numpy as np
+import simsz.utils as utils
+
 from scipy.interpolate import interp1d
 from colossus.halo import mass_adv
 
@@ -76,8 +78,11 @@ class GenerateCluster():
         Converts from an electron pressure profile to a compton-y profile,
         integrates over line of sight from -1 to 1 Mpc relative to center.
         Parameters: 
-        profile, Method to get thermal pressure profile in Kev/cm^3, accepts radius then **kwargs
+        profile, Method to get thermal pressure profile in Kev/cm^3, accepts radius, R200 and **kwargs
         radii, the array of radii corresponding to the profile in Mpc
+        P200, as defined in battaglia2012, needed for normalization of Battaglia profile
+        R200, the radius of the cluster at 200 times the critical density of the universe
+
         Return: Compton-y profile corresponding to the radii
         '''
         radii = radii * u.Mpc
@@ -98,9 +103,21 @@ class GenerateCluster():
         y_pro = pressure_integrated * sigma_T.value/ (m_e.value * c.value**2)
         return y_pro
     
-    def make_y_submap(y_pro, z, cosmo, width, *args, **kwargs):
-        X = np.arange(-width, width, 1)
-        X = utils.arcmin_to_Mpc(X, z, cosmo)
+    def make_y_submap(self, profile, redshift_z, cosmo, width, pix_size, *args, **kwargs):
+        '''
+        Converts from an electron pressure profile to a compton-y profile,
+        integrates over line of sight from -1 to 1 Mpc relative to center.
+        Parameters: 
+        profile, Method to get thermal pressure profile in Kev/cm^3, accepts radius, and **kwargs
+        redshift_z, the redshift of the cluster
+        cosmo, background cosmology for density calculation
+        width, width of submap in arcmin
+        pix_size, size of each pixel in arcmin
+
+        Return: Compton-y submap
+        '''
+        X = np.arange(-width, width, pix_size)
+        X = utils.arcmin_to_Mpc(X, redshift_z, cosmo)
         X[X==0] = 0.001
         Y = np.transpose(X)
         # radial component R
@@ -112,7 +129,7 @@ class GenerateCluster():
                 R.append(np.sqrt(i**2 + j**2))
     
         R = np.array(R)
-        cy = szcluster.epp_to_y(szcluster.Pth_Battaglia2012, R, R200=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200=P200)
+        cy = self.epp_to_y(profile, R, **kwargs)
 
         for i in range(X.size):
             for j in range(Y.size):
