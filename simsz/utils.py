@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 def Mpc_to_arcmin(r, z, cosmo):
     '''
@@ -117,3 +118,12 @@ def calc_constants():
     
     return
 
+def save_sim_to_h5(file, name, data, attributes={}, overwrite=False):
+    if overwrite and name in file:
+        del file[name]
+    for dname, dset in data.items():
+        file.create_dataset(os.path.join(name, dname), data=dset)
+    if name not in file:
+        file.create_group(name)
+    for aname, attr in attributes.items():
+        file[name].attrs[aname] = attr
