@@ -5,6 +5,7 @@ import scipy
 from scipy.interpolate import interp1d
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
+from pixell import enmap, powspec, enplot
 
 from astropy.constants import G, sigma_T, m_e, c, h, k_B
 from astropy import units as u
@@ -220,7 +221,15 @@ class GenerateCluster():
         #return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
         return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture
 
+    def make_cmb_map(self, shape, pix_size):
+        ps,_ = powspec.read_camb_scalar("test_scalCls.dat") # currently using a test power spectrum, will eventually be replaced by 
+        #ps[0][0] is cltt spectrum
+        shape,wcs = enmap.geometry(shape=shape,pos=(0,0),res=np.deg2rad(pix_size/60.))
+        shape = (3,) + shape
+        omap = enmap.rand_map(shape,wcs,cov=ps)
+        #omap gives TQU maps, so for temperature, we need omap[0]
 
+        return omap[0]
 
 #FUNCTIONS BELOW HERE HAVE NOT BEEN TESTED OR USED RECENTLY; MIGHT BE USEFUL FOR THE ABOVE TO-DO LIST
 
