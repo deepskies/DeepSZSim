@@ -6,6 +6,7 @@ from scipy.interpolate import interp1d
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 from pixell import enmap, powspec, enplot
+import camb
 
 from astropy.constants import G, sigma_T, m_e, c, h, k_B
 from astropy import units as u
@@ -220,9 +221,22 @@ class GenerateCluster():
 
         #return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
         return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture
+    
+    def get_cls(self, ns, cosmo):
+        data = camb.set_params(ns=ns, H0=cosmo.H0.value, ombh2=cosmo.Ob0, omch2=cosmo.Om0, lmax=2000,
+                     WantTransfer=True)
+        results = camb.get_results(data)
+        ps = np.zeros((3,3,2051))
+        cls = np.swapaxes(results.get_total_cls(CMB_unit='muK', raw_cl=True),0,1)
+        # Needs to be reshaped to match input for pixell.enmap
+        ps[0][0]= cls[0] # clTT spectrum
+        ps[1][0] = cls[3] #clTE
+        ps[0][1] = cls[3] #clTE
+        ps[1][1] = cls[1] #clEE
+        ps[2][2] = cls[2] #clBB
+        return ps
 
-    def make_cmb_map(self, shape, pix_size):
-        ps,_ = powspec.read_camb_scalar("test_scalCls.dat") # currently using a test power spectrum, will eventually be replaced by 
+    def make_cmb_map(self, shape, pix_size, ps):
         #ps[0][0] is cltt spectrum
         shape,wcs = enmap.geometry(shape=shape,pos=(0,0),res=np.deg2rad(pix_size/60.))
         shape = (3,) + shape
