@@ -5,6 +5,8 @@ import scipy
 from scipy.interpolate import interp1d
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
+from pixell import enmap, powspec, enplot
+import camb
 
 from astropy.constants import G, sigma_T, m_e, c, h, k_B
 from astropy import units as u
@@ -219,8 +221,46 @@ class GenerateCluster():
 
         #return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
         return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture
+    
+    def get_cls(self, ns, cosmo, lmax=2000):
+        '''
+        Makes a cmb temperature map based on the given power spectrum
+        Parameters:
+        ns, scalar spectral index of the power-spectrum
+        cosmo, background cosmology 
 
+        Return: power spectrum as can be used in szluster.make_cmb_map
+        '''
+        data = camb.set_params(ns=ns, H0=cosmo.H0.value, ombh2=cosmo.Ob0, omch2=cosmo.Om0, lmax=lmax,
+                     WantTransfer=True)
+        results = camb.get_results(data)
+        cls = np.swapaxes(results.get_total_cls(CMB_unit='muK', raw_cl=True),0,1)
+        ps = np.zeros((3,3,cls.shape[1]))
+        # Needs to be reshaped to match input for pixell.enmap
+        ps[0][0]= cls[0] # clTT spectrum
+        ps[1][0] = cls[3] #clTE
+        ps[0][1] = cls[3] #clTE
+        ps[1][1] = cls[1] #clEE
+        ps[2][2] = cls[2] #clBB
+        return ps
 
+    def make_cmb_map(self, shape, pix_size, ps):
+        '''
+        Makes a cmb temperature map based on the given power spectrum
+        Parameters:
+        shape, shape of submap in arcmin
+        pix_size, size of each pixel in arcmin
+        ps, power spectrum with shape (3, 3, lmax); clTT spectrum at ps[0][0]
+
+        Return: cmb T map
+        '''
+        #ps[0][0] is cltt spectrum
+        shape,wcs = enmap.geometry(shape=shape,pos=(0,0),res=np.deg2rad(pix_size/60.))
+        shape = (3,) + shape
+        omap = enmap.rand_map(shape,wcs,cov=ps)
+        #omap gives TQU maps, so for temperature, we need omap[0]
+
+        return omap[0]
 
 #FUNCTIONS BELOW HERE HAVE NOT BEEN TESTED OR USED RECENTLY; MIGHT BE USEFUL FOR THE ABOVE TO-DO LIST
 
