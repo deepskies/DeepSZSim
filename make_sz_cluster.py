@@ -230,21 +230,6 @@ class GenerateCluster():
 
         return image, x, y, r
 
-
-    def tSZ_signal(z, Map):
-        """
-        https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
-        """
-
-        rin, rout = calc_radius(z)
-
-        disk_mean = Map[r < rin].mean()
-        ring_mean = Map[(r >= rin) & (r < rout)].mean()
-        tSZ = disk_mean - ring_mean
-
-        return tSZ, rin
-
-
     def battaglia_profile(r, Mvir, z, cosmo): #THIS IS OLD; WILL LIKELY DELETE SOON
         '''
         Using Battaglia et al (2012). Eq. 10.
@@ -281,6 +266,26 @@ class GenerateCluster():
         p_e = pth * 0.518       # Vikram et al (2016)
 
         return p_e, M200, R200, c200
+
+    def tSZ_signal(self, Map, radmax, fmax=np.sqrt(2)):
+        """
+        Parameters:
+        Map
+        radmax: the radius of the inner radius
+
+        Returns: The average value within an annulus of inner radius R, outer radius sqrt(2)*R, and the tSZ signal
+        """
+
+        center = np.array(Map.shape) / 2
+        x, y = np.indices(Map.shape)
+        r = np.sqrt((x - center[0])**2 + (y - center[1])**2)
+
+        radius_out=radmax * fmax #define outer radius
+        disk_mean = Map[r < radmax].mean() #average in inner radius
+        ring_mean = Map[(r >= radmax) & (r < radius_out)].mean() #average in outer radius
+        tSZ = disk_mean - ring_mean
+
+        return disk_mean, ring_mean, tSZ
 
     def m200_to_r200(self,cosmo,sigma8,ns,M200,z):
 
