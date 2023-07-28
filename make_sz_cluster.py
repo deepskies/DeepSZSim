@@ -138,7 +138,7 @@ class GenerateCluster():
         for i in range(X.size):
             for j in range(Y.size):
                 y_map[i][j] = cy[np.where(R == np.sqrt(X[i]**2 + Y[j]**2))[0]][0] # assign the correct compton-y to the radius
-    
+
         return y_map
 
     def f_sz(self, freq, T_CMB, *args, **kwargs):
@@ -168,7 +168,7 @@ class GenerateCluster():
         '''
         gaussian = utils.gaussian_kernal(pix_size, beam_size_fwhp)
         convolved_map = scipy.signal.fftconvolve(map, gaussian, mode = 'same')
-        
+
         return(convolved_map)
 
 
@@ -221,13 +221,13 @@ class GenerateCluster():
 
         #return tSZ_signal(z, y_con), tSZ_signal(z, y_noise)
         return y_img, y_con, cmb_img, noise, cmb_noise, y_noise, SZsignal, aperture
-    
+
     def get_cls(self, ns, cosmo, lmax=2000):
         '''
         Makes a cmb temperature map based on the given power spectrum
         Parameters:
         ns, scalar spectral index of the power-spectrum
-        cosmo, background cosmology 
+        cosmo, background cosmology
 
         Return: power spectrum as can be used in szluster.make_cmb_map
         '''
@@ -262,6 +262,41 @@ class GenerateCluster():
 
         return omap[0]
 
+#other helpful functions
+
+    def get_tSZ_signal(self, Map, radmax, fmax=np.sqrt(2)):
+        """
+        Parameters:
+        Map
+        radmax: the radius of the inner radius
+
+        Returns: The average value within an annulus of inner radius R, outer radius sqrt(2)*R, and the tSZ signal
+        """
+
+        center = np.array(Map.shape) / 2
+        x, y = np.indices(Map.shape)
+        r = np.sqrt((x - center[0])**2 + (y - center[1])**2)
+
+        radius_out=radmax * fmax #define outer radius
+        disk_mean = Map[r < radmax].mean() #average in inner radius
+        ring_mean = Map[(r >= radmax) & (r < radius_out)].mean() #average in outer radius
+        tSZ = disk_mean - ring_mean
+
+        return disk_mean, ring_mean, tSZ
+
+    def m200_to_r200(self,cosmo,sigma8,ns,M200,z):
+
+        params = {'flat': True, 'H0': cosmo.H0.value, 'Om0': cosmo.Om0, 'Ob0': cosmo.Ob0, 'sigma8':sigma8, 'ns': ns}
+        cosmology.addCosmology('myCosmo', **params)
+        cosmo_colossus= cosmology.setCosmology('myCosmo')
+
+        M200, R200, c200 = mass_adv.changeMassDefinitionCModel(M200/cosmo.h, z, '200c', '200c', c_model = 'ishiyama21')
+        M200 *= cosmo.h #From M_solar/h to M_solar
+        R200 = R200*cosmo.h/1000 #From kpc/h to Mpc
+        R200 = R200/cosmo.scale_factor(z) #From Mpc proper to Mpc comoving
+        return M200, R200, c200
+
+
 #FUNCTIONS BELOW HERE HAVE NOT BEEN TESTED OR USED RECENTLY; MIGHT BE USEFUL FOR THE ABOVE TO-DO LIST
 
 
@@ -282,21 +317,6 @@ class GenerateCluster():
         image = profile_spline(r)
 
         return image, x, y, r
-
-
-    def tSZ_signal(z, Map):
-        """
-        https://kbarbary-astropy.readthedocs.io/en/latest/_modules/astropy/cosmology/funcs.html#kpc_proper_per_arcmin
-        """
-
-        rin, rout = calc_radius(z)
-
-        disk_mean = Map[r < rin].mean()
-        ring_mean = Map[(r >= rin) & (r < rout)].mean()
-        tSZ = disk_mean - ring_mean
-
-        return tSZ, rin
-
 
     def battaglia_profile(r, Mvir, z, cosmo): #THIS IS OLD; WILL LIKELY DELETE SOON
         '''
@@ -334,15 +354,3 @@ class GenerateCluster():
         p_e = pth * 0.518       # Vikram et al (2016)
 
         return p_e, M200, R200, c200
-
-    def m200_to_r200(self,cosmo,sigma8,ns,M200,z):
-
-        params = {'flat': True, 'H0': cosmo.H0.value, 'Om0': cosmo.Om0, 'Ob0': cosmo.Ob0, 'sigma8':sigma8, 'ns': ns}
-        cosmology.addCosmology('myCosmo', **params)
-        cosmo_colossus= cosmology.setCosmology('myCosmo')
-
-        M200, R200, c200 = mass_adv.changeMassDefinitionCModel(M200/cosmo.h, z, '200c', '200c', c_model = 'ishiyama21')
-        M200 *= cosmo.h #From M_solar/h to M_solar
-        R200 = R200*cosmo.h/1000 #From kpc/h to Mpc
-        R200 = R200/cosmo.scale_factor(z) #From Mpc proper to Mpc comoving
-        return M200, R200, c200
