@@ -115,12 +115,12 @@ class GenerateCluster():
         profile, Method to get thermal pressure profile in Kev/cm^3, accepts radius, and **kwargs
         redshift_z, the redshift of the cluster
         cosmo, background cosmology for density calculation
-        width, width of submap in arcmin
+        width, num pixels to each side of center; end shape of submap will be (2*width +1, 2*width +1)
         pix_size, size of each pixel in arcmin
 
-        Return: Compton-y submap
+        Return: Compton-y submap with shape (2*width +1, 2*width +1)
         '''
-        X = np.arange(-width, width, pix_size)
+        X = np.arange(-width, width + pix_size, pix_size)
         X = utils.arcmin_to_Mpc(X, redshift_z, cosmo)
         X[X==0] = 0.001 #Solves issues of div by 0
         Y = np.transpose(X)
