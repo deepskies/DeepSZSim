@@ -198,6 +198,29 @@ class GenerateCluster():
 
         return(convolved_map)
 
+    def add_cmb_map_and_convolve(self, dT_map, ps, pix_size, beam_size_fwhp_arcmin):
+        '''
+        Parameters:
+
+        dT_map, the map to add to the CMB, in units of -uK
+        ps, power spectrum with shape (3, 3, lmax); clTT spectrum at ps[0][0]
+        pix_size, size of each pixel in arcmin
+        beam_size_fwhp_arcmin, beam size in arcmin
+
+        Return: dT submap with same shape as dT_map, in units of -uK
+        '''
+        padding_value = int(np.ceil(beam_size_fwhp_arcmin/pix_size))
+        expanded_shape = (dT_map.shape[0] + 2*padding_value, dT_map.shape[1]+2*padding_value)
+        #print(expanded_shape)
+        cmb_map = self.make_cmb_map(shape=expanded_shape, pix_size=pix_size, ps=ps)
+        if type(dT_map) is u.Quantity:
+            cmb_map = cmb_map *u.uK
+        dT_map_expanded = np.pad(dT_map, (padding_value,padding_value),  constant_values=0)
+        signal_map = dT_map_expanded - cmb_map
+        conv_map = self.convolve_map_with_gaussian_beam(pix_size, beam_size_fwhp_arcmin, signal_map)
+
+        return conv_map[padding_value:-padding_value, padding_value:-padding_value]
+
 
 # 5) Generate noise map
 
