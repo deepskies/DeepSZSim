@@ -6,7 +6,7 @@ from scipy.interpolate import interp1d
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 from pixell import enmap, powspec, enplot
-import camb
+#import camb
 
 from astropy.constants import G, sigma_T, m_e, c, h, k_B
 from astropy import units as u
