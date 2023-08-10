@@ -296,7 +296,7 @@ class GenerateCluster():
 
     def make_cmb_map(self, shape, pix_size, ps):
         '''
-        Makes a cmb temperature map based on the given power spectrum
+        Makes a flat-sky CMB temperature map based on the given power spectrum
         Parameters:
         shape, shape of submap in arcmin
         pix_size, size of each pixel in arcmin
