@@ -270,14 +270,14 @@ class GenerateCluster():
         if profile != "Battaglia2012":
             return None
 
-        P200 = self.P200_Battaglia2012(cosmo,redshift_z,M200_solarmasses,
+        P200 = self.P200_Battaglia2012(cosmo,redshift_z,M200_SM,
                                        R200_Mpc) #P200 from Battaglia 2012
-        P0=self.param_Battaglia2012(18.1,0.154,-0.758,M200_solarmasses,
+        P0=self.param_Battaglia2012(18.1,0.154,-0.758,M200_SM,
                                     redshift_z) #Parameter computation from 
                                                 #Table 1 Battaglia et al. 2012
-        xc=self.param_Battaglia2012(0.497,-0.00865,0.731,M200_solarmasses,
+        xc=self.param_Battaglia2012(0.497,-0.00865,0.731,M200_SM,
                                     redshift_z)
-        beta=self.param_Battaglia2012(4.35,0.0393,0.415,M200_solarmasses,
+        beta=self.param_Battaglia2012(4.35,0.0393,0.415,M200_SM,
                                       redshift_z)
         y_map = self.make_y_submap(self.Pth_Battaglia2012, redshift_z, cosmo, 
                                    width, pix_size_arcmin, R200_mpc=R200_mpc, 
@@ -536,10 +536,10 @@ class GenerateCluster():
         cosmology.addCosmology('myCosmo', **params)
         cosmo_colossus= cosmology.setCosmology('myCosmo')
 
-        M200_SM, R200_mpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM/cosmo.h, z, '200c', '200c', c_model = 'ishiyama21')
+        M200_SM, R200_mpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM/cosmo.h, redshift_z, '200c', '200c', c_model = 'ishiyama21')
         M200_SM *= cosmo.h #From M_solar/h to M_solar
         R200_mpc = R200_mpc*cosmo.h/1000 #From kpc/h to Mpc
-        R200_mpc = R200_mpc/cosmo.scale_factor(z) #From Mpc proper to Mpc comoving
+        R200_mpc = R200_mpc/cosmo.scale_factor(redshift_z) #From Mpc proper to Mpc comoving
         return M200_SM, R200_mpc, c200
 
 
