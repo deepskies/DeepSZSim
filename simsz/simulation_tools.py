@@ -25,7 +25,8 @@ def convolve_map_with_gaussian_beam(pix_size_arcmin,
     Note - pixel size and beam_size need to be in the same units
     '''
     gaussian = utils.gaussian_kernal(pix_size_arcmin, beam_size_fwhp_arcmin)
-    convolved_map = scipy.signal.fftconvolve(map_to_convolve, gaussian, mode = 'same')
+    convolved_map = scipy.signal.fftconvolve(map_to_convolve, 
+                                             gaussian, mode = 'same')
 
     return(convolved_map)
 
@@ -50,27 +51,6 @@ def f_sz(freq_ghz, T_CMB_K):
     fsz = x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4
 
     return fsz
-
-def get_tSZ_signal(Map, radmax, fmax=np.sqrt(2)):
-    """
-    Parameters:
-    Map
-    radmax: the radius of the inner radius
-    fmax: Ratio of inner to outer radius, default of sqrt(2)
-
-    Returns: The average value within an annulus of inner radius R, outer radius sqrt(2)*R, and the tSZ signal
-    """
-
-    center = np.array(Map.shape) / 2
-    x, y = np.indices(Map.shape)
-    r = np.sqrt((x - center[0])**2 + (y - center[1])**2)
-
-    radius_out=radmax * fmax #define outer radius
-    disk_mean = Map[r < radmax].mean() #average in inner radius
-    ring_mean = Map[(r >= radmax) & (r < radius_out)].mean() #average in outer radius
-    tSZ = disk_mean - ring_mean
-
-    return disk_mean, ring_mean, tSZ
 
 def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin, 
                                  beam_size_fwhp_arcmin):
@@ -189,9 +169,12 @@ def get_tSZ_signal_aperture_photometry(dT_map, radmax_arcmin,
     x, y = np.indices(dT_map.shape)
     r = np.sqrt((x - center[0])**2 + (y - center[1])**2)
 
-    radius_out=radmax_arcmin * fmax_arcmin #define outer radius
-    disk_mean = dT_map[r < radmax_arcmin].mean() #average in inner radius
-    ring_mean = dT_map[(r >= radmax_arcmin) & (r < radius_out)].mean() #average in outer radius
+    #define outer radius
+    radius_out=radmax_arcmin * fmax_arcmin 
+    #average in inner radius
+    disk_mean = dT_map[r < radmax_arcmin].mean() 
+    #average in outer radius
+    ring_mean = dT_map[(r >= radmax_arcmin) & (r < radius_out)].mean()
     tSZ = disk_mean - ring_mean
 
     return disk_mean, ring_mean, tSZ
