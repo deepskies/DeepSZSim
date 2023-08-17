@@ -1,13 +1,13 @@
 import pytest
 import make_sz_cluster
-import simsz.get_dm_halo as get_dm_halo
+import simsz.make_dm_halo as make_dm_halo
 import simsz.utils as utils
 import numpy as np
 import astropy.units as u
 from astropy.cosmology import FlatLambdaCDM
 
 '''
-Tests for the make_sz_cluster and get_dm_halo files, only testing functions used in simulation of cluster using 
+Tests for the make_sz_cluster and make_dm_halo files, only testing functions used in simulation of cluster using 
 Battaglia 2012 profile. 
 
 Constants used in testing are similiar to those used in Battaglia 2012 paper
@@ -92,7 +92,7 @@ class TestDMHalo:
         M200 and R200 are the mass and radius of the halo at 200 times the critical density of the universe
         c200 is the concentration of the halo
         '''
-        halo = get_dm_halo.GenerateHalo()
+        halo = make_dm_halo.GenerateHalo()
         (cosmo, sigma8, ns) = get_mock_cosmology()
         M200_expected = 12979452205744.412
         R200_expected = 0.38689299677471767
@@ -106,7 +106,7 @@ class TestDMHalo:
         '''
         Test for the method flatdist_halo, generating a flat mass distribution
         '''
-        halo = get_dm_halo.GenerateHalo()
+        halo = make_dm_halo.GenerateHalo()
         redshift_z_min = 1
         redshift_z_max = 10
         mass_min = 1e13
