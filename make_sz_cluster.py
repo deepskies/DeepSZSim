@@ -8,7 +8,7 @@ import camb
 
 from astropy import constants as c
 from astropy import units as u
-import simtools
+import simsz.simtools
 
 class GenerateCluster():
 
@@ -249,7 +249,7 @@ class GenerateCluster():
             return None
 
         P200 = self.P200_Battaglia2012(cosmo,redshift_z,M200_SM,
-                                       R200_Mpc) #P200 from Battaglia 2012
+                                       R200_mpc) #P200 from Battaglia 2012
         P0=self.param_Battaglia2012(18.1,0.154,-0.758,M200_SM,
                                     redshift_z) #Parameter computation from 
                                                 #Table 1 Battaglia et al. 2012
