@@ -1,11 +1,16 @@
 import numpy as np
-import simsz.utils as utils
+from simsz import utils, simtools, noise, load_vars
 from scipy.interpolate import interp1d
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 
 from astropy import constants as c
 from astropy import units as u
+import os
+import h5py
+from datetime import datetime as dt
+import shutil
+
 
 def _param_Battaglia2012(A0,alpha_m,alpha_z,M200,redshift_z):
     '''
@@ -227,7 +232,7 @@ def epp_to_y(profile, radii_mpc, P200_kevcm3, R200_mpc, **kwargs):
     y_pro = pressure_integ * c.sigma_T.value/ (c.m_e.value * c.c.value**2)
     return y_pro
 
-def make_y_submap(profile, redshift_z, cosmo, width, pix_size_arcmin, **kwargs):
+def _make_y_submap(profile, redshift_z, cosmo, image_size, pix_size_arcmin, **kwargs):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -241,18 +246,19 @@ def make_y_submap(profile, redshift_z, cosmo, width, pix_size_arcmin, **kwargs):
         the redshift of the cluster (unitless)
     cosmo: FlatLambaCDM instance
         background cosmology for density calculation
-    width: float
-        num pixels to each side of center; end shape of submap will be 
-        (2*width +1, 2*width +1)
+    image_size: float
+        size of final submap
     pix_size_arcmin: float
         size of each pixel in arcmin
 
     Return:
     -------
     y_map: array
-        Compton-y submap with shape (2*width +1, 2*width +1)
+        Compton-y submap with shape (image_size, image_size)
     '''
-    X = np.arange(-width, width + pix_size_arcmin, pix_size_arcmin)
+
+    X = np.linspace(-image_size* pix_size_arcmin / 2, 
+                    image_size* pix_size_arcmin / 2, image_size)
     X = utils.arcmin_to_Mpc(X, redshift_z, cosmo)
     #Solves issues of div by 0
     X[(X<=pix_size_arcmin/10)&(X>=-pix_size_arcmin/10)] = pix_size_arcmin/10
@@ -279,7 +285,7 @@ def make_y_submap(profile, redshift_z, cosmo, width, pix_size_arcmin, **kwargs):
 
 
 def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo, 
-                        width, pix_size_arcmin, profile="Battaglia2012"):
+                        image_size, pix_size_arcmin, profile="Battaglia2012"):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -317,13 +323,127 @@ def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo,
                                             #Table 1 Battaglia et al. 2012
     xc=_xc_Battaglia2012(M200_SM, redshift_z)
     beta=_beta_Battaglia2012(M200_SM, redshift_z)
-    y_map = make_y_submap(Pth_Battaglia2012, redshift_z, cosmo, 
-                                width, pix_size_arcmin, R200_mpc=R200_mpc, 
+    y_map = _make_y_submap(Pth_Battaglia2012, redshift_z, cosmo, 
+                                image_size, pix_size_arcmin, R200_mpc=R200_mpc, 
                                 gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, 
                                 P200_kevcm3=P200)
 
     return y_map
-# 5) Generate noise map
+
+def simulate_submap(M200_dist, z_dist, id_dist=None, 
+                    savedir=os.path.join(os.getcwd(), 'outfiles'),
+                    R200_dist=None, add_cmb=True,
+                    settings_yaml=os.path.join(os.getcwd(), 'simsz', 'Settings',
+                                                'inputdata.yaml')):
+    """
+    Simulates a dT map for a cluster using each M200, z pair, using the density
+    profile from Battaglia 2012
+    Uses params from Settings/inputdata.yml
+
+    Parameters:
+    ----------
+    M200_dist: float or array-like of float
+        the mass contained within R200 in solar masses (same length as z_dist)
+    z_dist: float or array-like of float
+        the redshift of the cluster (unitless) (same length as M200_dist)
+    id_dist: float or array-like of float, optional
+        id of the sim or cluster (same length as M200_dist), 
+        generated if not given
+    savedir : str, default CWD/outfiles
+            directory into which results will be saved
+    R200_dist: float or array-like of float, optional
+        the radius of the cluster at 200 times the critical density of the 
+        universe in Mpc (same length as M200_dist), calculated via colossus 
+        if not given
+    add_cmb: bool
+        To add background cmb or not, defualt True
+    settings_yaml : str, default CWD/simsz/Settings/inputdata.yaml
+            path to yaml file with params
+
+    Return:
+    ------
+    clusters: array of dicts
+        Each dict contains the full information of each sim/cluster. 
+        Dict has attributes:
+        M200, R200, redshift_z, y_central, ID, cmb_map, noise_map
+        final_map
+
+    """
+    #Make a dictionary and cosmology from the .yaml
+    (survey,freq_GHz,beam_size_fwhp_arcmin,noise_level,
+     image_size,pix_size_arcmin,cosmo,sigma8,ns)=load_vars.load_vars(
+        settings_yaml).make_dict_and_flatLCDM() 
+    
+    M200_dist = np.asarray(M200_dist)
+    z_dist = np.asarray(z_dist)
+    if add_cmb:
+        # To make sure to only calculate this once if its a dist
+        ps = simtools.get_cls(ns=ns, cosmo=cosmo) 
+    
+    if not os.path.exists(savedir):
+            print(f"making local directory `{savedir}`")
+            os.mkdir(savedir)
+    
+    # Generate a run_id based on time of running and freq
+    rand_num = np.random.randint(10**6)
+    run_id = dt.now().strftime('%y%m%d%H%M%S%f_')+str(freq_GHz)+'_'+str(
+        rand_num).zfill(6) 
+    
+    f = h5py.File(os.path.join(savedir, f'sz_sim_{run_id}.h5'), 'a')
+    
+    clusters = []
+    
+    for index, M200 in np.ndenumerate(M200_dist):
+        z = z_dist[index]
+        if R200_dist is None:
+            (M200,R200,_c200)= get_r200_and_c200(cosmo,sigma8,
+                                                                ns,M200,z)
+        else:
+            R200 = R200_dist[index]
+        
+        
+        y_map = generate_y_submap(z, M200, R200, cosmo, 
+                                                  image_size, pix_size_arcmin)
+        #get f_SZ for observation frequency
+        fSZ = simtools.f_sz(freq_GHz,cosmo.Tcmb0) 
+        dT_map = (y_map * cosmo.Tcmb0 * fSZ).to(u.uK)
+        
+        cluster = {'M200': M200, 'R200': R200, 'redshift_z': z, 
+                   'y_central': y_map[image_size//2][image_size//2]}
+        
+        if id_dist is not None:
+            cluster['ID'] = id_dist[index]
+        else:
+            # Generate a simID
+            rand_num = np.random.randint(10**6)
+            cluster['ID'] = str(M200)[:5] + str(z*100)[:2] + str(rand_num).zfill(6) 
+        
+        if add_cmb:
+            conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_map, 
+                                                                  ps, 
+                                                                  pix_size_arcmin, 
+                                                                  beam_size_fwhp_arcmin)
+            cluster['CMB_map'] = cmb_map
+            
+        else:
+            conv_map = simtools.convolve_map_with_gaussian_beam(
+                pix_size_arcmin, beam_size_fwhp_arcmin, dT_map)
+    
+        if not noise_level == 0:
+            noise_map=noise.generate_noise_map(image_size, 
+                                               noise_level, pix_size_arcmin)
+            final_map = conv_map + noise_map
+    
+            cluster['noise_map'] = noise_map
+            cluster['final_map'] = final_map
+            
+        clusters.append(cluster)
+        utils.save_sim_to_h5(f, f"sim_{cluster['ID']}", cluster)
+    
+    f.close()
+    shutil.copyfile(settings_yaml, os.path.join(savedir, f'params_{run_id}.yaml'))
+
+    return clusters
 
 def generate_cluster(self, radius, profile, f_ghz, noise_level, 
                         beam_size_arcmin, redshift_z, nums, p = None): 

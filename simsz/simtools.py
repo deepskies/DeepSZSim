@@ -63,7 +63,7 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
         power spectrum with shape (3, 3, lmax); clTT spectrum at ps[0][0]
     pix_size_arcmin: float
         size of each pixel in arcmin
-    beam_size_fwhp_arcmin: float
+    beam_size_fwhp_arcmin: float or None
         beam size in arcmin
 
     Return:
@@ -81,12 +81,19 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
         cmb_map = cmb_map *u.uK
     dT_map_expanded = np.pad(dT_map_uK, (padding_value,padding_value),  
                                 constant_values=0)
-    signal_map = dT_map_expanded - cmb_map
-    conv_map = convolve_map_with_gaussian_beam(
-        pix_size_arcmin, beam_size_fwhp_arcmin, signal_map)
+    signal_map = dT_map_expanded + cmb_map
 
-    return conv_map[padding_value:-padding_value, 
+    if beam_size_fwhp_arcmin is not None:
+        conv_map = convolve_map_with_gaussian_beam(
+            pix_size_arcmin, beam_size_fwhp_arcmin, signal_map)
+    else:
+        conv_map = signal_map
+
+    return (conv_map[padding_value:-padding_value, 
+                    padding_value:-padding_value],
+            cmb_map[padding_value:-padding_value, 
                     padding_value:-padding_value]
+    ) 
 
 def get_cls(ns, cosmo, lmax=2000):
     '''
