@@ -1,11 +1,11 @@
 import numpy as np
 
-def generate_noise_map(N, noise_level, pix_size):
+def generate_noise_map(image_size, noise_level, pix_size):
     """
     Generates a noise map based on the noise level and beam size.
 
     Args:
-        N (int): Size of the noise map (N x N).
+        image_size (int): Size of the noise map (N x N).
         noise_level (float): Noise level of the survey.
 
     Returns:
@@ -13,7 +13,7 @@ def generate_noise_map(N, noise_level, pix_size):
     """
     
     # Create random noise map
-    random_noise_map = np.random.normal(0, 1, (N, N))
+    random_noise_map = np.random.normal(0, 1, (image_size, image_size))
 
     # Scale random noise map by noise level
     scaled_noise_map = random_noise_map * noise_level
