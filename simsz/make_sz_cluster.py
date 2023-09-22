@@ -370,15 +370,13 @@ def simulate_submap(M200_dist, z_dist, id_dist=None,
 
     """
     #Make a dictionary and cosmology from the .yaml
-    (survey,freq_GHz,beam_size_fwhp_arcmin,noise_level,
-     image_size,pix_size_arcmin,cosmo,sigma8,ns)=load_vars.load_vars(
-        settings_yaml).make_dict_and_flatLCDM() 
+    d=load_vars.load_vars().make_dict_and_flatLCDM() 
     
     M200_dist = np.asarray(M200_dist)
     z_dist = np.asarray(z_dist)
     if add_cmb:
         # To make sure to only calculate this once if its a dist
-        ps = simtools.get_cls(ns=ns, cosmo=cosmo) 
+        ps = simtools.get_cls(ns=d['ns'], cosmo=d['cosmo']) 
     
     if not os.path.exists(savedir):
             print(f"making local directory `{savedir}`")
@@ -386,7 +384,7 @@ def simulate_submap(M200_dist, z_dist, id_dist=None,
     
     # Generate a run_id based on time of running and freq
     rand_num = np.random.randint(10**6)
-    run_id = dt.now().strftime('%y%m%d%H%M%S%f_')+str(freq_GHz)+'_'+str(
+    run_id = dt.now().strftime('%y%m%d%H%M%S%f_')+str(d['survey_freq'])+'_'+str(
         rand_num).zfill(6) 
     
     f = h5py.File(os.path.join(savedir, f'sz_sim_{run_id}.h5'), 'a')
@@ -396,20 +394,20 @@ def simulate_submap(M200_dist, z_dist, id_dist=None,
     for index, M200 in np.ndenumerate(M200_dist):
         z = z_dist[index]
         if R200_dist is None:
-            (M200,R200,_c200)= get_r200_and_c200(cosmo,sigma8,
-                                                                ns,M200,z)
+            (M200,R200,_c200)= get_r200_and_c200(d['cosmo'],d['sigma8'],
+                                                                d['ns'],M200,z)
         else:
             R200 = R200_dist[index]
         
         
-        y_map = generate_y_submap(z, M200, R200, cosmo, 
-                                                  image_size, pix_size_arcmin)
+        y_map = generate_y_submap(z, M200, R200, d['cosmo'], 
+                                                  d['image_size_arcmin'], d['pix_size_arcmin'])
         #get f_SZ for observation frequency
-        fSZ = simtools.f_sz(freq_GHz,cosmo.Tcmb0) 
-        dT_map = (y_map * cosmo.Tcmb0 * fSZ).to(u.uK)
+        fSZ = simtools.f_sz(d['survey_freq'],d['cosmo'].Tcmb0) 
+        dT_map = (y_map * d['cosmo'].Tcmb0 * fSZ).to(u.uK)
         
         cluster = {'M200': M200, 'R200': R200, 'redshift_z': z, 
-                   'y_central': y_map[image_size//2][image_size//2]}
+                   'y_central': y_map[d['image_size_arcmin']//2][d['image_size_arcmin']//2]}
         
         if id_dist is not None:
             cluster['ID'] = id_dist[index]
@@ -421,17 +419,17 @@ def simulate_submap(M200_dist, z_dist, id_dist=None,
         if add_cmb:
             conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_map, 
                                                                   ps, 
-                                                                  pix_size_arcmin, 
-                                                                  beam_size_fwhp_arcmin)
+                                                                  d['pix_size_arcmin'], 
+                                                                  d['beam_size_arcmin'])
             cluster['CMB_map'] = cmb_map
             
         else:
             conv_map = simtools.convolve_map_with_gaussian_beam(
-                pix_size_arcmin, beam_size_fwhp_arcmin, dT_map)
+                d['pix_size_arcmin'], d['beam_size_fwhp_arcmin'], dT_map)
     
-        if not noise_level == 0:
-            noise_map=noise.generate_noise_map(image_size, 
-                                               noise_level, pix_size_arcmin)
+        if not d['noise_level'] == 0:
+            noise_map=noise.generate_noise_map(d['image_size_arcmin'], 
+                                               d['noise_level'], d['pix_size_arcmin'])
             final_map = conv_map + noise_map
     
             cluster['noise_map'] = noise_map
@@ -441,7 +439,7 @@ def simulate_submap(M200_dist, z_dist, id_dist=None,
         utils.save_sim_to_h5(f, f"sim_{cluster['ID']}", cluster)
     
     f.close()
-    shutil.copyfile(settings_yaml, os.path.join(savedir, f'params_{run_id}.yaml'))
+    shutil.copyfile(os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml"), os.path.join(savedir, f'params_{run_id}.yaml'))
 
     return clusters
 
