@@ -89,7 +89,7 @@ class TestSZCluster:
         x = radii/R200 #As defined in Battaglia 2012
         Pth_expected = P0 * (x/xc)**(-0.3) * (1 + (x/xc))**(-beta)
         result = Pth_Battaglia2012(radii,R200,-0.3,1.0,beta,xc,P0)
-        assert np.allclose(result, Pth_expected), f"Expected {Pth_expected}, but got {result}"
+        assert np.allclose(result, Pth_expected),f"Expected {Pth_expected}, but got {result}"
 
     def test_epp_to_y(self):
         '''

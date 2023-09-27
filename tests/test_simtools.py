@@ -25,5 +25,4 @@ class TestSimTools():
         T_CMB = cosmo.Tcmb0
         fsz = simtools.f_sz(freq,T_CMB)
         fsz_expected = 12.509
-        assert u.isclose(fsz,fsz_expected), 
-        f"Expected {fsz_expected}, but got {fsz}"
+        assert u.isclose(fsz,fsz_expected),f"Expected {fsz_expected}, but got {fsz}"
