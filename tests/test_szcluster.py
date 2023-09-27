@@ -1,5 +1,5 @@
 import pytest
-from make_sz_cluster import (
+from simsz.make_sz_cluster import (
     P200_Battaglia2012, param_Battaglia2012, Pth_Battaglia2012, epp_to_y)
 import simsz.utils as utils
 import numpy as np
@@ -39,8 +39,7 @@ class TestSZCluster:
         R200 = 0.386
         P200_expected = 0.00014312182 * (u.keV/u.cm**3.)
         P200_calculated = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
-        assert u.isclose(P200_calculated,P200_expected), 
-        f"Expected {P200_expected}, but got {P200_calculated}"
+        assert u.isclose(P200_calculated,P200_expected),f"Expected {P200_expected}, but got {P200_calculated}"
     
     def test_param_Battaglia2012(self):
         '''
@@ -90,8 +89,7 @@ class TestSZCluster:
         x = radii/R200 #As defined in Battaglia 2012
         Pth_expected = P0 * (x/xc)**(-0.3) * (1 + (x/xc))**(-beta)
         result = Pth_Battaglia2012(radii,R200,-0.3,1.0,beta,xc,P0)
-        assert np.allclose(result, Pth_expected), 
-        f"Expected {Pth_expected}, but got {result}"
+        assert np.allclose(result, Pth_expected), f"Expected {Pth_expected}, but got {result}"
 
     def test_epp_to_y(self):
         '''
