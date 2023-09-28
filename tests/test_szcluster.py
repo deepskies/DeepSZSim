@@ -1,9 +1,5 @@
 import pytest
-<<<<<<< HEAD
 from simsz.make_sz_cluster import (
-=======
-from make_sz_cluster import (
->>>>>>> origin/dev-massdist
     P200_Battaglia2012, param_Battaglia2012, Pth_Battaglia2012, epp_to_y)
 import simsz.utils as utils
 import numpy as np
@@ -43,12 +39,7 @@ class TestSZCluster:
         R200 = 0.386
         P200_expected = 0.00014312182 * (u.keV/u.cm**3.)
         P200_calculated = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
-<<<<<<< HEAD
         assert u.isclose(P200_calculated,P200_expected),f"Expected {P200_expected}, but got {P200_calculated}"
-=======
-        assert u.isclose(P200_calculated,P200_expected), 
-        f"Expected {P200_expected}, but got {P200_calculated}"
->>>>>>> origin/dev-massdist
     
     def test_param_Battaglia2012(self):
         '''
@@ -98,39 +89,22 @@ class TestSZCluster:
         x = radii/R200 #As defined in Battaglia 2012
         Pth_expected = P0 * (x/xc)**(-0.3) * (1 + (x/xc))**(-beta)
         result = Pth_Battaglia2012(radii,R200,-0.3,1.0,beta,xc,P0)
-<<<<<<< HEAD
         assert np.allclose(result, Pth_expected),f"Expected {Pth_expected}, but got {result}"
-=======
-        assert np.allclose(result, Pth_expected), 
-        f"Expected {Pth_expected}, but got {result}"
->>>>>>> origin/dev-massdist
 
     def test_epp_to_y(self):
         '''
         Test for the method epp_to_y,
         which...
         '''
-<<<<<<< HEAD
         (cosmo,sigma8,ns) = get_mock_cosmology()
         radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
         radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
         redshift_z = 0
-=======
-        radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
-        radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
-        redshift_z = 0
-        (cosmo,sigma8,ns) = get_mock_cosmology()
->>>>>>> origin/dev-massdist
         M200 = 1.3e13
         R200 = 0.386
         P0 = 18.84628919814473
         xc = 0.49587336181740654
         beta = 4.395084514715711
         P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
-<<<<<<< HEAD
         y = epp_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
-=======
-        profile = Pth_Battaglia2012(radii,R200,-0.3,1.0,beta,xc,P0)
-        y = epp_to_y(profile, radii, P200, R200)
->>>>>>> origin/dev-massdist
         assert np.max(y)==y[0]
