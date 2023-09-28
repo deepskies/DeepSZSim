@@ -3,6 +3,8 @@ import os
 import pytest
 from simsz.utils import arcmin_to_Mpc, Mpc_to_arcmin
 import astropy.units as u
+from astropy.cosmology import FlatLambdaCDM
+
 
 def get_mock_cosmology():
     '''

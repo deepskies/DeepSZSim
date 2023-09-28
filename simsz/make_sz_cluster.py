@@ -12,22 +12,32 @@ from datetime import datetime as dt
 import shutil
 
 
-def _param_Battaglia2012(A0,alpha_m,alpha_z,M200,redshift_z):
+def _param_Battaglia2012(A0,alpha_m,alpha_z,M200_SM,redshift_z):
     '''
     Calculates independent params as using the formula from Battaglia 2012, Equation 11
     in order for use in the pressure profile defined in Equation 10
 
     Parameters:
-    A0, normalization factor
-    alpha_m, power law index for the mass-dependent part of the function
-    alpha_z, power law index for the redshift dependent part
-    M200, the mass of the cluster at 200 times the critical density of the universe
-    redshift_z, the redshift of the cluster
+    -----------
+    A0: float
+        normalization factor
+    alpha_m: float
+        power law index for the mass-dependent part of the function
+    alpha_z: float
+        power law index for the redshift dependent part
+    M200_SM: float
+        the mass of the cluster at 200 times the critical density of the 
+        universe in units of solar masses
+    redshift_z: float
+        the redshift of the cluster
 
-    Returns the parameter A given the formula from Eq 11
+    Returns:
+    --------
+    A: float
+        the parameter A given the formula from Battaglia 2012, Eq 11
     '''
 
-    A = A0 * (M200/1e14)**alpha_m * (1.+redshift_z)**alpha_z
+    A = A0 * (M200_SM/1e14)**alpha_m * (1.+redshift_z)**alpha_z
 
     return(A)
 
@@ -36,15 +46,18 @@ def _P0_Battaglia2012(M200_SM, redshift_z):
     Calculates P0, the normalization factor/amplitude, 
     from Battaglia 2012, using the values from Table 1,
 
-    Params:
+    Parameters:
+    -----------
     M200_SM: float
         the mass of the cluster at 200 times the critical density of the 
         universe, in units of solar masses
     redshift_z: float
         the redshift of the cluster (unitless)
 
-    Returns
-        P0, the normalization factor for the Battaglia 2012 profile
+    Returns:
+    -------
+    P0: float
+        the normalization factor for the Battaglia 2012 profile
 
     """
     return _param_Battaglia2012(18.1,0.154,-0.758,M200_SM,redshift_z)
@@ -54,15 +67,18 @@ def _xc_Battaglia2012(M200_SM, redshift_z):
     Calculates P0, the core-scale fits, 
     from Battaglia 2012, using the values from Table 1,
 
-    Params:
+    Parameters:
+    -----------
     M200_SM: float
         the mass of the cluster at 200 times the critical density of the 
         universe, in units of solar masses
     redshift_z: float
         the redshift of the cluster (unitless)
 
-    Returns
-        xc, the core-scale factor for the Battaglia 2012 profile
+    Returns:
+    --------
+    xc: float
+        the core-scale factor for the Battaglia 2012 profile
 
     """
     return _param_Battaglia2012(0.497,-0.00865,0.731,M200_SM,redshift_z)
@@ -72,15 +88,18 @@ def _beta_Battaglia2012(M200_SM, redshift_z):
     Calculates beta, the power law index, 
     from Battaglia 2012, using the values from Table 1,
 
-    Params:
+    Parameters:
+    ----------
     M200_SM: float
         the mass of the cluster at 200 times the critical density of the 
         universe, in units of solar masses
     redshift_z: float
         the redshift of the cluster (unitless)
 
-    Returns
-        beta, the power law index for the Battaglia 2012 profile
+    Returns:
+    -------
+    beta: float
+        the power law index for the Battaglia 2012 profile
 
     """
     return _param_Battaglia2012(4.35,0.0393,0.415,M200_SM,redshift_z)
@@ -171,7 +190,7 @@ def Pth_Battaglia2012(radius_mpc,R200_mpc,gamma,alpha,beta,xc,P0):
 
     Returns:
     --------
-    Pth: float
+    Pth: array of floats
         the thermal pressure profile normalized over P200, units of 
         keV/cm**3
     '''
@@ -189,7 +208,7 @@ def epp_to_y(profile, radii_mpc, P200_kevcm3, R200_mpc, **kwargs):
 
     Parameters:
     -----------
-    profile:
+    profile: method
         Method to get thermal pressure profile in Kev/cm^3, accepts radius, 
         R200 and **kwargs
     radii_mpc: array

@@ -96,16 +96,15 @@ class TestSZCluster:
         Test for the method epp_to_y,
         which...
         '''
+        (cosmo,sigma8,ns) = get_mock_cosmology()
         radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
         radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
         redshift_z = 0
-        (cosmo,sigma8,ns) = get_mock_cosmology()
         M200 = 1.3e13
         R200 = 0.386
         P0 = 18.84628919814473
         xc = 0.49587336181740654
         beta = 4.395084514715711
         P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
-        profile = Pth_Battaglia2012(radii,R200,-0.3,1.0,beta,xc,P0)
-        y = epp_to_y(profile, radii, P200, R200)
+        y = epp_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
         assert np.max(y)==y[0]
