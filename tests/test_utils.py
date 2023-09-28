@@ -3,11 +3,8 @@ import os
 import pytest
 from simsz.utils import arcmin_to_Mpc, Mpc_to_arcmin
 import astropy.units as u
-<<<<<<< HEAD
 from astropy.cosmology import FlatLambdaCDM
 
-=======
->>>>>>> origin/dev-massdist
 
 def get_mock_cosmology():
     '''
@@ -27,12 +24,7 @@ class TestUtils():
         (cosmo,sigma8,ns) = get_mock_cosmology()
         value_expected = 0.559219683539306
         value_calculated = arcmin_to_Mpc(r, z, cosmo)
-<<<<<<< HEAD
         assert u.isclose(value_calculated, value_expected),f"Expected {value_expected}, but got {value_calculated}"
-=======
-        assert u.isclose(value_calculated, value_expected) 
-        f"Expected {value_expected}, but got {value_calculated}"
->>>>>>> origin/dev-massdist
 
     def test_Mpc_to_arcmin(self):
         r = 1
@@ -40,9 +32,4 @@ class TestUtils():
         (cosmo,sigma8,ns) = get_mock_cosmology()
         value_expected = 1.7882060117608733
         value_calculated = Mpc_to_arcmin(r, z, cosmo)
-<<<<<<< HEAD
         assert u.isclose(value_calculated, value_expected),f"Expected {value_expected}, but got {value_calculated}"
-=======
-        assert u.isclose(value_calculated, value_expected) 
-        f"Expected {value_expected}, but got {value_calculated}"
->>>>>>> origin/dev-massdist
