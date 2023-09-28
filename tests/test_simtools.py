@@ -7,6 +7,8 @@ import astropy.constants as c
 from astropy import units as u
 from pixell import enmap
 import camb
+from astropy.cosmology import FlatLambdaCDM
+
 
 def get_mock_cosmology():
     '''
@@ -21,9 +23,9 @@ def get_mock_cosmology():
 
 class TestSimTools():
     def test_f_sz(self):
-        freq = 100
+        freq = 1
+        (cosmo,sigma8,ns) = get_mock_cosmology()
         T_CMB = cosmo.Tcmb0
         fsz = simtools.f_sz(freq,T_CMB)
-        fsz_expected = 12.509
-        assert u.isclose(fsz,fsz_expected), 
-        f"Expected {fsz_expected}, but got {fsz}"
+        fsz_expected = -1.999948
+        assert u.isclose(fsz,fsz_expected),f"Expected {fsz_expected}, but got {fsz}"
