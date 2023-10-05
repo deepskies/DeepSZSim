@@ -1,3 +1,41 @@
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
+from simsz.utils import arcmin_to_Mpc
+
+def plot_graphs(image, title, xlabel, ylabel, cbarlabel, width  = 10, extend = False, logNorm = False):
+    '''
+    Plotting tool function for our 2D submaps and CMB maps. 
+    
+    Parameters:
+    -----------
+    image - float array
+        the graph we are plotting
+    title - str
+        title of the graph
+    xlabel - str
+        label of the x-axis
+    ylabel - str
+        label of the y-axis
+    cbarlabel - str
+        label of the color bar
+
+    Returns:
+    -------
+    none
+    '''
+    
+    if logNorm:
+        im = plt.imshow(image, norm=LogNorm())
+    else:
+        im = plt.imshow(image)
+    cbar = plt.colorbar(im)
+    im.set_extent([-width,width,-width,width])
+    plt.title(title)
+    plt.ylabel(xlabel)
+    plt.xlabel(ylabel)
+    cbar.set_label(cbarlabel, rotation=270)
+
+
 def plot_img(image, z, opt = 0, path = None):
      '''
      Input: image, mode (option of 0.5/5 Mpc, default to 0.5), cmb (option of y/delta_T, default to y)
