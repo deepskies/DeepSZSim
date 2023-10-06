@@ -2,7 +2,7 @@ import yaml
 from typing import Union
 import os
 
-class YAMLOperator(object):
+class YAMLOperator:
 
     def __init__(self, file_path=os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml")):
 
