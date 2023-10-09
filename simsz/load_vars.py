@@ -4,7 +4,7 @@ import simsz.read_yaml as read_yaml
 from typing import Union
 import os
 
-class load_vars(object):
+class load_vars:
 
     def __init__(self, 
                  file_path=os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml")):
