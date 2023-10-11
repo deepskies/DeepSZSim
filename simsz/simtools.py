@@ -125,7 +125,7 @@ def get_cls(ns, cosmo, lmax=2000):
     ps[2][2] = cls[2] #clBB
     return ps
 
-def make_cmb_map(shape, pix_size_arcmin, ps):
+def make_cmb_map(shape, pix_size_arcmin, ps, seed=None):
     '''
     Makes a cmb temperature map based on the given power spectrum
 
@@ -146,7 +146,7 @@ def make_cmb_map(shape, pix_size_arcmin, ps):
     shape,wcs = enmap.geometry(shape=shape,pos=(0,0),
                                 res=np.deg2rad(pix_size_arcmin/60.))
     shape = (3,) + shape
-    omap = enmap.rand_map(shape,wcs,cov=ps)
+    omap = enmap.rand_map(shape,wcs,cov=ps, seed=seed)
     #omap gives TQU maps, so for temperature, we need omap[0]
 
     return omap[0]
