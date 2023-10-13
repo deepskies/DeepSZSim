@@ -1,6 +1,6 @@
 import pytest
 from simsz.make_sz_cluster import (
-    P200_Battaglia2012, param_Battaglia2012, Pth_Battaglia2012, epp_to_y)
+    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, epp_to_y)
 import simsz.utils as utils
 import numpy as np
 import astropy.units as u
@@ -57,13 +57,13 @@ class TestSZCluster:
         xc_expected = 0.49587336181740654
         beta_expected = 4.395084514715711
         assert u.isclose(
-        param_Battaglia2012(18.1, 0.154, -0.758, M200, redshift_z),
+        _param_Battaglia2012(18.1, 0.154, -0.758, M200, redshift_z),
         P0_expected), "Incorrect param calculation: P0"
         assert u.isclose(
-        param_Battaglia2012(0.497,-0.00865,0.731,M200,redshift_z), 
+        _param_Battaglia2012(0.497,-0.00865,0.731,M200,redshift_z),
         xc_expected), "Incorrect param calculation: xc"
         assert u.isclose(
-        param_Battaglia2012(4.35,0.0393,0.415,M200,redshift_z)
+        _param_Battaglia2012(4.35,0.0393,0.415,M200,redshift_z)
         , beta_expected), "Incorrect param calculation: beta"
 
     def test_Pth_Battaglia2012(self):
