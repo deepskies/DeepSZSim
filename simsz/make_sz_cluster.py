@@ -1,6 +1,5 @@
 import numpy as np
 from simsz import utils, simtools, noise, load_vars
-from scipy.interpolate import interp1d
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 
