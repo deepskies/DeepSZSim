@@ -3,6 +3,7 @@ from astropy.cosmology import FlatLambdaCDM
 import simsz.read_yaml as read_yaml
 from typing import Union
 import os
+import sys
 
 class load_vars:
 
@@ -23,19 +24,19 @@ class load_vars:
             survey = ref['SURVEYS'][survey_name]
         else:
             print("specify a survey of interest with `survey_name`")
-            break
+            sys.exit()
         if len(list(ref['SURVEYS'][survey].keys())) == 1:
             survey_freq = list(ref['SURVEYS'][survey].keys())[0]
         elif survey_freq_val is not None:
             survey_freq = ref['SURVEYS'][survey][survey_freq_val]
         else:
             print("specify a survey frequency of interest with `survey_freq_val`")
-            break
+            sys.exit()
         self.dict["survey"] = survey
         self.dict["survey_freq"] = survey_freq
 
-        self.dict["beam_size_arcmin"] = self.dict["survey"][survey_freq]['beam_size']
-        self.dict["noise_level"] = self.dict["survey"][survey_freq]['noise_level']
+        self.dict["beam_size_arcmin"] = ref['SURVEYS'][survey][survey_freq]['beam_size']
+        self.dict["noise_level"] = ref['SURVEYS'][survey][survey_freq]['noise_level']
         self.dict["image_size_arcmin"] = ref['IMAGES']['image_size']
         self.dict["pix_size_arcmin"] = ref['IMAGES']['pix_size']
         if len(list(ref['COSMOLOGY'].keys())) == 1:
@@ -44,7 +45,7 @@ class load_vars:
             cosmo_dict = ref['COSMOLOGY'][cosmo_name]
         else:
             print("specify cosmology name with `cosmo_name`")
-            break
+            sys.exit()
         if cosmo_dict['flat']:
             self.dict["cosmo"] = FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0 = cosmo_dict['t_cmb'],
                                                Ob0 = cosmo_dict['Omega_b0'])
