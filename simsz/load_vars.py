@@ -3,37 +3,53 @@ from astropy.cosmology import FlatLambdaCDM
 import simsz.read_yaml as read_yaml
 from typing import Union
 import os
+import sys
 
-class load_vars:
-
-    def __init__(self, 
-                 file_path=os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml")):
-        self.data = []
-        self.file_path = file_path
-
-    def make_dict_and_flatLCDM(self):
-        d = {}
-        ref=read_yaml.YAMLOperator(self.file_path).parse_yaml()
-        survey = [key for key in ref['SURVEYS'].keys()][0]
-        survey_freq = [key for key in ref['SURVEYS'][survey].keys()][0]
-        beam_size_arcmin = ref['SURVEYS'][survey][survey_freq]['beam_size']
-        noise_level = ref['SURVEYS'][survey][survey_freq]['noise_level']
-        image_size_arcmin = ref['IMAGES']['image_size']
-        pix_size_arcmin = ref['IMAGES']['pix_size']
-        d["survey"] = survey
-        d["survey_freq"] = survey_freq
-        d["beam_size_arcmin"] = beam_size_arcmin
-        d["noise_level"] = noise_level
-        d["image_size_arcmin"] = image_size_arcmin
-        d["pix_size_arcmin"] = pix_size_arcmin
-        for key in ref['COSMOLOGY'].keys():
-            cosmo_dict=ref['COSMOLOGY'][key] #Read in cosmological parameters
-
-        sigma8=cosmo_dict['sigma8']
-        ns=cosmo_dict['ns']
-
-        cosmo=FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0=cosmo_dict['t_cmb'], Ob0=cosmo_dict['Omega_b0'])
-        d["sigma8"] = sigma8
-        d["ns"] = ns
-        d["cosmo"] = cosmo
-        return d
+def load_vars(file_path = os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml"),
+                 survey_num : int = None,
+                 survey_name : str = None,
+                 survey_freq_val : int = None,
+                 cosmo_name : str = None):
+    file_path = file_path
+    dict = {}
+    ref = read_yaml.YAMLOperator(file_path).parse_yaml()
+    if len(list(ref['SURVEYS'].keys())) == 1:
+        survey = list(ref['SURVEYS'].keys())[0]
+    elif survey_num is not None:
+        survey = list(ref['SURVEYS'].keys())[survey_num]
+    elif survey_name is not None:
+        survey = survey_name
+    else:
+        print("specify a survey of interest with `survey_name` or `survey_num`")
+        sys.exit()
+    if len(list(ref['SURVEYS'][survey].keys())) == 1:
+        survey_freq = list(ref['SURVEYS'][survey].keys())[0]
+    elif survey_freq_val is not None:
+        survey_freq = survey_freq_val
+    else:
+        print("specify a survey frequency of interest with `survey_freq_val`")
+        sys.exit()
+    dict["survey"] = survey
+    dict["survey_freq"] = survey_freq
+    dict["beam_size_arcmin"] = ref['SURVEYS'][survey][survey_freq]['beam_size']
+    dict["noise_level"] = ref['SURVEYS'][survey][survey_freq]['noise_level']
+    dict["image_size_arcmin"] = ref['IMAGES']['image_size']
+    dict["pix_size_arcmin"] = ref['IMAGES']['pix_size']
+    if len(list(ref['COSMOLOGY'].keys())) == 1:
+        cosmo_dict = ref['COSMOLOGY'][list(ref['COSMOLOGY'].keys())[0]] #Read in cosmological parameters
+    elif cosmo_name is not None:
+        cosmo_dict = ref['COSMOLOGY'][cosmo_name]
+    else:
+        print("specify cosmology name with `cosmo_name`")
+        sys.exit()
+    if cosmo_dict['flat']:
+        dict["cosmo"] = FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0 = cosmo_dict['t_cmb'],
+                                           Ob0 = cosmo_dict['Omega_b0'])
+    else:
+        print("only flat cosmology supported at this time")
+        dict["cosmo"] = FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0 = cosmo_dict['t_cmb'],
+                                           Ob0 = cosmo_dict['Omega_b0'])
+    dict["sigma8"] = cosmo_dict['sigma8']
+    dict["ns"] = cosmo_dict['ns']
+    
+    return dict
