@@ -1,6 +1,6 @@
 import pytest
 from simsz.make_sz_cluster import (
-    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, epp_to_y)
+    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, epp_to_y, _make_y_submap)
 import simsz.utils as utils
 import numpy as np
 import astropy.units as u
@@ -108,3 +108,30 @@ class TestSZCluster:
         P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
         y = epp_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
         assert np.max(y)==y[0]
+    
+    def test_make_y_submap(self):
+        '''
+        Test for the method _make_y_submap,
+        which...
+        '''
+        (cosmo,sigma8,ns) = get_mock_cosmology()
+        radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
+        radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
+        redshift_z=0.48
+        M200=194038855760143.47 #solar masses   
+        R200 = 0.947030177614577
+        P0 = 14.892069375592566
+        xc = 0.6581539098712913
+        beta = 5.253659160509611
+        P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
+        y = epp_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
+        y_map = _make_y_submap(Pth_Battaglia2012, redshift_z, cosmo, 41, 0.5, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
+        fSZ = -0.9529784143018927
+        dT_map = (y_map * cosmo.Tcmb0 * fSZ).to(u.uK).value
+        y_expected = 1.5285493023435713e-05
+        dT_expected = -0.0001084185490043638
+        assert np.allclose(y_map.max(), y_expected),f"Expected {y_expected}, but got {y_map.max()}"
+        assert np.allclose(dT_map.max(), dT_expected),f"Expected {dT_expected}, but got {dT_map.max()}"
+
+
+
