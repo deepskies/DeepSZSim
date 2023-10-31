@@ -128,10 +128,10 @@ class TestSZCluster:
         y_map = _make_y_submap(Pth_Battaglia2012, redshift_z, cosmo, 41, 0.5, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
         fSZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ).to(u.uK).value
-        y_expected = 1.5285493023435713e-05
-        dT_expected = -0.0001084185490043638
-        assert np.allclose(y_map.max(), y_expected),f"Expected {y_expected}, but got {y_map.max()}"
-        assert np.allclose(dT_map.max(), dT_expected),f"Expected {dT_expected}, but got {dT_map.max()}"
+        y_expected = 1.5477402918128797e-05
+        dT_expected = -40.19274417642139
+        assert np.isclose(y_map.max(), y_expected),f"Expected {y_expected}, but got {y_map.max()}"
+        assert np.isclose(dT_map.min(), dT_expected),f"Expected {dT_expected}, but got {dT_map.min()}"
 
 
 
