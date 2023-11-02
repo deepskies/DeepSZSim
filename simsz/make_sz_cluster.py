@@ -202,27 +202,28 @@ def epp_to_y(profile, radii_mpc, P200_kevcm3, R200_mpc, **kwargs):
     '''
     radii_mpc = radii_mpc * u.Mpc
     pressure_integ = np.empty(radii_mpc.size)
-    i = 0
-    l_mpc = np.linspace(0, R200_mpc, 10000)  # Get line of sight axis
-    l = l_mpc * (1 * u.Mpc).to(u.m).value  # l in meters
+    # i = 0
+    # l_mpc = np.linspace(0, R200_mpc, 10000)  # Get line of sight axis
+    # l = l_mpc * (1 * u.Mpc).to(u.m).value  # l in meters
     keVcm_to_Jm = (1 * u.keV / (u.cm**3.)).to(u.J / (u.m**3.))
     thermal_to_electron_pressure = 1 / 1.932  # from Battaglia 2012, assumes
     # fully ionized medium
-    for radius in radii_mpc:
+    for i, radius in enumerate(radii_mpc):
         # Multiply profile by P200 specifically for Battaglia 2012 profile,
         # since it returns Pth/P200 instead of Pth
-        th_pressure = profile(np.sqrt(l_mpc**2 + radius.value**2),
-                              R200_mpc = R200_mpc, **kwargs)
+        rv = radius.value
+        l_mpc = np.linspace(0, np.sqrt(radii_mpc.value.max()**2. - rv**2.)+1.e-5, 1000)  # Get line of sight
+        # axis
+        th_pressure = profile(np.sqrt(l_mpc**2 + rv**2), R200_mpc = R200_mpc, **kwargs)
         th_pressure = th_pressure * P200_kevcm3.value  # pressure as a
         #                                               function of l
         th_pressure = th_pressure * keVcm_to_Jm.value  # Use multiplication
         #                           by a precaluated factor for efficiency
         pressure = th_pressure * thermal_to_electron_pressure
-        integral = np.trapz(pressure, l) * 2  # integrate over pressure in
+        integral = np.trapz(pressure, l_mpc*(1 * u.Mpc).to(u.m).value) * 2  # integrate over pressure in
         # J/m^3 to get J/m^2, multiply by factor of 2 to get from -R200 to
         # R200 (assuming spherical symmetry)
         pressure_integ[i] = integral
-        i += 1
     y_pro = pressure_integ * c.sigma_T.value / (c.m_e.value * c.c.value**2)
     return y_pro
 
@@ -257,30 +258,30 @@ def _make_y_submap(profile, redshift_z, cosmo, image_size, pix_size_arcmin, **kw
     X = utils.arcmin_to_Mpc(X, redshift_z, cosmo)
     # Solves issues of div by 0
     X[(X <= pix_size_arcmin / 10) & (X >= -pix_size_arcmin / 10)] = pix_size_arcmin / 10
-    Y = np.transpose(X)
+    # Y = np.transpose(X)
     
-    R = []
-    y_map = np.empty((X.size, Y.size))
+    # R = []
+    y_map = np.empty((X.size, X.size))
     
-    for i in X:
-        for j in Y:
-            R.append(np.sqrt(i**2 + j**2))
+    # for i in X:
+    #     for j in Y:
+    #         R.append(np.sqrt(i**2 + j**2))
     
-    R = np.array(R)
+    R = np.sqrt(X[:,None]**2 + X[None,:]**2).flatten() # np.array(R)
     cy = epp_to_y(profile, R, **kwargs)  # evaluate compton-y for each
     # neccesary radius
     
-    for i in range(X.size):
-        for j in range(Y.size):
-            y_map[i][j] = cy[np.where(
-                R == np.sqrt(X[i]**2 + Y[j]**2))[0]][0]
-            # assign the correct compton-y to the radius
+    for i, x in enumerate(X):
+        for j, y in enumerate(X):
+            y_map[i][j] = cy[np.where(np.isclose(R, np.sqrt(x**2 + y**2),
+                                                 atol=1.e-10, rtol=1.e-10))[0]][0]
+        # assign the correct compton-y to the radius
     
     return y_map
 
 
-def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo,
-                      image_size, pix_size_arcmin, profile = "Battaglia2012"):
+def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo = None,
+                      image_size = None, pix_size_arcmin = None, loadvarsinstance = None, profile = "Battaglia2012"):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -310,7 +311,13 @@ def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo,
         Compton-y submap with dimension (2*width +1 , 2*width +1)
     '''
     if profile != "Battaglia2012":
+        print("only implementing Battaglia2012")
         return None
+    
+    if loadvarsinstance is not None:
+        cosmo = loadvarsinstance['cosmo']
+        image_size = loadvarsinstance['image_size_arcmin']
+        pix_size_arcmin = loadvarsinstance['pix_size_arcmin']
     
     P200 = P200_Battaglia2012(cosmo, redshift_z, M200_SM,
                               R200_mpc)  # P200 from Battaglia 2012
@@ -327,7 +334,7 @@ def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo,
 
 
 def simulate_submap(M200_dist, z_dist, id_dist = None,
-                    savedir = os.path.join(os.getcwd(), 'outfiles'),
+                    savedir = os.path.join(os.getcwd(), 'outfiles'), saverun = False,
                     R200_dist = None, add_cmb = True,
                     settings_yaml = os.path.join(os.getcwd(), 'simsz', 'Settings',
                                                  'inputdata.yaml')):
@@ -366,7 +373,7 @@ def simulate_submap(M200_dist, z_dist, id_dist = None,
 
     """
     # Make a dictionary and cosmology from the .yaml
-    d = load_vars.load_vars().make_dict_and_flatLCDM()
+    d = load_vars.load_vars()
     
     M200_dist = np.asarray(M200_dist)
     z_dist = np.asarray(z_dist)
@@ -383,7 +390,8 @@ def simulate_submap(M200_dist, z_dist, id_dist = None,
     run_id = dt.now().strftime('%y%m%d%H%M%S%f_') + str(d['survey_freq']) + '_' + str(
         rand_num).zfill(6)
     
-    f = h5py.File(os.path.join(savedir, f'sz_sim_{run_id}.h5'), 'a')
+    if saverun:
+        f = h5py.File(os.path.join(savedir, f'sz_sim_{run_id}.h5'), 'a')
     
     clusters = []
     
@@ -431,11 +439,13 @@ def simulate_submap(M200_dist, z_dist, id_dist = None,
             cluster['final_map'] = final_map
         
         clusters.append(cluster)
-        utils.save_sim_to_h5(f, f"sim_{cluster['ID']}", cluster)
+        if saverun:
+            utils.save_sim_to_h5(f, f"sim_{cluster['ID']}", cluster)
     
-    f.close()
-    shutil.copyfile(os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml"),
-                    os.path.join(savedir, f'params_{run_id}.yaml'))
+    if saverun:
+        f.close()
+        shutil.copyfile(os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml"),
+                        os.path.join(savedir, f'params_{run_id}.yaml'))
     
     return clusters
 
