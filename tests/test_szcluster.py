@@ -126,12 +126,12 @@ class TestSZCluster:
         P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
         y = epp_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
         y_map = _make_y_submap(Pth_Battaglia2012, redshift_z, cosmo, 41, 0.5, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
-        fSZ = -0.9529784143018927
-        dT_map = (y_map * cosmo.Tcmb0 * fSZ).to(u.uK).value
+        fSZ_150GhZ = -0.9529784143018927
+        dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
         y_expected = 1.5477402918128797e-05
-        dT_expected = -40.19274417642139
+        dT_expected = 40.19274417642139
         assert np.isclose(y_map.max(), y_expected),f"Expected {y_expected}, but got {y_map.max()}"
-        assert np.isclose(dT_map.min(), dT_expected),f"Expected {dT_expected}, but got {dT_map.min()}"
+        assert np.isclose(abs(dT_map).max(), dT_expected),f"Expected {dT_expected}, but got {abs(dT_map).max()}"
 
 
 

@@ -280,8 +280,8 @@ def _make_y_submap(profile, redshift_z, cosmo, image_size, pix_size_arcmin, **kw
     return y_map
 
 
-def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo,
-                      image_size, pix_size_arcmin, profile = "Battaglia2012"):
+def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo = None,
+                      image_size = None, pix_size_arcmin = None, loadvarsinstance = None, profile = "Battaglia2012"):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -311,7 +311,13 @@ def generate_y_submap(redshift_z, M200_SM, R200_mpc, cosmo,
         Compton-y submap with dimension (2*width +1 , 2*width +1)
     '''
     if profile != "Battaglia2012":
+        print("only implementing Battaglia2012")
         return None
+    
+    if loadvarsinstance is not None:
+        cosmo = loadvarsinstance['cosmo']
+        image_size = loadvarsinstance['image_size_arcmin']
+        pix_size_arcmin = loadvarsinstance['pix_size_arcmin']
     
     P200 = P200_Battaglia2012(cosmo, redshift_z, M200_SM,
                               R200_mpc)  # P200 from Battaglia 2012
