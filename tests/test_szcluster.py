@@ -1,6 +1,6 @@
 import pytest
 from simsz.make_sz_cluster import (
-    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, epp_to_y, _make_y_submap)
+    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, Pe_to_y, _make_y_submap)
 import simsz.utils as utils
 import numpy as np
 import astropy.units as u
@@ -106,7 +106,7 @@ class TestSZCluster:
         xc = 0.49587336181740654
         beta = 4.395084514715711
         P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
-        y = epp_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
+        y = Pe_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3, alpha=1.0, beta=beta, xc=xc, P0=P0, P200_kevcm3=P200)
         assert np.max(y)==y[0]
     
     def test_make_y_submap(self):
@@ -124,7 +124,7 @@ class TestSZCluster:
         xc = 0.6581539098712913
         beta = 5.253659160509611
         P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
-        y = epp_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
+        y = Pe_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3, alpha=1.0, beta=beta, xc=xc, P0=P0, P200_kevcm3=P200)
         y_map = _make_y_submap(Pth_Battaglia2012, redshift_z, cosmo, 41, 0.5, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value

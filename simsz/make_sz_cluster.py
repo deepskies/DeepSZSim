@@ -176,7 +176,7 @@ def Pth_Battaglia2012(radius_mpc, R200_mpc, gamma, alpha, beta, xc, P0):
     return (Pth)
 
 
-def epp_to_y(profile, radii_mpc, P200_kevcm3, R200_mpc, **kwargs):
+def Pe_to_y(profile, radii_mpc, P200_kevcm3, R200_mpc, **kwargs):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -268,7 +268,7 @@ def _make_y_submap(profile, redshift_z, cosmo, image_size, pix_size_arcmin, **kw
     #         R.append(np.sqrt(i**2 + j**2))
     
     R = np.sqrt(X[:,None]**2 + X[None,:]**2).flatten() # np.array(R)
-    cy = epp_to_y(profile, R, **kwargs)  # evaluate compton-y for each
+    cy = Pe_to_y(profile, R, **kwargs)  # evaluate compton-y for each
     # neccesary radius
     
     for i, x in enumerate(X):
