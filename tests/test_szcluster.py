@@ -33,12 +33,12 @@ class TestSZCluster:
         critical density of the universe P200 is the thermal pressure profile of
         the shell defined by R200
         '''
-        redshift_z = 0
+        redshift_z = 1
         (cosmo,sigma8,ns) = get_mock_cosmology()
-        M200 = 1.3e13
-        R200 = 0.386
-        P200_expected = 0.00014312182 * (u.keV/u.cm**3.)
-        P200_calculated = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
+        M200 = 1e15
+        R200 = 1.8299423267153179
+        P200_expected = 0.00638921 * (u.keV/u.cm**3.)
+        P200_calculated = P200_Battaglia2012(M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96})
         assert u.isclose(P200_calculated,P200_expected),f"Expected {P200_expected}, but got {P200_calculated}"
     
     def test_param_Battaglia2012(self):
@@ -82,16 +82,18 @@ class TestSZCluster:
         radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
         (cosmo, sigma8, ns) = get_mock_cosmology()
         radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
-        P0 = 18.84628919814473
-        xc = 0.49587336181740654
-        beta = 4.395084514715711
-        R200 = 0.386
+        M200 = 1e15
+        z = 1
+        R200 = 1.8299423267153179
         x = radii/R200 #As defined in Battaglia 2012
+        P0 = 15.25800799611548
+        xc = 0.8086476253750757
+        beta = 6.349166339625658
         Pth_expected = P0 * (x/xc)**(-0.3) * (1 + (x/xc))**(-beta)
-        result = Pth_Battaglia2012(radii,R200,-0.3,1.0,beta,xc,P0)
+        result = Pth_Battaglia2012(radii, M200, z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 1.0, -0.3)
         assert np.allclose(result, Pth_expected),f"Expected {Pth_expected}, but got {result}"
 
-    def test_epp_to_y(self):
+    def test_Pe_to_y(self):
         '''
         Test for the method epp_to_y,
         which...
@@ -99,14 +101,9 @@ class TestSZCluster:
         (cosmo,sigma8,ns) = get_mock_cosmology()
         radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
         radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
-        redshift_z = 0
-        M200 = 1.3e13
-        R200 = 0.386
-        P0 = 18.84628919814473
-        xc = 0.49587336181740654
-        beta = 4.395084514715711
-        P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
-        y = Pe_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3, alpha=1.0, beta=beta, xc=xc, P0=P0, P200_kevcm3=P200)
+        redshift_z = 1
+        M200 = 1e15
+        y = Pe_to_y(Pth_Battaglia2012, radii, M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 1.0, -0.3)
         assert np.max(y)==y[0]
     
     def test_make_y_submap(self):
@@ -117,19 +114,15 @@ class TestSZCluster:
         (cosmo,sigma8,ns) = get_mock_cosmology()
         radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
         radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
-        redshift_z=0.48
-        M200=194038855760143.47 #solar masses   
-        R200 = 0.947030177614577
-        P0 = 14.892069375592566
-        xc = 0.6581539098712913
-        beta = 5.253659160509611
-        P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
-        y = Pe_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3, alpha=1.0, beta=beta, xc=xc, P0=P0, P200_kevcm3=P200)
-        y_map = _make_y_submap(Pth_Battaglia2012, redshift_z, cosmo, 41, 0.5, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
+        redshift_z = 1
+        M200 = 1e15 #solar masses
+        y = Pe_to_y(Pth_Battaglia2012, radii, M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 1.0, -0.3)
+        y_map = _make_y_submap(Pth_Battaglia2012, M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 41,
+                               0.5, 1.0, -0.3)
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
-        y_expected = 1.5477402918128797e-05
-        dT_expected = 40.19274417642139
+        y_expected = 0.00018465253397448628
+        dT_expected = 479.51792033994303
         assert np.isclose(y_map.max(), y_expected),f"Expected {y_expected}, but got {y_map.max()}"
         assert np.isclose(abs(dT_map).max(), dT_expected),f"Expected {dT_expected}, but got {abs(dT_map).max()}"
 
