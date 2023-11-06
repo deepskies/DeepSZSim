@@ -110,7 +110,7 @@ def _beta_Battaglia2012(M200_SM, redshift_z):
     return _param_Battaglia2012(4.35, 0.0393, 0.415, M200_SM, redshift_z)
 
 
-def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict):
+def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_mpc = None):
     '''
     Calculates the P200 pressure of a cluster, as defined in
     Battaglia 2012
@@ -132,7 +132,8 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict):
     '''
     cosmo = load_vars_dict['cosmo']
 
-    R200_mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+    if R200_mpc is None:
+        R200_mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     
     GM200 = c.G * M200_SM * u.Msun * 200. * cosmo.critical_density(redshift_z)
     fbR200 = (cosmo.Ob0 / cosmo.Om0) / (2. * R200_mpc * u.Mpc)  # From Battaglia2012
@@ -177,7 +178,7 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_mpc, alpha, beta, gamma, xc):
     
     return (Pth)
 
-def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3):
+def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_mpc = None):
     '''
     Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
     Equation 10. Pth is unitless. It is normalized by P200
@@ -204,7 +205,8 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1
         keV/cm**3)
     '''
     
-    R200_mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+    if R200_mpc is None:
+        R200_mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     P0 = _P0_Battaglia2012(M200_SM, redshift_z)
     xc = _xc_Battaglia2012(M200_SM, redshift_z)
     beta = _beta_Battaglia2012(M200_SM, redshift_z)
@@ -212,7 +214,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1
     return _Pth_Battaglia2012(P0, radius_mpc, R200_mpc, alpha, beta, gamma, xc)
 
 
-def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3):
+def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -252,7 +254,8 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
         rv = radius.value
         l_mpc = np.linspace(0, np.sqrt(radii_mpc.value.max()**2. - rv**2.)+1.e-5, 1000)  # Get line of sight
         # axis
-        th_pressure = profile(np.sqrt(l_mpc**2 + rv**2), M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma)
+        th_pressure = profile(np.sqrt(l_mpc**2 + rv**2), M200_SM, redshift_z, load_vars_dict, alpha = alpha,
+                              gamma = gamma, R200_mpc = R200_mpc)
         th_pressure = th_pressure * P200_kevcm3.value  # pressure as a
         #                                               function of l
         th_pressure = th_pressure * keVcm_to_Jm.value  # Use multiplication
@@ -266,7 +269,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
     return y_pro
 
 
-def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix_size_arcmin, alpha = 1.0, gamma = -0.3):
+def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix_size_arcmin, alpha = 1.0, gamma = -0.3, R200_mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -299,9 +302,9 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix
     
     y_map = np.empty((X.size, X.size))
     
-    
     R = np.sqrt(X[:,None]**2 + X[None,:]**2).flatten()
-    cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma)  # evaluate compton-y for each
+    cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_mpc = R200_mpc)  #
+    # evaluate compton-y for each
     # neccesary radius
     
     for i, x in enumerate(X):
@@ -314,7 +317,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix
 
 
 def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = None,
-                      image_size = None, pix_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3):
+                      image_size = None, pix_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3, R200_mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -352,19 +355,14 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = No
         image_size = load_vars_dict['image_size_arcmin']
         pix_size_arcmin = load_vars_dict['pix_size_arcmin']
     
-    P200 = P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict)  # P200 from Battaglia 2012
-    P0 = _P0_Battaglia2012(M200_SM, redshift_z)  # Parameter computation from
-    # Table 1 Battaglia et al. 2012
-    xc = _xc_Battaglia2012(M200_SM, redshift_z)
-    beta = _beta_Battaglia2012(M200_SM, redshift_z)
     y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
                            image_size, pix_size_arcmin,
-                           alpha = alpha, gamma = gamma)
+                           alpha = alpha, gamma = gamma, R200_mpc = R200_mpc)
     
     return y_map
 
 
-def simulate_submap(M200_dist, z_dist, id_dist = None, profile = "Battaglia2012",
+def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia2012",
                     savedir = os.path.join(os.getcwd(), 'outfiles'), saverun = False,
                     R200_dist = None, add_cmb = True,
                     load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings',
@@ -433,7 +431,7 @@ def simulate_submap(M200_dist, z_dist, id_dist = None, profile = "Battaglia2012"
         else:
             R200 = R200_dist[index]
         
-        y_map = generate_y_submap(M200, z, profile = profile, load_vars_dict = d)
+        y_map = generate_y_submap(M200, z, profile = profile, load_vars_dict = d, R200_mpc = R200)
         # get f_SZ for observation frequency
         fSZ = simtools.f_sz(d['survey_freq'], d['cosmo'].Tcmb0)
         dT_map = (y_map * d['cosmo'].Tcmb0 * fSZ).to(u.uK)
@@ -483,14 +481,13 @@ def get_r200_and_c200(M200_SM, redshift_z, load_vars_dict):
     '''
     Parameters:
     ----------
-    cosmo: FlatLambaCDM instance
-        background cosmology
-    sigma8: float
-    ns: float
     M200_SM: float
         the mass contained within R200, in units of solar masses
     redshift_z: float
         redshift of the cluster (unitless)
+    load_vars_dict: dict
+        must contain 'cosmo' (a FlatLambaCDM instance describing the background cosmology),
+        'sigma8' (float, around 0.8), and 'ns' (float, around 0.96)
 
     Returns:
     -------
