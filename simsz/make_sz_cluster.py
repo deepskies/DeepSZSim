@@ -110,7 +110,7 @@ def _beta_Battaglia2012(M200_SM, redshift_z):
     return _param_Battaglia2012(4.35, 0.0393, 0.415, M200_SM, redshift_z)
 
 
-def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_mpc = None):
+def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
     '''
     Calculates the P200 pressure of a cluster, as defined in
     Battaglia 2012
@@ -132,17 +132,17 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_mpc = None):
     '''
     cosmo = load_vars_dict['cosmo']
 
-    if R200_mpc is None:
-        R200_mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+    if R200_Mpc is None:
+        R200_Mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     
     GM200 = c.G * M200_SM * u.Msun * 200. * cosmo.critical_density(redshift_z)
-    fbR200 = (cosmo.Ob0 / cosmo.Om0) / (2. * R200_mpc * u.Mpc)  # From Battaglia2012
+    fbR200 = (cosmo.Ob0 / cosmo.Om0) / (2. * R200_Mpc * u.Mpc)  # From Battaglia2012
     P200 = GM200 * fbR200
     P200_kevcm3 = P200.to(u.keV / u.cm**3.)  # Unit conversion to keV/cm^3
     
     return (P200_kevcm3)
 
-def _Pth_Battaglia2012(P0, radius_mpc, R200_mpc, alpha, beta, gamma, xc):
+def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
     '''
     Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
     Equation 10. Pth is unitless. It is normalized by P200
@@ -153,7 +153,7 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_mpc, alpha, beta, gamma, xc):
         the normalization factor/amplitude,
     radius_mpc: float or np.ndarray(float)
         the radius for the pressure to be calculated at, in units of Mpc
-    R200_mpc: float
+    R200_Mpc: float
         the radius of the cluster at 200 times the critical density of the
         universe, in units of Mpc
     alpha: float
@@ -172,13 +172,13 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_mpc, alpha, beta, gamma, xc):
         keV/cm**3)
     '''
     
-    x = radius_mpc / R200_mpc
+    x = radius_mpc / R200_Mpc
     
     Pth = P0 * (x / xc)**gamma * (1 + (x / xc)**alpha)**(-beta)
     
     return (Pth)
 
-def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_mpc = None):
+def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
     '''
     Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
     Equation 10. Pth is unitless. It is normalized by P200
@@ -205,16 +205,16 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1
         keV/cm**3)
     '''
     
-    if R200_mpc is None:
-        R200_mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+    if R200_Mpc is None:
+        R200_Mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     P0 = _P0_Battaglia2012(M200_SM, redshift_z)
     xc = _xc_Battaglia2012(M200_SM, redshift_z)
     beta = _beta_Battaglia2012(M200_SM, redshift_z)
     
-    return _Pth_Battaglia2012(P0, radius_mpc, R200_mpc, alpha, beta, gamma, xc)
+    return _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc)
 
 
-def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_mpc = None):
+def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -255,7 +255,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
         l_mpc = np.linspace(0, np.sqrt(radii_mpc.value.max()**2. - rv**2.)+1.e-5, 1000)  # Get line of sight
         # axis
         th_pressure = profile(np.sqrt(l_mpc**2 + rv**2), M200_SM, redshift_z, load_vars_dict, alpha = alpha,
-                              gamma = gamma, R200_mpc = R200_mpc)
+                              gamma = gamma, R200_Mpc = R200_Mpc)
         th_pressure = th_pressure * P200_kevcm3.value  # pressure as a
         #                                               function of l
         th_pressure = th_pressure * keVcm_to_Jm.value  # Use multiplication
@@ -269,7 +269,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
     return y_pro
 
 
-def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix_size_arcmin, alpha = 1.0, gamma = -0.3, R200_mpc = None):
+def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix_size_arcmin, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -303,7 +303,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix
     y_map = np.empty((X.size, X.size))
     
     R = np.sqrt(X[:,None]**2 + X[None,:]**2).flatten()
-    cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_mpc = R200_mpc)  #
+    cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)  #
     # evaluate compton-y for each
     # neccesary radius
     
@@ -317,7 +317,8 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix
 
 
 def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = None,
-                      image_size = None, pix_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3, R200_mpc = None):
+                      image_size = None, pix_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
+                      R200_Mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -351,13 +352,12 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = No
         return None
     
     if load_vars_dict is not None:
-        cosmo = load_vars_dict['cosmo']
         image_size = load_vars_dict['image_size_arcmin']
         pix_size_arcmin = load_vars_dict['pix_size_arcmin']
     
     y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
                            image_size, pix_size_arcmin,
-                           alpha = alpha, gamma = gamma, R200_mpc = R200_mpc)
+                           alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)
     
     return y_map
 
@@ -431,7 +431,7 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
         else:
             R200 = R200_dist[index]
         
-        y_map = generate_y_submap(M200, z, profile = profile, load_vars_dict = d, R200_mpc = R200)
+        y_map = generate_y_submap(M200, z, profile = profile, load_vars_dict = d, R200_Mpc = R200)
         # get f_SZ for observation frequency
         fSZ = simtools.f_sz(d['survey_freq'], d['cosmo'].Tcmb0)
         dT_map = (y_map * d['cosmo'].Tcmb0 * fSZ).to(u.uK)
@@ -493,7 +493,7 @@ def get_r200_and_c200(M200_SM, redshift_z, load_vars_dict):
     -------
     M200_SM: float
         the mass contained within R200, in units of solar masses
-    R200_mpc: float
+    R200_Mpc: float
         the radius of the cluster at 200 times the critical density of the universe in Mpc
     c200: float
         concentration parameter
@@ -506,10 +506,10 @@ def get_r200_and_c200(M200_SM, redshift_z, load_vars_dict):
     cosmology.addCosmology('myCosmo', **params)
     cosmo_colossus = cosmology.setCosmology('myCosmo')
     
-    M200_SM, R200_mpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM / cosmo.h,
+    M200_SM, R200_Mpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM / cosmo.h,
                                                                   redshift_z, '200c', '200c', c_model = 'ishiyama21')
     M200_SM *= cosmo.h  # From M_solar/h to M_solar
-    R200_mpc = R200_mpc * cosmo.h / 1000  # From kpc/h to Mpc
+    R200_Mpc = R200_Mpc * cosmo.h / 1000  # From kpc/h to Mpc
     # From Mpc proper to Mpc comoving
-    R200_mpc = R200_mpc / cosmo.scale_factor(redshift_z)
-    return M200_SM, R200_mpc, c200
+    R200_Mpc = R200_Mpc / cosmo.scale_factor(redshift_z)
+    return M200_SM, R200_Mpc, c200
