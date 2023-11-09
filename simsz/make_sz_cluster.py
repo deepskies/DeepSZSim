@@ -1,5 +1,5 @@
 import numpy as np
-from simsz import utils, simtools, noise, load_vars
+from simsz import utils, simtools, noise, load_vars, dm_halo_dist
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 
@@ -476,6 +476,151 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
     
     return clusters
 
+
+class simulate_clusters:
+    def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
+                 R200_Mpc = None, cosmo = None, profile = "Battaglia2012",
+                 image_size = None, pix_size_arcmin = None, alpha = 1.0, gamma = -0.3,
+                 load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'inputdata.yaml'),
+                 seed = None
+                 ):
+        
+        if (M200 is not None) and (redshift_z is not None):
+            self.M200, self.redshift_z = M200, redshift_z
+        else:
+            if (num_halos is None):
+                print("must specify `M200` AND `redshift_z` simultaneously,",
+                      "OR a number of halos to generate with `num_halos`"
+                      "along with the arguments for `simsz.dm_halo_dist.flatdist_halo` via `halo_params_dict`.",
+                      "Defaulting to making 100 halos in 0.1<z<1.1, 1e14<M<1e15")
+                num_halos = 100
+            if (halo_params_dict is None):
+                print(f"making {num_halos} clusters uniformly sampled from 0.1<z<1.1, 1e13<M200<1e14")
+                halo_params_dict = {'zmin': 0.1, 'zmax': 1.1, 'm500min_SM': 1e13, 'm500max_SM': 1e14}
+            self.redshift_z, self.M200 = dm_halo_dist.flatdist_halo(halo_params_dict['zmin'],
+                                                                    halo_params_dict['zmax'],
+                                                                    halo_params_dict['m500min_SM'],
+                                                                    halo_params_dict['m500max_SM'],
+                                                                    num_halos, seed = seed)
+        
+        try:
+            self._size = len(self.M200)
+        except TypeError:
+            self.M200, self.redshift_z = np.array([self.M200]), np.array([self.redshift_z])
+            self._size = 1
+        self.clusters = {}
+        
+        if profile != "Battaglia2012":
+            print("only `Battaglia2012` is implemented, using that for now")
+        self.profile = "Battaglia2012"
+        
+        self.vars = load_vars.load_vars(load_vars_yaml)
+        self.image_size = self.vars['image_size_arcmin'] if (image_size is None) else image_size
+        self.pix_size_arcmin = self.vars['pix_size_arcmin'] if (pix_size_arcmin is None) else pix_size_arcmin
+        self.beam_size_arcmin = self.vars['beam_size_arcmin']
+        self.cosmo = self.vars['cosmo']
+        
+        self.alpha, self.gamma = alpha, gamma
+        self.seed, self._rng = seed, np.random.default_rng(seed)
+        
+        if R200_Mpc is not None:
+            self.R200_Mpc = R200_Mpc
+        else:
+            self.R200_Mpc = np.array(
+                [get_r200_and_c200(self.M200[i], self.redshift_z[i], self.vars)[1]
+                 for i in range(self._size)])
+        self.id_list = [
+            str(self.M200[i])[:5] + str(self.redshift_z[i] * 100)[:2] + str(self._rng.integers(10**6)).zfill(6)
+            for i in range(self._size)]
+        self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i], 'redshift_z': self.redshift_z[i],
+                                                            'R200': self.R200_Mpc[i]}} for i in range(self._size)]))
+    
+    def get_y_maps(self):
+        try:
+            return self.y_maps
+        except AttributeError:
+            self.y_maps = np.array([generate_y_submap(self.M200[i],
+                                                      self.redshift_z[i],
+                                                      R200_Mpc = self.R200_Mpc[i],
+                                                      load_vars_dict = self.vars)
+                                    for i in range(self._size)])
+            return self.y_maps
+    
+    def get_dT_maps(self):
+        try:
+            return self.dT_maps
+        except AttributeError:
+            ym = self.get_y_maps()
+            fSZ = simtools.f_sz(self.vars['survey_freq'], self.cosmo.Tcmb0)
+            self.dT_maps = (ym * fSZ * self.cosmo.Tcmb0).to(u.uK).value
+            return self.dT_maps
+    
+    def get_T_maps(self, add_CMB = True):
+        dT_maps = self.get_dT_maps()
+        if add_CMB:
+            self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
+        for i in range(self._size):
+            self.clusters[self.id_list[i]]['params']['dT_central'] = dT_maps[i][self.image_size // 2][
+                self.image_size // 2]
+            self.clusters[self.id_list[i]]['maps'] = {}
+            if add_CMB:
+                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_maps[i], self.ps,
+                                                                            self.pix_size_arcmin,
+                                                                            self.beam_size_arcmin)
+                self.clusters[self.id_list[i]]['maps']['CMB_map'] = cmb_map
+            else:
+                conv_map = simtools.convolve_map_with_gaussian_beam(
+                    self.pix_size_arcmin, self.beam_size_arcmin, dT_map)
+            if not self.vars['noise_level'] == 0:
+                noise_map = noise.generate_noise_map(self.image_size, self.vars['noise_level'],
+                                                     self.pix_size_arcmin)
+            else:
+                noise_map = np.zeros_like(conv_map)
+            final_map = conv_map + noise_map
+            self.clusters[self.id_list[i]]['maps']['conv_map'] = conv_map
+            self.clusters[self.id_list[i]]['maps']['noise_map'] = noise_map
+            self.clusters[self.id_list[i]]['maps']['final_map'] = final_map
+        return self.clusters
+    
+    def ith_T_map(self, i, add_CMB = True):
+        try:
+            return self.clusters[self.id_list[i]]['maps']['final_map']
+        except KeyError:
+            self.get_T_maps(add_CMB = add_CMB)
+            return self.clusters[self.id_list[i]]['maps']['final_map']
+    
+    def save_map(self, i = None, nest_h5 = True, nest_name = None,
+                 savedir = os.path.join(os.path.dirname(__file__), "outfiles")):
+        self.savedir = savedir
+        if not os.path.exists(self.savedir):
+            print(f"making local directory `{self.savedir}`")
+            os.mkdir(self.savedir)
+        try:
+            self.clusters[self.id_list[0]]['maps']
+        except KeyError:
+            self.get_T_maps()
+        if i is not None:
+            with h5py.File(os.path.join(self.savedir, self.id_list[i] + ".h5"), 'w') as f:
+                for k, v in self.clusters[self.id_list[i]]['params'].items():
+                    f.create_dataset('params/' + k, data = float(v))
+                for k, v in self.clusters[self.id_list[i]]['maps'].items():
+                    f.create_dataset('maps/' + k, data = v)
+        elif nest_h5:
+            file_name = str(self._size) + "clusters_" + dt.strftime(dt.now(),
+                                                                    '%y%m%d%H%M%S%f') if nest_name is None else nest_name
+            with h5py.File(os.path.join(self.savedir, file_name + ".h5"), 'w') as f:
+                for j in range(self._size):
+                    for k, v in self.clusters[self.id_list[j]]['params'].items():
+                        f.create_dataset(self.id_list[j] + '/params/' + k, data = float(v))
+                    for k, v in self.clusters[self.id_list[j]]['maps'].items():
+                        f.create_dataset(self.id_list[j] + '/maps/' + k, data = v)
+        else:
+            for i in range(self._size):
+                with h5py.File(os.path.join(self.savedir, self.id_list[i] + ".h5"), 'w') as f:
+                    for k, v in self.clusters[self.id_list[i]]['params'].items():
+                        f.create_dataset('params/' + k, data = float(v))
+                    for k, v in self.clusters[self.id_list[i]]['maps'].items():
+                        f.create_dataset('maps/' + k, data = v)
 
 def get_r200_and_c200(M200_SM, redshift_z, load_vars_dict):
     '''
