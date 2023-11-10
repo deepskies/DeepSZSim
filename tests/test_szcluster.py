@@ -1,6 +1,7 @@
 import pytest
 from simsz.make_sz_cluster import (
-    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, epp_to_y, _make_y_submap)
+    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, epp_to_y, _make_y_submap, generate_y_submap,
+    get_r200_and_c200)
 import simsz.utils as utils
 import numpy as np
 import astropy.units as u
@@ -132,6 +133,41 @@ class TestSZCluster:
         dT_expected = 40.19274417642139
         assert np.isclose(y_map.max(), y_expected),f"Expected {y_expected}, but got {y_map.max()}"
         assert np.isclose(abs(dT_map).max(), dT_expected),f"Expected {dT_expected}, but got {abs(dT_map).max()}"
+
+    def test_generate_y_submap(self):
+        '''
+        Test for the method _make_y_submap,
+        which...
+        '''
+        (cosmo,sigma8,ns) = get_mock_cosmology()
+        radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
+        radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
+        redshift_z=0.48
+        M200=194038855760143.47 #solar masses   
+        R200 = 0.947030177614577
+        P0 = 14.892069375592566
+        xc = 0.6581539098712913
+        beta = 5.253659160509611
+        P200 = P200_Battaglia2012(cosmo, redshift_z, M200, R200)
+        y = epp_to_y(Pth_Battaglia2012, radii, R200_mpc=R200, gamma=-0.3,alpha=1.0,beta=beta,xc=xc,P0=P0, P200_kevcm3=P200)
+        y_map = generate_y_submap(redshift_z, M200, R200, cosmo, 41, 0.5)
+        fSZ_150GhZ = -0.9529784143018927
+        dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
+        y_expected = 1.5477402918128797e-05
+        dT_expected = 40.19274417642139
+        assert np.isclose(y_map.max(), y_expected, atol=1e-04, rtol=1e-2),f"Expected {y_expected}, but got {y_map.max()}"
+        assert np.isclose(abs(dT_map).max(), dT_expected, atol=1, rtol=1e-3),f"Expected {dT_expected}, but got {abs(dT_map).max()}"
+
+    def test_get_r200_and_c200(self):
+        cosmo, sigma8, ns = get_mock_cosmology()
+        M200_SM = 1e14 
+        redshift_z = 0.3
+        result = get_r200_and_c200(cosmo, sigma8, ns, M200_SM, redshift_z)
+        assert np.isclose(result[1], 0.7089471219756236), f"Expected {0.7089471219756236}, but got {result[1]}"
+        assert np.isclose(result[2], 3.738937410169946), f"Expected {3.738937410169946}, but got {result[2]}"
+
+
+        
 
 
 
