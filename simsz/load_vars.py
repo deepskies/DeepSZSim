@@ -53,3 +53,23 @@ def load_vars(file_path = os.path.join(os.path.dirname(__file__), "Settings", "i
     dict["ns"] = cosmo_dict['ns']
     
     return dict
+
+def readh5(fname, fdir = None):
+    fdir = os.path.join(os.path.dirname(__file__), "outfiles") if fdir is None else fdir
+    try:
+        with h5py.File(os.path.join(fdir, fname), "r") as f:
+            fmdict = {'maps':{}, 'params':{}}
+            for m in f['maps']:
+                fmdict['maps'][m] = f['maps/'+m][()]
+            for p in f['params']:
+                fmdict['params'][p] = f['params/'+p][()]
+    except KeyError:
+        with h5py.File(os.path.join(fdir, fname), "r") as f:
+            fmdict = {}
+            for c in f:
+                fmdict[c] = {'maps':{}, 'params':{}}
+                for m in f[c+'/maps']:
+                    fmdict[c]["maps"][m] = f[c+'/maps/'+m][()]
+                for p in f[c+'/params']:
+                    fmdict[c]["params"][p] = f[c+'/params/'+p][()]
+    return fmdict
