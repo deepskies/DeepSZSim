@@ -4,6 +4,7 @@ import simsz.read_yaml as read_yaml
 from typing import Union
 import os
 import sys
+import h5py
 
 def load_vars(file_path = os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml"),
                  survey_num : int = None,
