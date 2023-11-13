@@ -126,3 +126,34 @@ class TestSZCluster:
         assert np.isclose(y_map.max(), y_expected),f"Expected {y_expected}, but got {y_map.max()}"
         assert np.isclose(abs(dT_map).max(), dT_expected),f"Expected {dT_expected}, but got {abs(dT_map).max()}"
 
+    def test_generate_y_submap(self):
+        '''
+        Test for the method _make_y_submap,
+        which...
+        '''
+        (cosmo,sigma8,ns) = get_mock_cosmology()
+        radii=np.linspace(0.01,10,10000) #Generate a space of radii in arcmin
+        radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
+        redshift_z = 1
+        M200 = 1e14 #solar masses
+        y = Pe_to_y(Pth_Battaglia2012, radii, M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 1.0, -0.3)
+        y_map = generate_y_submap(M200, redshift_z, load_vars_dict = {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96,
+                                                                      'image_size_arcmin': 41, 'pix_size_arcmin': 0.5})
+        fSZ_150GhZ = -0.9529784143018927
+        dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
+        y_expected = 1.1667524019195264e-05
+        dT_expected = 30.29899851779931
+        assert np.isclose(y_map.max(), y_expected, atol=1e-04, rtol=1e-5),f"Expected {y_expected}, " \
+                                                                          f"but got {y_map.max()}"
+        assert np.isclose(abs(dT_map).max(), dT_expected, atol=1e-04, rtol=1e-5),f"Expected {dT_expected}, but got " \
+                                                                             f"{abs(dT_map).max()}"
+
+    def test_get_r200_and_c200(self):
+        cosmo, sigma8, ns = get_mock_cosmology()
+        M200_SM = 1e14
+        redshift_z = 1
+        R200_expected = 0.8493839914731125
+        c200_expected = 3.6289273790625938
+        result = get_r200_and_c200(M200_SM, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96})
+        assert np.isclose(result[1], R200_expected), f"Expected {R200_expected}, but got {result[1]}"
+        assert np.isclose(result[2], c200_expected), f"Expected {c200_expected}, but got {result[2]}"
