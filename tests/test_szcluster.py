@@ -1,6 +1,6 @@
 import pytest
 from simsz.make_sz_cluster import (
-    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, epp_to_y, _make_y_submap, generate_y_submap,
+    P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, Pe_to_y, _make_y_submap, generate_y_submap,
     get_r200_and_c200)
 import simsz.utils as utils
 import numpy as np
