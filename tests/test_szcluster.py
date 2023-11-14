@@ -138,7 +138,8 @@ class TestSZCluster:
         M200 = 1e14 #solar masses
         y = Pe_to_y(Pth_Battaglia2012, radii, M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 1.0, -0.3)
         y_map = generate_y_submap(M200, redshift_z, load_vars_dict = {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96,
-                                                                      'image_size_arcmin': 41, 'pix_size_arcmin': 0.5})
+                                                                      'image_size_pixels': 41, 'pixel_size_arcmin':
+                                                                          0.5})
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
         y_expected = 1.1667524019195264e-05
