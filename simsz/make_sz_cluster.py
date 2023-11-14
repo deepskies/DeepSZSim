@@ -121,8 +121,12 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
         the mass contained within R200, in units of solar masses
     redshift_z: float
         the redshift of the cluster (unitless)
-    cosmo: FlatLambaCDM instance
-        background cosmology for density calculation
+    load_vars_dict: instance of load_vars.load_vars()
+        dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+        calculation of R200 and c200)
+    R200_Mpc: None or float
+        if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+        and the cosmology contained in load_vars_dict
 
     Returns:
     --------
@@ -152,18 +156,18 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
     P0: float
         the normalization factor/amplitude,
     radius_mpc: float or np.ndarray(float)
-        the radius for the pressure to be calculated at, in units of Mpc
+        the radius or radii for the pressure to be calculated at, in units of Mpc
     R200_Mpc: float
         the radius of the cluster at 200 times the critical density of the
         universe, in units of Mpc
     alpha: float
-        fixed parameter defined by Battaglia 2012
+        fixed parameter equal to 1.0 in Battaglia 2012
     beta: float
         power law index
     gamma: float
-        fixed paremeter defined by Battaglia 2012
+        fixed paremeter equal to -0.3 in Battaglia 2012
     xc: float
-        fits for the core-scale
+        core-scale radius
 
     Returns:
     --------
@@ -191,12 +195,16 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1
         the mass contained within R200, in units of solar masses
     redshift_z: float
         the redshift of the cluster (unitless)
-    cosmo: FlatLambaCDM instance
-        background cosmology for density calculation
+    load_vars_dict: instance of load_vars.load_vars()
+        dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+        calculation of R200 and c200)
     alpha: float
         variable fixed by Battaglia et al 2012 to 1.0
     gamma: float
         variable fixed by Battaglia et al 2012 to -0.3
+    R200_Mpc: None or float
+        if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+        and the cosmology contained in load_vars_dict
 
     Returns:
     --------
@@ -230,12 +238,16 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
         the mass contained within R200, in units of solar masses
     redshift_z: float
         the redshift of the cluster (unitless)
-    cosmo: FlatLambaCDM instance
-        background cosmology for density calculation
+    load_vars_dict: instance of load_vars.load_vars()
+        dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+        calculation of R200 and c200)
     alpha: float
         variable fixed by Battaglia et al 2012 to 1.0
     gamma: float
         variable fixed by Battaglia et al 2012 to -0.3
+    R200_Mpc: None or float
+        if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+        and the cosmology contained in load_vars_dict
 
     Return:
     -------
@@ -279,14 +291,20 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     profile:
         Method to get thermal pressure profile in Kev/cm^3, accepts radius,
             R200 and **kwargs
+    M200_SM: float
+        mass contained in R200, in units of solar masses
     redshift_z: float
         the redshift of the cluster (unitless)
-    cosmo: FlatLambaCDM instance
-        background cosmology for density calculation
+    load_vars_dict: instance of load_vars.load_vars()
+        dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+        calculation of R200 and c200)
     image_size_pixels: int
         size of final submap in number of pixels
     pixel_size_arcmin: float
         size of each pixel in arcmin
+    R200_Mpc: None or float
+        if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+        and the cosmology contained in load_vars_dict
 
     Return:
     -------
@@ -316,7 +334,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     return y_map
 
 
-def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = None,
+def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
                       image_size_pixels = None, pixel_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
                       R200_Mpc = None):
     '''
@@ -331,8 +349,6 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = No
         the redshift of the cluster (unitless)
     profile: str
         Name of profile, currently only supports "Battaglia2012"
-    cosmo: FlatLambaCDM instance
-        background cosmology for density calculation
     image_size_pixels: float
         num pixels to each side of center; end shape of submap will be 
         (image_size_pixels, image_size_pixels)
@@ -341,6 +357,9 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = No
     load_vars_dict: dict
         result of running the load_vars() function, which includes a dictionary of cosmological and experimental
         parameters
+    R200_Mpc: None or float
+        if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+        and the cosmology contained in load_vars_dict
 
     Return:
     ------
@@ -381,16 +400,20 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
     id_dist: float or array-like of float, optional
         id of the sim or cluster (same length as M200_dist), 
         generated if not given
+    profile: str
+        Name of profile, currently only supports "Battaglia2012"
     savedir : str, default CWD/outfiles
-            directory into which results will be saved
+        directory into which results will be saved
+    saverun: bool
+        whether or not to save runs
     R200_dist: float or array-like of float, optional
         the radius of the cluster at 200 times the critical density of the 
         universe in Mpc (same length as M200_dist), calculated via colossus 
         if not given
     add_cmb: bool
         To add background cmb or not, defualt True
-    settings_yaml : str, default CWD/simsz/Settings/inputdata.yaml
-            path to yaml file with params
+    load_vars_yaml : str, default CWD/simsz/Settings/inputdata.yaml
+        path to yaml file with params
 
     Return:
     ------
@@ -479,12 +502,44 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
 
 class simulate_clusters:
     def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
-                 R200_Mpc = None, cosmo = None, profile = "Battaglia2012",
+                 R200_Mpc = None, profile = "Battaglia2012",
                  image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
                  alpha = 1.0, gamma = -0.3,
                  load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'inputdata.yaml'),
                  seed = None
                  ):
+        """
+        Parameters
+        ----------
+        M200_dist: float or array-like of float
+            the mass contained within R200 in solar masses (same length as z_dist)
+        z_dist: float or array-like of float
+            the redshift of the cluster (unitless) (same length as M200_dist)
+        num_halos: None or int
+            number of halos to simulate if none supplied
+        halo_params_dict: None or dict
+            parameters from which to sample halos if num_halos specified,
+            must contain zmin, zmax, m500min_SM, m500max_SM
+        R200_Mpc: None or float or np.ndarray(float)
+            if None, will calculate the R200 values corresponding to a given set of
+            M200 and redshift_z values for the specified cosmology
+        profile: str
+            Name of profile, currently only supports "Battaglia2012"
+        image_size_pixels: None or int
+            image size in pixels (should be odd)
+        image_size_arcmin: None or float
+            image size in arcmin
+        pixel_size_arcmin: None or float
+            pixel size in arcmin
+        alpha: float
+            fixed to equal 1.0 in Battaglia 2012
+        gamma: float
+            fixed to equal -0.3 in Battaglia 2012
+        load_vars_yaml: str
+            path to yaml file with params
+        seed: None or int
+            random seed value to sample with
+        """
         
         if (M200 is not None) and (redshift_z is not None):
             self.M200, self.redshift_z = M200, redshift_z
@@ -540,6 +595,13 @@ class simulate_clusters:
             self._size)]))
     
     def get_y_maps(self):
+        """
+        
+        Returns
+        -------
+        np.ndarray(float)
+            self._size many maps of the Compton `y` value, each of which is image_size_pixels x image_size_pixels in size
+        """
         try:
             return self.y_maps
         except AttributeError:
@@ -551,6 +613,14 @@ class simulate_clusters:
             return self.y_maps
     
     def get_dT_maps(self):
+        """
+        
+        Returns
+        -------
+        np.ndarray(float)
+            self._size many maps of the dT values in units of uK, each of which is image_size_pixels x
+            image_size_pixels in size
+        """
         try:
             return self.dT_maps
         except AttributeError:
@@ -560,6 +630,18 @@ class simulate_clusters:
             return self.dT_maps
     
     def get_T_maps(self, add_CMB = True):
+        """
+        Parameters
+        ----------
+        add_CMB: bool
+            whether or not to include the CMB contribution to the final map
+        
+        Returns
+        -------
+        np.ndarray(float)
+            self._size many maps of the sky in units of uK, each of which is image_size_pixels x image_size_pixels in
+            size
+        """
         dT_maps = self.get_dT_maps()
         if add_CMB:
             self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
@@ -587,6 +669,19 @@ class simulate_clusters:
         return self.clusters
     
     def ith_T_map(self, i, add_CMB = True):
+        """
+        Parameters
+        ----------
+        i: int
+            the map you want to return
+        add_CMB: bool
+            whether or not to include the CMB contribution to the final map
+        
+        Returns
+        -------
+        np.ndarray(float)
+            the ith map of the sky in units of uK, which is image_size_pixels x image_size_pixels in size
+        """
         try:
             return self.clusters[self.id_list[i]]['maps']['final_map']
         except KeyError:
@@ -595,6 +690,20 @@ class simulate_clusters:
     
     def save_map(self, i = None, nest_h5 = True, nest_name = None,
                  savedir = os.path.join(os.path.dirname(__file__), "outfiles")):
+        """
+        Parameters
+        ----------
+        i: None or int
+            the map you want to save, if you only want to save a single map
+        nest_h5: bool
+            whether or not to nest the clusters into a single h5 file, assuming that you are saving all of the
+            clusters that you have calculated
+        nest_name: None or str
+            a name for the overall file if you are nesting them (otherwise, it will name it with the number of
+            clusters plus the date plus a random string)
+        savedir: str
+            the path to the directory you want to save into
+        """
         self.savedir = savedir
         if not os.path.exists(self.savedir):
             print(f"making local directory `{self.savedir}`")
