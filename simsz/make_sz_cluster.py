@@ -269,7 +269,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
     return y_pro
 
 
-def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix_size_arcmin, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
+def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixels, pixel_size_arcmin, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -283,22 +283,22 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix
         the redshift of the cluster (unitless)
     cosmo: FlatLambaCDM instance
         background cosmology for density calculation
-    image_size: float
-        size of final submap
-    pix_size_arcmin: float
+    image_size_pixels: int
+        size of final submap in number of pixels
+    pixel_size_arcmin: float
         size of each pixel in arcmin
 
     Return:
     -------
     y_map: array
-        Compton-y submap with shape (image_size, image_size)
+        Compton-y submap with shape (image_size_pixels, image_size_pixels)
     '''
     
-    X = np.linspace(-image_size * pix_size_arcmin / 2,
-                    image_size * pix_size_arcmin / 2, image_size)
+    X = np.linspace(-image_size_pixels * pixel_size_arcmin / 2,
+                    image_size_pixels * pixel_size_arcmin / 2, image_size_pixels)
     X = utils.arcmin_to_Mpc(X, redshift_z, load_vars_dict['cosmo'])
     # Solves issues of div by 0
-    X[(X <= pix_size_arcmin / 10) & (X >= -pix_size_arcmin / 10)] = pix_size_arcmin / 10
+    X[(X <= pixel_size_arcmin / 10) & (X >= -pixel_size_arcmin / 10)] = pixel_size_arcmin / 10
     
     y_map = np.empty((X.size, X.size))
     
@@ -317,7 +317,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size, pix
 
 
 def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = None,
-                      image_size = None, pix_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
+                      image_size_pixels = None, pixel_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
                       R200_Mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
@@ -333,10 +333,10 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = No
         Name of profile, currently only supports "Battaglia2012"
     cosmo: FlatLambaCDM instance
         background cosmology for density calculation
-    image_size: float
+    image_size_pixels: float
         num pixels to each side of center; end shape of submap will be 
-        (2*image_size +1, 2*image_size +1)
-    pix_size_arcmin: float
+        (image_size_pixels, image_size_pixels)
+    pixel_size_arcmin: float
         size of each pixel in arcmin
     load_vars_dict: dict
         result of running the load_vars() function, which includes a dictionary of cosmological and experimental
@@ -345,18 +345,18 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", cosmo = No
     Return:
     ------
     y_map: array
-        Compton-y submap with dimension (2*image_size +1 , 2*image_size +1)
+        Compton-y submap with dimension (image_size_pixels, image_size_pixels)
     '''
     if profile != "Battaglia2012":
         print("only implementing Battaglia2012")
         return None
     
     if load_vars_dict is not None:
-        image_size = load_vars_dict['image_size_arcmin']
-        pix_size_arcmin = load_vars_dict['pix_size_arcmin']
+        image_size_pixels = load_vars_dict['image_size_pixels']
+        pixel_size_arcmin = load_vars_dict['pixel_size_arcmin']
     
     y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
-                           image_size, pix_size_arcmin,
+                           image_size_pixels, pixel_size_arcmin,
                            alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)
     
     return y_map
@@ -437,7 +437,7 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
         dT_map = (y_map * d['cosmo'].Tcmb0 * fSZ).to(u.uK)
         
         cluster = {'M200': M200, 'R200': R200, 'redshift_z': z,
-                   'y_central': y_map[d['image_size_arcmin'] // 2][d['image_size_arcmin'] // 2]}
+                   'y_central': y_map[d['image_size_pixels'] // 2][d['image_size_pixels'] // 2]}
         
         if id_dist is not None:
             cluster['ID'] = id_dist[index]
@@ -449,17 +449,17 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
         if add_cmb:
             conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_map,
                                                                   ps,
-                                                                  d['pix_size_arcmin'],
+                                                                  d['pixel_size_arcmin'],
                                                                   d['beam_size_arcmin'])
             cluster['CMB_map'] = cmb_map
         
         else:
             conv_map = simtools.convolve_map_with_gaussian_beam(
-                d['pix_size_arcmin'], d['beam_size_fwhp_arcmin'], dT_map)
+                d['pixel_size_arcmin'], d['beam_size_fwhp_arcmin'], dT_map)
         
         if not d['noise_level'] == 0:
-            noise_map = noise.generate_noise_map(d['image_size_arcmin'],
-                                                 d['noise_level'], d['pix_size_arcmin'])
+            noise_map = noise.generate_noise_map(d['image_size_pixels'],
+                                                 d['noise_level'], d['pixel_size_arcmin'])
             final_map = conv_map + noise_map
             
             cluster['noise_map'] = noise_map
@@ -480,7 +480,8 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
 class simulate_clusters:
     def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
                  R200_Mpc = None, cosmo = None, profile = "Battaglia2012",
-                 image_size = None, pix_size_arcmin = None, alpha = 1.0, gamma = -0.3,
+                 image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
+                 alpha = 1.0, gamma = -0.3,
                  load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'inputdata.yaml'),
                  seed = None
                  ):
@@ -515,8 +516,9 @@ class simulate_clusters:
         self.profile = "Battaglia2012"
         
         self.vars = load_vars.load_vars(load_vars_yaml)
-        self.image_size = self.vars['image_size_arcmin'] if (image_size is None) else image_size
-        self.pix_size_arcmin = self.vars['pix_size_arcmin'] if (pix_size_arcmin is None) else pix_size_arcmin
+        self.image_size_pixels = self.vars['image_size_pixels'] if (image_size_pixels is None) else image_size_pixels
+        self.image_size_arcmin = self.vars['image_size_arcmin'] if (image_size_arcmin is None) else image_size_arcmin
+        self.pixel_size_arcmin = self.vars['pixel_size_arcmin'] if (pixel_size_arcmin is None) else pixel_size_arcmin
         self.beam_size_arcmin = self.vars['beam_size_arcmin']
         self.cosmo = self.vars['cosmo']
         
@@ -533,7 +535,9 @@ class simulate_clusters:
             str(self.M200[i])[:5] + str(self.redshift_z[i] * 100)[:2] + str(self._rng.integers(10**6)).zfill(6)
             for i in range(self._size)]
         self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i], 'redshift_z': self.redshift_z[i],
-                                                            'R200': self.R200_Mpc[i]}} for i in range(self._size)]))
+                                                            'R200': self.R200_Mpc[i], 'image_size_pixels' : self.image_size_pixels}} for
+                                                i in range(
+            self._size)]))
     
     def get_y_maps(self):
         try:
@@ -560,20 +564,20 @@ class simulate_clusters:
         if add_CMB:
             self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
         for i in range(self._size):
-            self.clusters[self.id_list[i]]['params']['dT_central'] = dT_maps[i][self.image_size // 2][
-                self.image_size // 2]
+            self.clusters[self.id_list[i]]['params']['dT_central'] = dT_maps[i][self.image_size_pixels // 2][
+                self.image_size_pixels // 2]
             self.clusters[self.id_list[i]]['maps'] = {}
             if add_CMB:
                 conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_maps[i], self.ps,
-                                                                            self.pix_size_arcmin,
+                                                                            self.pixel_size_arcmin,
                                                                             self.beam_size_arcmin)
                 self.clusters[self.id_list[i]]['maps']['CMB_map'] = cmb_map
             else:
                 conv_map = simtools.convolve_map_with_gaussian_beam(
-                    self.pix_size_arcmin, self.beam_size_arcmin, dT_map)
+                    self.pixel_size_arcmin, self.beam_size_arcmin, dT_map)
             if not self.vars['noise_level'] == 0:
-                noise_map = noise.generate_noise_map(self.image_size, self.vars['noise_level'],
-                                                     self.pix_size_arcmin)
+                noise_map = noise.generate_noise_map(self.image_size_pixels, self.vars['noise_level'],
+                                                     self.pixel_size_arcmin)
             else:
                 noise_map = np.zeros_like(conv_map)
             final_map = conv_map + noise_map

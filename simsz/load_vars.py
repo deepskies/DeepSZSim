@@ -7,10 +7,11 @@ import sys
 import h5py
 
 def load_vars(file_path = os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml"),
-                 survey_num : int = None,
-                 survey_name : str = None,
-                 survey_freq_val : int = None,
-                 cosmo_name : str = None):
+              survey_num : int = None,
+              survey_name : str = None,
+              survey_freq_val : int = None,
+              cosmo_name : str = None,
+              enforce_odd_pix : bool = True):
     file_path = file_path
     dict = {}
     ref = read_yaml.YAMLOperator(file_path).parse_yaml()
@@ -34,8 +35,33 @@ def load_vars(file_path = os.path.join(os.path.dirname(__file__), "Settings", "i
     dict["survey_freq"] = survey_freq
     dict["beam_size_arcmin"] = ref['SURVEYS'][survey][survey_freq]['beam_size']
     dict["noise_level"] = ref['SURVEYS'][survey][survey_freq]['noise_level']
-    dict["image_size_arcmin"] = ref['IMAGES']['image_size']
-    dict["pix_size_arcmin"] = ref['IMAGES']['pix_size']
+    img_params_specified = list(ref['IMAGES'].keys())
+    img_params_all = ('image_size_pixels', 'image_size_arcmin', 'pixel_size_arcmin')
+    if len(img_params_specified) == 2:
+        for p in img_params_specified:
+            dict[p] = ref['IMAGES'][p]
+        if img_params_all[0] not in img_params_specified:
+            dict[img_params_all[0]] = dict[img_params_all[1]]/dict[img_params_all[2]]+1
+        elif img_params_all[1] not in img_params_specified:
+            dict[img_params_all[1]] = (dict[img_params_all[0]]-1)*dict[img_params_all[2]]
+        else:
+            dict[img_params_all[2]] = dict[img_params_all[1]]/(dict[img_params_all[0]]-1)
+    elif len(img_params_specified) < 2:
+        print(f"two of {img_params_all} should be specified -- exiting")
+        return None
+    else:
+        print(f"only two of {img_params_all} should be specified -- using `image_size_pixels` and `pixel_size_arcmin`")
+        for p in img_params_specified:
+            dict[p] = ref['IMAGES'][p]
+        dict[img_params_all[1]] = (dict[img_params_all[0]]-1) * dict[img_params_all[2]]
+    if (dict[img_params_all[0]]%2 == 0) and (enforce_odd_pix):
+        dict[img_params_all[0]] += 1
+        dict[img_params_all[1]] = (dict[img_params_all[0]]-1)*dict[img_params_all[2]]
+        print(f"you specified `image_size_pixels = {dict[img_params_all[0]] - 1}`, but we strongly encourage having an "
+              f"odd number of pixels because the central value should be the maximum, so we added one to your number "
+              f"of pixels, such that now `image_size_pixels = {dict[img_params_all[0]]}`. If however you are "
+              f"absolutely certain you want an even number of pixels, please rerun this command with "
+              f"`enforce_odd_pix` set to `False`.")
     if len(list(ref['COSMOLOGY'].keys())) == 1:
         cosmo_dict = ref['COSMOLOGY'][list(ref['COSMOLOGY'].keys())[0]] #Read in cosmological parameters
     elif cosmo_name is not None:
