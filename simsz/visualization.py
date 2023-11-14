@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.colors import LogNorm
 from simsz.utils import arcmin_to_Mpc
 
@@ -30,6 +31,12 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
         title, xlabel, ylabel, cbarlabel, width = specs['title'], specs['xlabel'], specs['ylabel'], \
                                                   specs['cbarlabel'], specs['width']
     if logNorm:
+        if np.max(image)<=0:
+            print("entire image is negative; displaying -1 times the input")
+            image *= -1
+        elif np.min(image)<=0:
+            print("some of the image is negative; clipping at `np.min(np.abs(image))`")
+            image = np.maximum(image, np.min(np.abs(image)))
         im = plt.imshow(image, norm=LogNorm())
     else:
         im = plt.imshow(image)
