@@ -6,13 +6,41 @@ import os
 import sys
 import h5py
 
-def load_vars(file_path = os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml"),
+def load_vars(file_name= "inputdata.yaml",
+              file_dir = os.path.join(os.path.dirname(__file__), "Settings"),
               survey_num : int = None,
               survey_name : str = None,
               survey_freq_val : int = None,
               cosmo_name : str = None,
               enforce_odd_pix : bool = True):
-    file_path = file_path
+    """
+    
+    Parameters
+    ----------
+    file_name: str
+        name of a yaml file that specifies the variables that you want to simulate
+    file_dir: str
+        path to the yaml file named in `file_name`
+    survey_num: None or int
+        optional -- if there are multiple surveys, choose one by its position in the list
+    survey_name: None or str
+        optional -- if there are multiple surveys, choose one by its name
+    survey_freq_val: None or int
+        optional -- if a survey has multiple frequencies, choose a frequency by its value (in GHz)
+    cosmo_name: None or str
+        optional -- if there are multiple cosmologies, choose one by its name
+    enforce_odd_pix: bool
+        whether or not to enforce an odd number of pixels in the simulated image (defaults to true so that the
+        central pixel has the maximal y-value
+
+    Returns
+    -------
+    dict
+        a dictionary that will enable you to simulate SZ clusters with a given cosmology and set of observational
+        properties.
+
+    """
+    file_path = os.path.join(file_dir, file_name)
     dict = {}
     ref = read_yaml.YAMLOperator(file_path).parse_yaml()
     if len(list(ref['SURVEYS'].keys())) == 1:
@@ -69,19 +97,31 @@ def load_vars(file_path = os.path.join(os.path.dirname(__file__), "Settings", "i
     else:
         print("specify cosmology name with `cosmo_name`")
         sys.exit()
-    if cosmo_dict['flat']:
-        dict["cosmo"] = FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0 = cosmo_dict['t_cmb'],
-                                           Ob0 = cosmo_dict['Omega_b0'])
-    else:
+    if not cosmo_dict['flat']:
         print("only flat cosmology supported at this time")
-        dict["cosmo"] = FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0 = cosmo_dict['t_cmb'],
-                                           Ob0 = cosmo_dict['Omega_b0'])
+    dict["cosmo"] = FlatLambdaCDM(cosmo_dict['H0'], cosmo_dict['Omega_m0'], Tcmb0 = cosmo_dict['t_cmb'],
+                                  Ob0 = cosmo_dict['Omega_b0'])
     dict["sigma8"] = cosmo_dict['sigma8']
     dict["ns"] = cosmo_dict['ns']
     
     return dict
 
 def readh5(fname, fdir = None):
+    """
+    
+    Parameters
+    ----------
+    fname: str
+        name of the file you want to read (must include the suffix, eg '.h5' or '.hd5' or '.hdf5')
+    fdir: None or str
+        path to the directory that contains the file you want to read
+    Returns
+    -------
+    dict
+        dictionary that represents a single cluster (if `fname` represents a single cluster) or a nested set of
+        clusters. Each cluster that is returned will itself have a dictionary with 'maps' and 'params' as keys,
+        containing the output maps and the parameters that were used to make them, respectively
+    """
     fdir = os.path.join(os.path.dirname(__file__), "outfiles") if fdir is None else fdir
     try:
         with h5py.File(os.path.join(fdir, fname), "r") as f:
