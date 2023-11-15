@@ -1,3 +1,7 @@
+"""
+package for realistically simulating the Sunyaev-Zel'dovich effect of clusters
+"""
+
 import simsz.make_sz_cluster as make_sz_cluster
 import simsz.dm_halo_dist as dm_halo_dist
 import simsz.visualization as visualization

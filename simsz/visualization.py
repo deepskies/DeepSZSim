@@ -21,6 +21,8 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
         label of the y-axis
     cbarlabel - str
         label of the color bar
+    width: int
+        half rounded down of the width of output plot in pixels (eg, image size = 2*width+1)
 
     Returns:
     -------
