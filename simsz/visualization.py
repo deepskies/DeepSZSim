@@ -1,8 +1,11 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.colors import LogNorm
 from simsz.utils import arcmin_to_Mpc
 
-def plot_graphs(image, title, xlabel, ylabel, cbarlabel, width  = 10, extend = False, logNorm = False):
+def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = None, width = None, specs = None,
+                extend = False,
+                logNorm = False):
     '''
     Plotting tool function for our 2D submaps and CMB maps. 
     
@@ -18,13 +21,24 @@ def plot_graphs(image, title, xlabel, ylabel, cbarlabel, width  = 10, extend = F
         label of the y-axis
     cbarlabel - str
         label of the color bar
+    width: int
+        half rounded down of the width of output plot in pixels (eg, image size = 2*width+1)
 
     Returns:
     -------
     none
     '''
     
+    if specs is not None:
+        title, xlabel, ylabel, cbarlabel, width = specs['title'], specs['xlabel'], specs['ylabel'], \
+                                                  specs['cbarlabel'], specs['width']
     if logNorm:
+        if np.max(image)<=0:
+            print("entire image is negative; displaying -1 times the input")
+            image *= -1
+        elif np.min(image)<=0:
+            print("some of the image is negative; clipping at `np.min(np.abs(image))`")
+            image = np.maximum(image, np.min(np.abs(image)))
         im = plt.imshow(image, norm=LogNorm())
     else:
         im = plt.imshow(image)
@@ -124,3 +138,13 @@ def plot_pdf(xr, title, func=None, args=None, label='ITS method',
     plt.xlabel(r'$mass$')
     plt.legend(loc='best', frameon=False, fontsize=3*figsize)
     plt.show()
+
+
+def plotting_specs(cluster):
+    out = {}
+    out['title'] = f"M200 = {cluster['params']['M200']:.2e}, z = {cluster['params']['redshift_z']:.3f}"
+    out['xlabel'] = "arcmin"
+    out['ylabel'] = "arcmin"
+    out['cbarlabel'] = "Compton y"
+    out['width'] = (cluster['params']['image_size_pixels']-1)//2
+    return out
