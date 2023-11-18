@@ -1,3 +1,7 @@
+"""
+utils: unit conversions and data saving functions
+"""
+
 import numpy as np
 import os
 
@@ -74,27 +78,6 @@ def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
     gaussian = gaussian / np.sum(gaussian)
 
     return(gaussian)
-
-
-#def calc_scale_factor(z): #Replace with AstroPy
-#    """
-#    calculate the cosmic expansion scale factor
-#    """
-#    a = 1. + z
-
-#     return a
-
-
-#def calc_rho_critical(a,cosmo,m_sun):
-#    """
-#    calculate critical density
-#    """
-#    H_0=cosmo_h*100
-#    Mpc_to_m=3.09e22
-#    omega_d=1.0-(omega_m+omega_b)
-#    rho_critical = (3 * H_0 ** 2)/(8 * np.pi * G) * (omega_m * a ** 3 + omega_d) / m_sun * Mpc_to_m ** 3       #msolar / MPC^3
-
-#    return rho_critical
 
 def save_sim_to_h5(file, name, data, attributes={}, overwrite=False):
     '''

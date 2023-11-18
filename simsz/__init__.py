@@ -1,5 +1,5 @@
 """
-package for realistically simulating the Sunyaev-Zel'dovich effect of clusters
+package for fast simulations of the Sunyaev-Zel'dovich effect from galaxy clusters
 """
 
 import simsz.make_sz_cluster as make_sz_cluster

@@ -1,3 +1,7 @@
+"""
+simtools: beam convolution, SZ function and CMB simulation tools 
+"""
+
 from simsz import utils
 import scipy
 import numpy as np

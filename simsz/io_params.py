@@ -1,3 +1,7 @@
+"""
+io_params: CAMB and yaml-handling tools  
+"""
+
 import yaml
 import numpy as np
 import re

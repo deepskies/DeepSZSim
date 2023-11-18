@@ -1,3 +1,7 @@
+"""
+make_sz_cluster: pressure profile, Compton-y, R200, C200 and temperature submap generating functions based on halo redshift and mass information
+"""
+
 import numpy as np
 from simsz import utils, simtools, noise, load_vars, dm_halo_dist
 from colossus.cosmology import cosmology
@@ -16,7 +20,7 @@ thermal_to_electron_pressure = 1 / 1.932  # from Battaglia 2012, assumes
 
 def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
     '''
-    Calculates independent params as using the formula from Battaglia 2012, Equation 11
+    Calculates independent params using the formula from Battaglia 2012, Equation 11
     in order for use in the pressure profile defined in Equation 10
 
     Parameters:
