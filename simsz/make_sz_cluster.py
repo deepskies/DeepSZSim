@@ -320,19 +320,21 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
                     image_size_pixels * pixel_size_arcmin / 2, image_size_pixels)
     X = utils.arcmin_to_Mpc(X, redshift_z, load_vars_dict['cosmo'])
     # Solves issues of div by 0
-    X[(X <= pixel_size_arcmin / 10) & (X >= -pixel_size_arcmin / 10)] = pixel_size_arcmin / 10
+    #X[(X <= pixel_size_arcmin / 10) & (X >= -pixel_size_arcmin / 10)] = pixel_size_arcmin / 10
     
     y_map = np.empty((X.size, X.size))
     
-    R = np.sqrt(X[:,None]**2 + X[None,:]**2).flatten()
+    R = np.maximum(pixel_size_arcmin*0.1,  np.sqrt(X[:,None]**2 + X[None,:]**2).flatten() )
     cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)  #
     # evaluate compton-y for each
     # neccesary radius
     
     for i, x in enumerate(X):
         for j, y in enumerate(X):
-            y_map[i][j] = cy[np.where(np.isclose(R, np.sqrt(x**2 + y**2),
-                                                 atol=1.e-10, rtol=1.e-10))[0]][0]
+            y_map[i][j] = cy[np.where(np.isclose(R, 
+                                                 np.maximum(pixel_size_arcmin*0.1,
+                                                             np.sqrt(x**2 + y**2)), 
+                                                             atol=1.e-10, rtol=1.e-10))[0]][0]
     # assign the correct compton-y to the radius
     
     return y_map
