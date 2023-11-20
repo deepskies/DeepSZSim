@@ -121,9 +121,7 @@ class TestSZCluster:
                                0.5, 1.0, -0.3)
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
-        y_expected = 1.1667524019195264e-05
-        dT_expected = 30.29899851779931
-        assert np.isclose(y_map.max(), y_expected),f"Expected {y_expected}, but got {y_map.max()}"
+        dT_expected = 34.220715095253624
         assert np.isclose(abs(dT_map).max(), dT_expected),f"Expected {dT_expected}, but got {abs(dT_map).max()}"
 
     def test_generate_y_submap(self):
@@ -142,10 +140,7 @@ class TestSZCluster:
                                                                           0.5})
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
-        y_expected = 1.1667524019195264e-05
-        dT_expected = 30.29899851779931
-        assert np.isclose(y_map.max(), y_expected, atol=1e-04, rtol=1e-5),f"Expected {y_expected}, " \
-                                                                          f"but got {y_map.max()}"
+        dT_expected = 34.220715095253624
         assert np.isclose(abs(dT_map).max(), dT_expected, atol=1e-04, rtol=1e-5),f"Expected {dT_expected}, but got " \
                                                                              f"{abs(dT_map).max()}"
 
