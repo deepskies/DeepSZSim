@@ -1,5 +1,5 @@
 """
-utils: unit conversions and data saving functions
+unit conversions and data saving functions
 """
 
 import numpy as np
