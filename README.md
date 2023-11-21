@@ -4,9 +4,9 @@ Code for producing fast simulations of the SZ effect for galaxy halos of varying
 
 ## Installation 
 
-Sam to add more here on installation instructions.
+We provide an environment specification file for `conda` or `mamba` users at `environment.yml`. With `conda`, an environment is created by `conda env create -f environment.yml`. With `micromamba` the `env` is omitted and a new environment is instead created with `micromamba create -f environment.yml`.
 
-The simulated CMB signal relies on `camb`. 
+The simulated CMB signal relies on `camb` and utilities for saving rely on `h5py`.
 
 From the top-level directory, you can do `pip install .`
 
