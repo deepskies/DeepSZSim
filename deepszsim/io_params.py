@@ -1,5 +1,5 @@
 """
-io_params: CAMB and yaml-handling tools  
+CAMB and yaml-handling tools  
 """
 
 import yaml
