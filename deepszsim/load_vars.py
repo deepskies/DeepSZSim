@@ -1,5 +1,5 @@
 """
-load_vars: read-in functions for input parameter yaml and h5 files  
+read-in functions for input parameter yaml and h5 files  
 """
 
 import astropy
