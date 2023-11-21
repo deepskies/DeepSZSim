@@ -4,7 +4,7 @@ load_vars: read-in functions for input parameter yaml and h5 files
 
 import astropy
 from astropy.cosmology import FlatLambdaCDM
-import simsz.read_yaml as read_yaml
+import deepszsim.read_yaml as read_yaml
 from typing import Union
 import os
 import sys

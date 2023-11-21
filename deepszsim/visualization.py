@@ -5,7 +5,7 @@ visualization: plotting functions
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LogNorm, SymLogNorm
-from simsz.utils import arcmin_to_Mpc
+from deepszsim.utils import arcmin_to_Mpc
 
 def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = None, width = None, specs = None,
                 extend = False,

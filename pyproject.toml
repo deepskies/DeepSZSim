@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "simsz"
+name = "deepszsim"
 version = "0.1.0"
 description = "code for fast simulations of galaxy clusters"
 authors = [{name = "Eve Vavagiakis", email = "ev66@cornell.edu"}]

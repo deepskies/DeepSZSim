@@ -3,7 +3,7 @@ make_sz_cluster: pressure profile, Compton-y, R200, C200 and temperature submap 
 """
 
 import numpy as np
-from simsz import utils, simtools, noise, load_vars, dm_halo_dist
+from deepszsim import utils, simtools, noise, load_vars, dm_halo_dist
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 
@@ -418,7 +418,7 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
         if not given
     add_cmb: bool
         To add background cmb or not, defualt True
-    load_vars_yaml : str, default CWD/simsz/Settings/inputdata.yaml
+    load_vars_yaml : str, default CWD/deepszsim/Settings/inputdata.yaml
         path to yaml file with params
 
     Return:
@@ -553,7 +553,7 @@ class simulate_clusters:
             if (num_halos is None):
                 print("must specify `M200` AND `redshift_z` simultaneously,",
                       "OR a number of halos to generate with `num_halos`"
-                      "along with the arguments for `simsz.dm_halo_dist.flatdist_halo` via `halo_params_dict`.",
+                      "along with the arguments for `deepszsim.dm_halo_dist.flatdist_halo` via `halo_params_dict`.",
                       "Defaulting to making 100 halos in 0.1<z<1.1, 1e14<M<1e15")
                 num_halos = 100
             if (halo_params_dict is None):

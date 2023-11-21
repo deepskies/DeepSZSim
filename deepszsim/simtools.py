@@ -2,7 +2,7 @@
 simtools: beam convolution, SZ function and CMB simulation tools 
 """
 
-from simsz import utils
+from deepszsim import utils
 import scipy
 import numpy as np
 import astropy.constants as c
