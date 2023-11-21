@@ -1,5 +1,5 @@
 """
-filters: submap filtering tools to analyze SZ submaps
+submap filtering tools to analyze SZ submaps
 """
 
 import numpy as np
