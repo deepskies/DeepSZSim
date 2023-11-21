@@ -1,5 +1,5 @@
 """
-simtools: beam convolution, SZ function and CMB simulation tools 
+beam convolution, SZ function and CMB simulation tools 
 """
 
 from deepszsim import utils
