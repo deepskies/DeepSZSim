@@ -1,6 +1,6 @@
 import pytest
-from simsz.simtools import f_sz, convolve_map_with_gaussian_beam
-import simsz.utils as utils
+from deepszsim.simtools import f_sz, convolve_map_with_gaussian_beam
+import deepszsim.utils as utils
 import scipy
 import numpy as np
 import astropy.constants as c
