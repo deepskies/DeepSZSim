@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import pytest
-from simsz.utils import arcmin_to_Mpc, Mpc_to_arcmin
+from deepszsim.utils import arcmin_to_Mpc, Mpc_to_arcmin
 import astropy.units as u
 from astropy.cosmology import FlatLambdaCDM
 
