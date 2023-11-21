@@ -1,5 +1,5 @@
 """
-make_sz_cluster: pressure profile, Compton-y, R200, C200 and temperature submap generating functions based on halo redshift and mass information
+pressure profile, Compton-y, R200, C200 and temperature submap generating functions based on halo redshift and mass information
 """
 
 import numpy as np
