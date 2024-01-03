@@ -6,6 +6,7 @@ import numpy as np
 from deepszsim import utils, simtools, noise, load_vars, dm_halo_dist
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
+import abel
 
 from astropy import constants as c
 from astropy import units as u
@@ -14,8 +15,10 @@ import h5py
 from datetime import datetime as dt
 import shutil
 
-keVcm_to_Jm = (1 * u.keV / (u.cm**3.)).to(u.J / (u.m**3.))
+keVcm3_to_Jm3 = ((1 * u.keV / (u.cm**3.)).to(u.J / (u.m**3.))).value
 thermal_to_electron_pressure = 1 / 1.932  # from Battaglia 2012, assumes
+Mpc_to_m = (1 * u.Mpc).to(u.m).value
+Thomson_scale = (c.sigma_T/(c.m_e * c.c**2)).value
 # fully ionized medium
 
 def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
@@ -258,30 +261,26 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
     y_pro: array
         Compton-y profile corresponding to the radii
     '''
-    radii_mpc = radii_mpc * u.Mpc
+    radii_mpc = (radii_mpc * u.Mpc).value
     pressure_integ = np.empty(radii_mpc.size)
-    P200_kevcm3 = P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict)
+    P200_kevcm3 = P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict).value
     if profile == "Battaglia2012":
         profile = Pth_Battaglia2012
     
     for i, radius in enumerate(radii_mpc):
         # Multiply profile by P200 specifically for Battaglia 2012 profile,
         # since it returns Pth/P200 instead of Pth
-        rv = radius.value
-        l_mpc = np.linspace(0, np.sqrt(radii_mpc.value.max()**2. - rv**2.)+1., 1000)  # Get line of sight
-        # axis
+        rv = radius
+        l_mpc = np.linspace(0, np.sqrt(radii_mpc.max()**2. - rv**2.)+1., 1000)  # Get line of sight axis
         th_pressure = profile(np.sqrt(l_mpc**2 + rv**2), M200_SM, redshift_z, load_vars_dict, alpha = alpha,
                               gamma = gamma, R200_Mpc = R200_Mpc)
-        th_pressure = th_pressure * P200_kevcm3.value  # pressure as a
-        #                                               function of l
-        th_pressure = th_pressure * keVcm_to_Jm.value  # Use multiplication
-        #                           by a precaluated factor for efficiency
-        pressure = th_pressure * thermal_to_electron_pressure
-        integral = np.trapz(pressure, l_mpc*(1 * u.Mpc).to(u.m).value) * 2  # integrate over pressure in
+        th_pressure *= P200_kevcm3 * keVcm3_to_Jm3  # scaling by P200 and changing units
+        pressure = th_pressure * thermal_to_electron_pressure # changing to electron pressure
+        integral = np.trapz(pressure, l_mpc*Mpc_to_m) * 2  # integrate over pressure in
         # J/m^3 to get J/m^2, multiply by factor of 2 to get from -R200 to
         # R200 (assuming spherical symmetry)
         pressure_integ[i] = integral
-    y_pro = pressure_integ * c.sigma_T.value / (c.m_e.value * c.c.value**2)
+    y_pro = pressure_integ * Thomson_scale
     return y_pro
 
 
@@ -315,32 +314,34 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     y_map: array
         Compton-y submap with shape (image_size_pixels, image_size_pixels)
     '''
-    
-    X = np.linspace(-image_size_pixels * pixel_size_arcmin / 2,
-                    image_size_pixels * pixel_size_arcmin / 2, image_size_pixels)
+
+    X = np.linspace(-(image_size_pixels // 2) * pixel_size_arcmin,
+                    (image_size_pixels // 2) * pixel_size_arcmin, image_size_pixels)
     X = utils.arcmin_to_Mpc(X, redshift_z, load_vars_dict['cosmo'])
     # Solves issues of div by 0
     #X[(X <= pixel_size_arcmin / 10) & (X >= -pixel_size_arcmin / 10)] = pixel_size_arcmin / 10
     
     y_map = np.empty((X.size, X.size))
-    
-    R = np.maximum(pixel_size_arcmin*0.1,  np.sqrt(X[:,None]**2 + X[None,:]**2).flatten() )
+
+    R = np.maximum(utils.arcmin_to_Mpc(pixel_size_arcmin * 0.1, redshift_z, load_vars_dict['cosmo']),
+                   np.sqrt(X[:, None]**2 + X[None, :]**2).flatten())
     cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)  #
     # evaluate compton-y for each
     # neccesary radius
     
     for i, x in enumerate(X):
         for j, y in enumerate(X):
-            y_map[i][j] = cy[np.where(np.isclose(R, 
-                                                 np.maximum(pixel_size_arcmin*0.1,
-                                                             np.sqrt(x**2 + y**2)), 
+            y_map[i][j] = cy[np.where(np.isclose(R,
+                                                 np.maximum(utils.arcmin_to_Mpc(pixel_size_arcmin*0.1,
+                                                                                redshift_z, load_vars_dict['cosmo']),
+                                                             np.sqrt(x**2 + y**2)),
                                                              atol=1.e-10, rtol=1.e-10))[0]][0]
     # assign the correct compton-y to the radius
     
     return y_map
 
 
-def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
+def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", method = "integrate",
                       image_size_pixels = None, pixel_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
                       R200_Mpc = None):
     '''
@@ -354,7 +355,12 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
     redshift_z: float
         the redshift of the cluster (unitless)
     profile: str
-        Name of profile, currently only supports "Battaglia2012"
+        name of profile, currently only supports "Battaglia2012"
+    method: str
+        procedure by which we obtain the y map from a pressure profile. Two options at this time are
+        "integrate" (using np.trapz), which is precise and inherently spherically symmetric, but slow; or
+        "abel" (using pyabel), which suffers distortions along the y-axis but is fast. We recommend "integrate" for
+        producing single maps and "abel" for producing large quantities of maps (eg for `sbi`).
     image_size_pixels: float
         num pixels to each side of center; end shape of submap will be 
         (image_size_pixels, image_size_pixels)
@@ -380,10 +386,24 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
         image_size_pixels = load_vars_dict['image_size_pixels']
         pixel_size_arcmin = load_vars_dict['pixel_size_arcmin']
     
-    y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
-                           image_size_pixels, pixel_size_arcmin,
-                           alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)
-    
+    if "abel" in method:
+        image_size_pixels, pixel_size_arcmin = load_vars_dict['image_size_pixels'], load_vars_dict['pixel_size_arcmin']
+        X = np.linspace(- (image_size_pixels // 2) * pixel_size_arcmin, (image_size_pixels // 2) * pixel_size_arcmin,
+                        image_size_pixels)
+        pixlocs = np.maximum(pixel_size_arcmin * 0.1, np.sqrt(X[:, None]**2 + X[None, :]**2))
+        pixlocs = utils.arcmin_to_Mpc(pixlocs, redshift_z, load_vars_dict['cosmo'])
+        paDa = abel.transform.Transform(Pth_Battaglia2012(pixlocs, M200_SM, redshift_z, load_vars_dict),
+                                        direction = 'forward', method = 'daun').transform
+        paDa *= P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict).value*keVcm3_to_Jm3*thermal_to_electron_pressure
+        paDa_sym = (paDa + paDa.T)/2
+        y_map = paDa_sym*Mpc_to_m*Thomson_scale
+    else:
+        if not ("integ" in method):
+            print("only valid method choices are 'abel' or 'integrate'. Defaulting to 'integrate'")
+        y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
+                               image_size_pixels, pixel_size_arcmin,
+                               alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)
+
     return y_map
 
 
