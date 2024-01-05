@@ -329,18 +329,18 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     # evaluate compton-y for each
     # neccesary radius
 
-    y_map = np.empty((X.size*2 - 1, X.size*2 - 1))
+    y_map = np.zeros((X.size*2 - 1, X.size*2 - 1))
     for i, x in enumerate(X):
-        for j, y in enumerate(X):
+        for j in range(i, len(X)):
+            y = X[j]
             ijval = cy[np.where(np.isclose(R, np.maximum(mindist, np.sqrt(x**2 + y**2)),
                                          atol=1.e-10, rtol=1.e-10))[0]][0]
             y_map[X.size + i - 1][X.size + j - 1] = ijval
-            if i>0:
-                y_map[X.size - i - 1][X.size + j - 1] = ijval
-            if j>0:
-                y_map[X.size + i - 1][X.size - j - 1] = ijval
-            if (i*j>0):
-                y_map[X.size - i - 1][X.size - j - 1] = ijval
+            y_map[X.size + j - 1][X.size + i - 1] = ijval
+    for i in range(len(X)):
+        y_map[X.size - i - 1] = y_map[X.size + i - 1]
+    for j in range(len(X)):
+        y_map[:, X.size - j - 1] = y_map[:, X.size + j - 1]
     # assign the correct compton-y to the radius
     
     return y_map
