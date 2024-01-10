@@ -233,7 +233,8 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
     return _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc)
 
 
-def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
+def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_Mpc = None,
+            Rmaxy = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -266,28 +267,48 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
         Compton-y profile corresponding to the radii
     '''
     if R200_Mpc is None:
-        r200 = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+        R200_Mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     radii_mpc = (radii_mpc * u.Mpc).value
-    pressure_integ = np.empty(radii_mpc.size)
+    if Rmaxy is None:
+        rmax = radii_mpc.max()
+    elif '200' in Rmaxy:
+        rmax = R200_Mpc
+    else:
+        print('please specify a valid `Rmaxy`')
+        return None
     if profile != "Battaglia2012":
         print("only implementing `Battaglia2012` for profile")
     profile = Pth_Battaglia2012
-    P200_kevcm3 = P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = r200).value
+    pressure_integ = np.empty_like(radii_mpc)
+    P200_kevcm3 = P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = R200_Mpc).value
     
+    # integral = np.trapz(np.array([profile(np.sqrt(np.linspace(0, np.sqrt(radii_mpc.max()**2. - rv**2.)+1.,
+    #                                                               1000)**2 +
+    #                                      rv**2), M200_SM, redshift_z, load_vars_dict = None, alpha = alpha,
+    #                       gamma = gamma, R200_Mpc = r200) for rv in radii_mpc]), np.array([np.linspace(0,
+    #                                                                                             np.sqrt(radii_mpc.max(
+    # )**2. - rv**2.)+1., 1000) for rv in radii_mpc]))
+    # y_pro = integral * P200_kevcm3 * keVcm3_to_Jm3 * Thomson_scale * \
+    #         thermal_to_electron_pressure * 2*Mpc_to_m
+    # return y_pro
     for i, radius in enumerate(radii_mpc):
         # Multiply profile by P200 specifically for Battaglia 2012 profile,
         # since it returns Pth/P200 instead of Pth
         rv = radius
-        l_mpc = np.linspace(0, np.sqrt(radii_mpc.max()**2. - rv**2.)+1., 1000)  # Get line of sight axis
-        th_pressure = profile(np.sqrt(l_mpc**2 + rv**2), M200_SM, redshift_z, load_vars_dict = None, alpha = alpha,
-                              gamma = gamma, R200_Mpc = r200)
-        integral = np.trapz(th_pressure, l_mpc)
-        pressure_integ[i] = integral
-    y_pro = pressure_integ * P200_kevcm3 * keVcm3_to_Jm3 * Thomson_scale * thermal_to_electron_pressure * 2*Mpc_to_m
+        if (rmax == R200_Mpc) and (rv >= R200_Mpc):
+            pressure_integ[i] = 0
+        else:
+            l_mpc = np.linspace(0, np.sqrt(rmax**2. - rv**2.) + 1., 1000)  # Get line of sight axis
+            th_pressure = profile(np.sqrt(l_mpc**2 + rv**2), M200_SM, redshift_z, load_vars_dict = None, alpha = alpha,
+                                  gamma = gamma, R200_Mpc = R200_Mpc)
+            integral = np.trapz(th_pressure, l_mpc)
+            pressure_integ[i] = integral
+    y_pro = pressure_integ * P200_kevcm3 * keVcm3_to_Jm3 * Thomson_scale * thermal_to_electron_pressure * 2 * Mpc_to_m
     return y_pro
 
 
-def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixels, pixel_size_arcmin, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
+def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixels, pixel_size_arcmin, alpha = 1.0,
+                   gamma = -0.3, R200_Mpc = None, Rmaxy = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -325,7 +346,8 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     mindist = utils.arcmin_to_Mpc(pixel_size_arcmin*0.1, redshift_z, load_vars_dict['cosmo'])
     R = np.maximum(mindist, np.sqrt(X[:, None]**2 + X[None, :]**2).flatten())
     
-    cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)  #
+    cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc,
+                 Rmaxy = Rmaxy)  #
     # evaluate compton-y for each
     # neccesary radius
 
@@ -336,7 +358,8 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
             ijval = cy[np.where(np.isclose(R, np.maximum(mindist, np.sqrt(x**2 + y**2)),
                                          atol=1.e-10, rtol=1.e-10))[0]][0]
             y_map[X.size + i - 1][X.size + j - 1] = ijval
-            y_map[X.size + j - 1][X.size + i - 1] = ijval
+            if j != i:
+                y_map[X.size + j - 1][X.size + i - 1] = ijval
     for i in range(len(X)):
         y_map[X.size - i - 1] = y_map[X.size + i - 1]
     for j in range(len(X)):
@@ -348,7 +371,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
 
 def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", method = "integrate",
                       image_size_pixels = None, pixel_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
-                      R200_Mpc = None):
+                      R200_Mpc = None, Rmaxy = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -399,6 +422,10 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", method = "
         pixlocs = np.maximum(mindist, pixlocs)
         if R200_Mpc is None:
             r200 = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+        else:
+            r200 = R200_Mpc
+        if (Rmaxy is not None) and ('200' in Rmaxy):
+            pixlocs = np.minimum(r200, pixlocs)
         paDa = abel.transform.Transform(Pth_Battaglia2012(pixlocs, M200_SM, redshift_z, R200_Mpc = r200),
                                         direction = 'forward', method = 'daun',
                                         symmetry_axis = (0,1), transform_options = {'degree':2}
@@ -411,7 +438,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", method = "
             print("only valid method choices are 'abel' or 'integrate'. Defaulting to 'integrate'")
         y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
                                image_size_pixels, pixel_size_arcmin,
-                               alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)
+                               alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc, Rmaxy = Rmaxy)
 
     return y_map
 
@@ -537,7 +564,7 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
 
 class simulate_clusters:
     def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
-                 R200_Mpc = None, profile = "Battaglia2012",
+                 R200_Mpc = None, Rmaxy = None, profile = "Battaglia2012",
                  image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
                  alpha = 1.0, gamma = -0.3,
                  load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'inputdata.yaml'),
@@ -621,6 +648,9 @@ class simulate_clusters:
             self.R200_Mpc = np.array(
                 [get_r200_and_c200(self.M200[i], self.redshift_z[i], self.vars)[1]
                  for i in range(self._size)])
+        
+        self.Rmaxy = Rmaxy
+        
         self.id_list = [
             str(self.M200[i])[:5] + str(self.redshift_z[i] * 100)[:2] + str(self._rng.integers(10**6)).zfill(6)
             for i in range(self._size)]
@@ -643,6 +673,7 @@ class simulate_clusters:
             self.y_maps = np.array([generate_y_submap(self.M200[i],
                                                       self.redshift_z[i],
                                                       R200_Mpc = self.R200_Mpc[i],
+                                                      Rmaxy = self.Rmaxy,
                                                       load_vars_dict = self.vars)
                                     for i in range(self._size)])
             return self.y_maps
