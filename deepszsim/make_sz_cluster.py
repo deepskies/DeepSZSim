@@ -7,6 +7,7 @@ from deepszsim import utils, simtools, noise, load_vars, dm_halo_dist
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
 import abel
+from tqdm import tqdm
 
 from astropy import constants as c
 from astropy import units as u
@@ -670,12 +671,13 @@ class simulate_clusters:
         try:
             return self.y_maps
         except AttributeError:
+            print("making `y` maps")
             self.y_maps = np.array([generate_y_submap(self.M200[i],
                                                       self.redshift_z[i],
                                                       R200_Mpc = self.R200_Mpc[i],
                                                       Rmaxy = self.Rmaxy,
                                                       load_vars_dict = self.vars)
-                                    for i in range(self._size)])
+                                    for i in tqdm(range(self._size))])
             return self.y_maps
     
     def get_dT_maps(self):
@@ -711,7 +713,8 @@ class simulate_clusters:
         dT_maps = self.get_dT_maps()
         if add_CMB:
             self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
-        for i in range(self._size):
+        print("making convolved T maps"+(" with CMB" if add_CMB else ""))
+        for i in tqdm(range(self._size)):
             self.clusters[self.id_list[i]]['params']['dT_central'] = dT_maps[i][self.image_size_pixels // 2][
                 self.image_size_pixels // 2]
             self.clusters[self.id_list[i]]['maps'] = {}
