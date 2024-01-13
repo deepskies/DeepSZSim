@@ -620,7 +620,7 @@ class simulate_clusters:
                                                                     halo_params_dict['zmax'],
                                                                     halo_params_dict['m500min_SM'],
                                                                     halo_params_dict['m500max_SM'],
-                                                                    num_halos, seed = seed)
+                                                                    int(num_halos), seed = seed)
         
         try:
             self._size = len(self.M200)
@@ -697,7 +697,7 @@ class simulate_clusters:
             self.dT_maps = (ym * fSZ * self.cosmo.Tcmb0).to(u.uK).value
             return self.dT_maps
     
-    def get_T_maps(self, add_CMB = True):
+    def get_T_maps(self, add_CMB = True, returnval = False):
         """
         Parameters
         ----------
@@ -735,7 +735,9 @@ class simulate_clusters:
             self.clusters[self.id_list[i]]['maps']['conv_map'] = conv_map
             self.clusters[self.id_list[i]]['maps']['noise_map'] = noise_map
             self.clusters[self.id_list[i]]['maps']['final_map'] = final_map
-        return self.clusters
+        
+        if returnval:
+            return self.clusters
     
     def ith_T_map(self, i, add_CMB = True):
         """
