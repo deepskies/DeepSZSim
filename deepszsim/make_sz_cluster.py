@@ -569,7 +569,7 @@ class simulate_clusters:
                  image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
                  alpha = 1.0, gamma = -0.3,
                  load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'inputdata.yaml'),
-                 seed = None
+                 seed = None, tqverb = False
                  ):
         """
         Parameters
@@ -639,6 +639,7 @@ class simulate_clusters:
         self.pixel_size_arcmin = self.vars['pixel_size_arcmin'] if (pixel_size_arcmin is None) else pixel_size_arcmin
         self.beam_size_arcmin = self.vars['beam_size_arcmin']
         self.cosmo = self.vars['cosmo']
+        self.tqverb = tqverb
         
         self.alpha, self.gamma = alpha, gamma
         self.seed, self._rng = seed, np.random.default_rng(seed)
@@ -671,13 +672,13 @@ class simulate_clusters:
         try:
             return self.y_maps
         except AttributeError:
-            print("making `y` maps")
+            if self.tqverb: print("making `y` maps")
             self.y_maps = np.array([generate_y_submap(self.M200[i],
                                                       self.redshift_z[i],
                                                       R200_Mpc = self.R200_Mpc[i],
                                                       Rmaxy = self.Rmaxy,
                                                       load_vars_dict = self.vars)
-                                    for i in tqdm(range(self._size))])
+                                    for i in tqdm(range(self._size), disable = (not self.tqverb))])
             return self.y_maps
     
     def get_dT_maps(self):
@@ -711,10 +712,9 @@ class simulate_clusters:
             size
         """
         dT_maps = self.get_dT_maps()
-        if add_CMB:
-            self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
-        print("making convolved T maps"+(" with CMB" if add_CMB else ""))
-        for i in tqdm(range(self._size)):
+        if add_CMB: self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
+        if self.tqverb: print("making convolved T maps"+(" with CMB" if add_CMB else ""))
+        for i in tqdm(range(self._size), disable = (not self.tqverb)):
             self.clusters[self.id_list[i]]['params']['dT_central'] = dT_maps[i][self.image_size_pixels // 2][
                 self.image_size_pixels // 2]
             self.clusters[self.id_list[i]]['maps'] = {}
