@@ -582,7 +582,7 @@ class simulate_clusters:
             number of halos to simulate if none supplied
         halo_params_dict: None or dict
             parameters from which to sample halos if num_halos specified,
-            must contain zmin, zmax, m500min_SM, m500max_SM
+            must contain zmin, zmax, m200min_SM, m200max_SM
         R200_Mpc: None or float or np.ndarray(float)
             if None, will calculate the R200 values corresponding to a given set of
             M200 and redshift_z values for the specified cosmology
@@ -615,11 +615,11 @@ class simulate_clusters:
                 num_halos = 100
             if (halo_params_dict is None):
                 print(f"making {num_halos} clusters uniformly sampled from 0.1<z<1.1, 1e13<M200<1e14")
-                halo_params_dict = {'zmin': 0.1, 'zmax': 1.1, 'm500min_SM': 1e13, 'm500max_SM': 1e14}
+                halo_params_dict = {'zmin': 0.1, 'zmax': 1.1, 'm200min_SM': 1e13, 'm200max_SM': 1e14}
             self.redshift_z, self.M200 = dm_halo_dist.flatdist_halo(halo_params_dict['zmin'],
                                                                     halo_params_dict['zmax'],
-                                                                    halo_params_dict['m500min_SM'],
-                                                                    halo_params_dict['m500max_SM'],
+                                                                    halo_params_dict['m200min_SM'],
+                                                                    halo_params_dict['m200max_SM'],
                                                                     int(num_halos), seed = seed)
         
         try:
