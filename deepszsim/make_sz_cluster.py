@@ -6,7 +6,6 @@ import numpy as np
 from deepszsim import utils, simtools, noise, load_vars, dm_halo_dist
 from colossus.cosmology import cosmology
 from colossus.halo import mass_adv
-import abel
 from tqdm import tqdm
 
 from astropy import constants as c
@@ -370,7 +369,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     return y_map
 
 
-def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", method = "integrate",
+def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
                       image_size_pixels = None, pixel_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
                       R200_Mpc = None, Rmaxy = None):
     '''
@@ -385,11 +384,6 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", method = "
         the redshift of the cluster (unitless)
     profile: str
         name of profile, currently only supports "Battaglia2012"
-    method: str
-        procedure by which we obtain the y map from a pressure profile. Two options at this time are
-        "integrate" (using np.trapz), which is precise and inherently spherically symmetric, but slow; or
-        "abel" (using pyabel), which suffers distortions along the y-axis but is fast. We recommend "integrate" for
-        producing single maps and "abel" for producing large quantities of maps (eg for `sbi`).
     image_size_pixels: float
         num pixels to each side of center; end shape of submap will be 
         (image_size_pixels, image_size_pixels)
@@ -414,32 +408,10 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012", method = "
     if load_vars_dict is not None:
         image_size_pixels = load_vars_dict['image_size_pixels']
         pixel_size_arcmin = load_vars_dict['pixel_size_arcmin']
-    dim = (image_size_pixels // 2) * pixel_size_arcmin
     
-    if "abel" in method:
-        X = np.linspace(- dim, dim, image_size_pixels)
-        pixlocs = utils.arcmin_to_Mpc(np.sqrt(X[:, None]**2 + X[None, :]**2), redshift_z, load_vars_dict['cosmo'])
-        mindist = utils.arcmin_to_Mpc(pixel_size_arcmin * 0.1, redshift_z, load_vars_dict['cosmo'])
-        pixlocs = np.maximum(mindist, pixlocs)
-        if R200_Mpc is None:
-            r200 = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
-        else:
-            r200 = R200_Mpc
-        if (Rmaxy is not None) and ('200' in Rmaxy):
-            pixlocs = np.minimum(r200, pixlocs)
-        paDa = abel.transform.Transform(Pth_Battaglia2012(pixlocs, M200_SM, redshift_z, R200_Mpc = r200),
-                                        direction = 'forward', method = 'daun',
-                                        symmetry_axis = (0,1), transform_options = {'degree':2}
-                                        ).transform
-        paDa_sym = (paDa + paDa.T)/2
-        y_map = paDa_sym * keVcm3_to_Jm3 * Mpc_to_m * thermal_to_electron_pressure * P200_Battaglia2012(
-            M200_SM, redshift_z, load_vars_dict, R200_Mpc = r200).value * Thomson_scale
-    else:
-        if not ("integ" in method):
-            print("only valid method choices are 'abel' or 'integrate'. Defaulting to 'integrate'")
-        y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
-                               image_size_pixels, pixel_size_arcmin,
-                               alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc, Rmaxy = Rmaxy)
+    y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
+                           image_size_pixels, pixel_size_arcmin,
+                           alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc, Rmaxy = Rmaxy)
 
     return y_map
 
