@@ -116,12 +116,11 @@ class TestSZCluster:
         radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
         redshift_z = 1
         M200 = 1e14 #solar masses
-        y = Pe_to_y(Pth_Battaglia2012, radii, M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 1.0, -0.3)
-        y_map = _make_y_submap(Pth_Battaglia2012, M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 41,
+        y_map = _make_y_submap("Battaglia2012", M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, 41,
                                0.5, 1.0, -0.3)
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
-        dT_expected = 34.220715095253624
+        dT_expected = 34.30931779866642
         assert np.isclose(abs(dT_map).max(), dT_expected),f"Expected {dT_expected}, but got {abs(dT_map).max()}"
 
     def test_generate_y_submap(self):
@@ -140,7 +139,7 @@ class TestSZCluster:
                                                                           0.5})
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
-        dT_expected = 34.220715095253624
+        dT_expected = 34.30931779866642
         assert np.isclose(abs(dT_map).max(), dT_expected, atol=1e-04, rtol=1e-5),f"Expected {dT_expected}, but got " \
                                                                              f"{abs(dT_map).max()}"
 
