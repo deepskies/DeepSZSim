@@ -1,5 +1,5 @@
 """
-noise: functions to generate simulated CMB map noise
+functions to generate simulated CMB map noise
 """
 
 import numpy as np

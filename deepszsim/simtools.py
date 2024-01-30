@@ -1,5 +1,5 @@
 """
-simtools: beam convolution, SZ function and CMB simulation tools 
+beam convolution, SZ function and CMB simulation tools 
 """
 
 from deepszsim import utils
@@ -10,14 +10,14 @@ from astropy import units as u
 from pixell import enmap
 import camb
 
-def convolve_map_with_gaussian_beam(pix_size_arcmin, 
-                                beam_size_fwhp_arcmin, map_to_convolve):
+def convolve_map_with_gaussian_beam(pix_size_arcmin,
+                                    beam_size_fwhm_arcmin, map_to_convolve):
     '''
     Parameters:
     ----------
     pix_size_arcmin: float
         size of each pixel in arcmin
-    beam_size_fwhp_arcmin: float
+    beam_size_fwhm_arcmin: float
         beam size in arcmin
     map_to_convolve: array
         image to apply beam convolution to
@@ -28,7 +28,7 @@ def convolve_map_with_gaussian_beam(pix_size_arcmin,
 
     Note - pixel size and beam_size need to be in the same units
     '''
-    gaussian = utils.gaussian_kernal(pix_size_arcmin, beam_size_fwhp_arcmin)
+    gaussian = utils.gaussian_kernal(pix_size_arcmin, beam_size_fwhm_arcmin)
     convolved_map = scipy.signal.fftconvolve(map_to_convolve, 
                                              gaussian, mode = 'same')
 

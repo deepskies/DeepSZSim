@@ -12,8 +12,8 @@ COSMOLOGY:
 SURVEYS:
   ACTDR5:
     150: #Observation frequency [GHz]
-      beam_size: 1.3 #From published survey properties
-      noise_level: 8 #From published survey properties [uK/arcmin]
+      beam_size: 1.4 #From published survey properties
+      noise_level: 8 #[uK/arcmin]
   
 IMAGES:
   image_size_pixels: 41

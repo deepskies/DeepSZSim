@@ -1,5 +1,5 @@
 """
-dm_halo_dist: creates a mass and redshift distribution of halos 
+creates a mass and redshift distribution of halos 
 """
 
 import numpy as np

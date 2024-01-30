@@ -1,5 +1,5 @@
 """
-visualization: plotting functions
+plotting functions
 """
 
 import matplotlib.pyplot as plt
