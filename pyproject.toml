@@ -8,12 +8,14 @@ version = "0.1.0"
 description = "code for fast simulations of galaxy clusters"
 authors = [{name = "Eve Vavagiakis", email = "ev66@cornell.edu"}]
 license = {text="LICENSE.txt"}
-
-[tool.dependencies]
-python = "^3.9"
-camb = "^1.4.0"
-h5py = "^3.8.0"
-numpy = "^1.24.3"
+requires-python = ">= 3.9"
+dependencies = [
+  "camb >= 1.4.0",
+  "h5py >= 3.8.0",
+  "numpy >= 1.24.3",
+  "astropy >= 6.0",
+  "pixell == 0.17.3",
+]
 
 [tool.dev-dependencies]
 pytest = "^7.3.1"
