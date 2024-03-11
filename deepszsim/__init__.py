@@ -7,6 +7,7 @@ import deepszsim.dm_halo_dist as dm_halo_dist
 import deepszsim.visualization as visualization
 from deepszsim.load_vars import load_vars
 from deepszsim.load_vars import readh5
+from deepszsim.simclusters import simulate_clusters as simulate_clusters
 
 try:
     from deepszsim.filters import get_tSZ_signal_aperture_photometry
