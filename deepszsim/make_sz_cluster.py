@@ -144,7 +144,7 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
     cosmo = load_vars_dict['cosmo']
 
     if R200_Mpc is None:
-        R200_Mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+        R200_Mpc = get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     
     GM200 = c.G * M200_SM * u.Msun * 200. * cosmo.critical_density(redshift_z)
     fbR200 = (cosmo.Ob0 / cosmo.Om0) / (2. * R200_Mpc * u.Mpc)  # From Battaglia2012
@@ -225,7 +225,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
         if load_vars_dict is None:
             print("must specify either `load_vars_dict` or `R200_Mpc`")
             return None
-        R200_Mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+        R200_Mpc = get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     P0 = _P0_Battaglia2012(M200_SM, redshift_z)
     xc = _xc_Battaglia2012(M200_SM, redshift_z)
     beta = _beta_Battaglia2012(M200_SM, redshift_z)
@@ -267,7 +267,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
         Compton-y profile corresponding to the radii
     '''
     if R200_Mpc is None:
-        R200_Mpc = get_r200_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
+        R200_Mpc = get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     radii_mpc = (radii_mpc * u.Mpc).value
     if Rmaxy is None:
         rmax = radii_mpc.max()
@@ -485,7 +485,7 @@ def simulate_T_submaps(M200_dist, z_dist, id_dist = None, profile = "Battaglia20
     for index, M200 in enumerate(M200_dist):
         z = z_dist[index]
         if R200_dist is None:
-            (M200, R200, _c200) = get_r200_and_c200(M200, z, d)
+            (M200, R200, _c200) = get_r200_angsize_and_c200(M200, z, d)
         else:
             R200 = R200_dist[index]
         
@@ -581,13 +581,14 @@ class simulate_clusters:
         else:
             if (num_halos is None):
                 print("must specify `M200` AND `redshift_z` simultaneously,",
-                      "OR a number of halos to generate with `num_halos`"
-                      "along with the arguments for `deepszsim.dm_halo_dist.flatdist_halo` via `halo_params_dict`.",
-                      "Defaulting to making 100 halos in 0.1<z<1.1, 1e14<M<1e15")
+                      "OR a number of halos to generate with `num_halos`",
+                      "along with the arguments for `deepszsim.dm_halo_dist.flatdist_halo` via `halo_params_dict`.")
                 num_halos = 100
             if (halo_params_dict is None):
-                print(f"making {num_halos} clusters uniformly sampled from 0.1<z<1.1, 1e13<M200<1e14")
-                halo_params_dict = {'zmin': 0.1, 'zmax': 1.1, 'm200min_SM': 1e13, 'm200max_SM': 1e14}
+                halo_params_dict = {'zmin': 0.1, 'zmax': 1.1, 'm200min_SM': 4e13, 'm200max_SM': 1e15}
+            print(f"making {num_halos} clusters uniformly sampled from"
+                  f"{halo_params_dict['zmin']}<z<{halo_params_dict['zmax']}, and "
+                  f"{halo_params_dict['m200min_SM']:1.1e}<M200<{halo_params_dict['m200max_SM']:1.1e}")
             self.redshift_z, self.M200 = dm_halo_dist.flatdist_halo(halo_params_dict['zmin'],
                                                                     halo_params_dict['zmax'],
                                                                     halo_params_dict['m200min_SM'],
@@ -619,9 +620,9 @@ class simulate_clusters:
         if R200_Mpc is not None:
             self.R200_Mpc = R200_Mpc
         else:
-            self.R200_Mpc = np.array(
-                [get_r200_and_c200(self.M200[i], self.redshift_z[i], self.vars)[1]
-                 for i in range(self._size)])
+            self.R200_Mpc, self.angsize_arcmin = np.array(
+                [get_r200_angsize_and_c200(self.M200[i], self.redshift_z[i], self.vars)[1:-1]
+                 for i in range(self._size)]).T
         
         self.Rmaxy = Rmaxy
         
@@ -629,7 +630,9 @@ class simulate_clusters:
             str(self.M200[i])[:5] + str(self.redshift_z[i] * 100)[:2] + str(self._rng.integers(10**6)).zfill(6)
             for i in range(self._size)]
         self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i], 'redshift_z': self.redshift_z[i],
-                                                            'R200': self.R200_Mpc[i], 'image_size_pixels' : self.image_size_pixels}} for
+                                                            'R200': self.R200_Mpc[i],
+                                                            'angsize_arcmin': self.angsize_arcmin[i],
+                                                            'image_size_pixels' : self.image_size_pixels}} for
                                                 i in range(
             self._size)]))
     
@@ -694,10 +697,10 @@ class simulate_clusters:
                 conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_maps[i], self.ps,
                                                                             self.pixel_size_arcmin,
                                                                             self.beam_size_arcmin)
-                self.clusters[self.id_list[i]]['maps']['CMB_map'] = cmb_map
             else:
                 conv_map = simtools.convolve_map_with_gaussian_beam(
                     self.pixel_size_arcmin, self.beam_size_arcmin, dT_map)
+                cmb_map = np.zeros_like(conv_map)
             if not self.vars['noise_level'] == 0:
                 noise_map = noise.generate_noise_map(self.image_size_pixels, self.vars['noise_level'],
                                                      self.pixel_size_arcmin)
@@ -705,6 +708,8 @@ class simulate_clusters:
                 noise_map = np.zeros_like(conv_map)
             final_map = conv_map + noise_map
             self.clusters[self.id_list[i]]['maps']['conv_map'] = conv_map
+            self.clusters[self.id_list[i]]['maps']['CMB_map'] = cmb_map
+            self.clusters[self.id_list[i]]['maps']['signal_map'] = conv_map - cmb_map
             self.clusters[self.id_list[i]]['maps']['noise_map'] = noise_map
             self.clusters[self.id_list[i]]['maps']['final_map'] = final_map
         
@@ -778,7 +783,7 @@ class simulate_clusters:
                     for k, v in self.clusters[self.id_list[i]]['maps'].items():
                         f.create_dataset('maps/' + k, data = v)
 
-def get_r200_and_c200(M200_SM, redshift_z, load_vars_dict):
+def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict):
     '''
     Parameters:
     ----------
@@ -807,10 +812,9 @@ def get_r200_and_c200(M200_SM, redshift_z, load_vars_dict):
     cosmology.addCosmology('myCosmo', **params)
     cosmo_colossus = cosmology.setCosmology('myCosmo')
     
-    M200_SM, R200_Mpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM / cosmo.h,
+    M200_SM, R200_Mpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM * cosmo.h,
                                                                   redshift_z, '200c', '200c', c_model = 'ishiyama21')
-    M200_SM *= cosmo.h  # From M_solar/h to M_solar
-    R200_Mpc = R200_Mpc * cosmo.h / 1000  # From kpc/h to Mpc
-    # From Mpc proper to Mpc comoving
-    R200_Mpc = R200_Mpc / cosmo.scale_factor(redshift_z)
-    return M200_SM, R200_Mpc, c200
+    M200_SM /= cosmo.h  # From M_solar/h to M_solar
+    R200_Mpc = R200_Mpc / cosmo.h / 1000  # From kpc/h to Mpc
+    angsize_arcmin = R200_Mpc*1000/60/cosmo_colossus.kpcPerArcsec(redshift_z)
+    return M200_SM, R200_Mpc, angsize_arcmin, c200 # now returns M200, R200, angsize in arcmin, c200
