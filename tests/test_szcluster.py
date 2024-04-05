@@ -1,7 +1,7 @@
 import pytest
 from deepszsim.make_sz_cluster import (
     P200_Battaglia2012, _param_Battaglia2012, Pth_Battaglia2012, Pe_to_y, _make_y_submap, generate_y_submap,
-    get_r200_and_c200)
+    get_r200_angsize_and_c200)
 import deepszsim.utils as utils
 import numpy as np
 import astropy.units as u
@@ -37,7 +37,7 @@ class TestSZCluster:
         redshift_z = 1
         (cosmo,sigma8,ns) = get_mock_cosmology()
         M200 = 1e14
-        P200_expected = 0.00137651 * (u.keV/u.cm**3.)
+        P200_expected = 0.0017111 * (u.keV/u.cm**3.)
         P200_calculated = P200_Battaglia2012(M200, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96})
         assert u.isclose(P200_calculated,P200_expected),f"Expected {P200_expected}, but got {P200_calculated}"
     
@@ -84,7 +84,7 @@ class TestSZCluster:
         radii=utils.arcmin_to_Mpc(radii,0.5,cosmo)
         M200 = 1e14
         z = 1
-        R200 = 0.8493839914731125
+        R200 = 0.6832978084398144
         x = radii/R200 #As defined in Battaglia 2012
         P0 = 10.702810552209492
         xc = 0.8249152180764426
@@ -120,7 +120,7 @@ class TestSZCluster:
                                0.5, 1.0, -0.3)
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
-        dT_expected = 34.30931779866642
+        dT_expected = 31.957493018699797
         assert np.isclose(abs(dT_map).max(), dT_expected),f"Expected {dT_expected}, but got {abs(dT_map).max()}"
 
     def test_generate_y_submap(self):
@@ -139,7 +139,7 @@ class TestSZCluster:
                                                                           0.5})
         fSZ_150GhZ = -0.9529784143018927
         dT_map = (y_map * cosmo.Tcmb0 * fSZ_150GhZ).to(u.uK).value
-        dT_expected = 34.30931779866642
+        dT_expected = 31.957493018699797
         assert np.isclose(abs(dT_map).max(), dT_expected, atol=1e-04, rtol=1e-5),f"Expected {dT_expected}, but got " \
                                                                              f"{abs(dT_map).max()}"
 
@@ -147,8 +147,10 @@ class TestSZCluster:
         cosmo, sigma8, ns = get_mock_cosmology()
         M200_SM = 1e14
         redshift_z = 1
-        R200_expected = 0.8493839914731125
-        c200_expected = 3.6289273790625938
-        result = get_r200_and_c200(M200_SM, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96})
+        R200_expected = 0.6832978084398144
+        angsize_arcmin_expected = 1.3786496285878964
+        c200_expected = 3.5527260646787737
+        result = get_r200_angsize_and_c200(M200_SM, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96})
         assert np.isclose(result[1], R200_expected), f"Expected {R200_expected}, but got {result[1]}"
-        assert np.isclose(result[2], c200_expected), f"Expected {c200_expected}, but got {result[2]}"
+        assert np.isclose(result[2], angsize_arcmin_expected), f"Expected {angsize_arcmin_expected}, but got {result[2]}"
+        assert np.isclose(result[-1], c200_expected), f"Expected {c200_expected}, but got {result[-1]}"
