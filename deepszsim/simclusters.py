@@ -93,8 +93,9 @@ class simulate_clusters:
         if R200_Mpc is not None:
             self.R200_Mpc = R200_Mpc
         else:
-            self.R200_Mpc, self.angsize_arcmin = np.array(
-                [make_sz_cluster.get_r200_angsize_and_c200(self.M200[i], self.redshift_z[i], self.vars)[1:-1]
+            self.R200_Mpc, self.angsize500_arcmin = np.array(
+                [make_sz_cluster.get_r200_angsize_and_c200(self.M200[i], self.redshift_z[i], self.vars,
+                                                           angsize_density = '500c')[[1,2]]
                  for i in range(self._size)]).T
         
         self.Rmaxy = Rmaxy
@@ -104,7 +105,7 @@ class simulate_clusters:
             for i in range(self._size)]
         self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i], 'redshift_z': self.redshift_z[i],
                                                             'R200': self.R200_Mpc[i],
-                                                            'angsize_arcmin': self.angsize_arcmin[i],
+                                                            'angsize500_arcmin': self.angsize500_arcmin[i],
                                                             'image_size_pixels': self.image_size_pixels}} for
                                                 i in range(
                 self._size)]))

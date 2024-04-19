@@ -410,7 +410,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
 
     return y_map
 
-def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict):
+def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_density = None):
     '''
     Parameters:
     ----------
@@ -439,9 +439,19 @@ def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict):
     cosmology.addCosmology('myCosmo', **params)
     cosmo_colossus = cosmology.setCosmology('myCosmo')
     
-    M200_SM, R200_Mpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM * cosmo.h,
+    M200_SM, R200_kpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM * cosmo.h,
                                                                   redshift_z, '200c', '200c', c_model = 'ishiyama21')
     M200_SM /= cosmo.h  # From M_solar/h to M_solar
-    R200_Mpc = R200_Mpc / cosmo.h / 1000  # From kpc/h to Mpc
-    angsize_arcmin = R200_Mpc*1000/60/cosmo_colossus.kpcPerArcsec(redshift_z)
+    R200_Mpc = R200_kpc / cosmo.h / 1000  # From kpc/h to Mpc
+    
+    if angsize_density is not None:
+        if angsize_density != '200c':
+            _, Rd_kpc, _ = mass_adv.changeMassDefinitionCModel(M200_SM * cosmo.h,
+                                                               redshift_z, '200c', angsize_density,
+                                                               c_model = 'ishiyama21')
+            angsize_arcmin = Rd_kpc / cosmo.h / 60 / cosmo_colossus.kpcPerArcsec(redshift_z)
+        else:
+            angsize_arcmin = R200_Mpc * 1000 / 60 / cosmo_colossus.kpcPerArcsec(redshift_z)
+    else:
+        angsize_arcmin = None
     return M200_SM, R200_Mpc, angsize_arcmin, c200 # now returns M200, R200, angsize in arcmin, c200

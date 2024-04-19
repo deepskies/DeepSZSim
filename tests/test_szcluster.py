@@ -148,9 +148,9 @@ class TestSZCluster:
         M200_SM = 1e14
         redshift_z = 1
         R200_expected = 0.6832978084398144
-        angsize_arcmin_expected = 1.3786496285878964
+        angsize_arcmin_expected = 0.8908671948201962
         c200_expected = 3.5527260646787737
-        result = get_r200_angsize_and_c200(M200_SM, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96})
+        result = get_r200_angsize_and_c200(M200_SM, redshift_z, {'cosmo': cosmo, 'sigma8': 0.8, 'ns': 0.96}, angsize_density = '500c')
         assert np.isclose(result[1], R200_expected), f"Expected {R200_expected}, but got {result[1]}"
         assert np.isclose(result[2], angsize_arcmin_expected), f"Expected {angsize_arcmin_expected}, but got {result[2]}"
         assert np.isclose(result[-1], c200_expected), f"Expected {c200_expected}, but got {result[-1]}"
