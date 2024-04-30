@@ -4,11 +4,11 @@ Code for producing fast simulations of the SZ effect for galaxy halos of varying
 
 ## Installation 
 
-We provide an environment specification file for `conda` or `mamba` users at `environment.yml`. With `conda`, an environment is created by `conda env create -f environment.yml`. With `micromamba` the `env` is omitted and a new environment is instead created with `micromamba create -f environment.yml`.
+We provide an environment specification file `conda` or `mamba` users at `environment.yml`, which will produce a new virtual environment with appropriate versions of major python packages. With `conda`, this environment is created by `conda env create -f environment.yml`. With `micromamba` the `env` is omitted and a new environment is instead created with `micromamba create -f environment.yml`.
 
-The simulated CMB signal relies on `camb` and utilities for saving rely on `h5py`.
+The simulated CMB signal relies on `camb` and `pixell`, cosmology relies on `colossus`, and utilities for saving rely on `h5py`. These are specified in the `pyproject.toml` file.
 
-From the top-level directory, you can do `pip install .`
+From the top-level directory, you can do `pip install .` to install the package.
 
 ## Usage
 
