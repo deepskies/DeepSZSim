@@ -95,7 +95,7 @@ class simulate_clusters:
         else:
             self.R200_Mpc, self.angsize500_arcmin = np.array(
                 [make_sz_cluster.get_r200_angsize_and_c200(self.M200[i], self.redshift_z[i], self.vars,
-                                                           angsize_density = '500c')[[1,2]]
+                                                           angsize_density = '500c')[1:3]
                  for i in range(self._size)]).T
         
         self.Rmaxy = Rmaxy
