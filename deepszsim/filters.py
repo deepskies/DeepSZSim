@@ -4,8 +4,8 @@ submap filtering tools to analyze SZ submaps
 
 import numpy as np
 
-def get_tSZ_signal_aperture_photometry(dT_map, radmax_arcmin, pixel_scale
-                                           fmax_arcmin=np.sqrt(2)):
+def get_tSZ_signal_aperture_photometry(dT_map, radmax_arcmin, pixel_scale, 
+                                       fmax_arcmin=np.sqrt(2)):
     """
     Parameters:
     ----------
