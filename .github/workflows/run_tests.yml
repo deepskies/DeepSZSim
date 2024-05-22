@@ -11,19 +11,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
-    - name: Set up Python 3.11
       with:
         python-version: '3.11'
-    - name: Add conda to system path
-      run: |
+    - run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
-    - name: Install dependencies
-      run: |
+    - run: |
         conda env update --file environment.yml --name base
         python -m pip install colossus pixell camb
         python -m pip install .
-    - name: Test with pytest
-      run: |
+    - run: |
         conda install pytest
         pytest
