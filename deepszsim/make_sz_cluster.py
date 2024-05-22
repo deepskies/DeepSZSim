@@ -269,11 +269,13 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
     pressure_integ = np.empty_like(radii_mpc)
     P200_kevcm3 = P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = R200_Mpc).value
     
+    rmax = radii_mpc.max()
+    
     for i, radius in enumerate(radii_mpc):
         # Multiply profile by P200 specifically for Battaglia 2012 profile,
         # since it returns Pth/P200 instead of Pth
         rv = radius
-        if (rmax == R200_Mpc) and (rv >= R200_Mpc):
+        if (rv >= R200_Mpc):
             pressure_integ[i] = 0
         else:
             l_mpc = np.linspace(0, np.sqrt(rmax**2. - rv**2.) + 1., 1000)  # Get line of sight axis
