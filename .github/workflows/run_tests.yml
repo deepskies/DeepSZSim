@@ -17,8 +17,7 @@ jobs:
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
     - run: |
-        conda env update --file environment.yml --name base
-        python -m pip install colossus pixell camb
+        conda env update --file=environment.yml --name=base
         python -m pip install .
     - run: |
         conda install pytest
