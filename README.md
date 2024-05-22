@@ -1,10 +1,10 @@
 # `DeepSZSim`
 
-Code for producing fast simulations of the SZ effect for galaxy halos of varying z, $M_{200}$, based on average thermal pressure profile fits from [Battaglia et al. 2012](https://ui.adsabs.harvard.edu/abs/2012ApJ...758...75B/abstract). Simulated submaps can include tSZ signal from these halos, simulated CMB, instrument beam convolution and white noise.
+Code for producing fast simulations of the SZ effect for galaxy halos of varying redshift and mass, based on average thermal pressure profile fits from [Battaglia et al. 2012](https://ui.adsabs.harvard.edu/abs/2012ApJ...758...75B/abstract). Simulated submaps can include tSZ signal from these halos, simulated CMB, instrument beam convolution and white noise.
 
 ## Installation 
 
-We provide an environment specification file `conda` or `mamba` users at `environment.yml`, which will produce a new virtual environment called `szsims` with appropriate versions of major python packages. With `conda`, this environment is created by `conda env create -f environment.yml`. With `micromamba` the `env` is omitted and a new environment is instead created with `micromamba create -f environment.yml`.
+We provide an environment specification file for `conda` or `mamba` users at `environment.yml`, which will produce a new virtual environment called `szsims` with appropriate versions of major python packages. With `conda`, this environment is created by `conda env create -f environment.yml`. With `micromamba` the `env` is omitted and a new environment is instead created with `micromamba create -f environment.yml`.
 
 The simulated CMB signal relies on `camb` and `pixell`, cosmology relies on `colossus`, and utilities for saving rely on `h5py`. These are specified in the `pyproject.toml` file.
 
@@ -16,11 +16,11 @@ The usage of this code is documented in `notebooks/demo_simulation.ipynb`. A det
 
 A full list of potential inputs is documented in `settings/config.yaml` and you can edit `settings/inputdata.yaml` to reflect your desired simulation settings.  
 
-`dm_halo_dist.py` generates a z, $M_{200}$ array. The functions in `make_sz_cluster.py` create pressure profiles, Compton-y, and SZ signal maps from these halos of various z, $M_{200}$ and produce the final simulated submaps. These submaps contain simulated CMB and simple instrument beam convolution from `simtools.py` and white noise from `noise.py`. Plotting tools are provided in `visualization.py`.
+`dm_halo_dist.py` generates an array of mass and redshift. The functions in `make_sz_cluster.py` create pressure profiles, Compton-y, and SZ signal maps for a halo of a given mass and redshift, and produces the final simulated submaps. These submaps contain simulated CMB and simple instrument beam convolution from `simtools.py` and white noise from `noise.py`. Plotting tools are provided in `visualization.py`. Simulations of a large suite of clusters can be achieved easily with `simclusters.py`.
 
 ## Citation
 
-If you use this code in your research, please cite this GitHub repo. Please also make use of the citation instructions for `camb` provided [here](https://camb.info).
+If you use this code in your research, please cite this GitHub repo and our JOSS paper. Please also make use of the citation instructions for `camb` provided [here](https://camb.info).
 
 ## Contributing
 
