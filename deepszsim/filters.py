@@ -5,7 +5,7 @@ submap filtering tools to analyze SZ submaps
 import numpy as np
 
 def get_tSZ_signal_aperture_photometry(dT_map, radmax_arcmin, pixel_scale, 
-                                       fmax_arcmin=np.sqrt(2)):
+                                       fmax=np.sqrt(2)):
     """
     Parameters:
     ----------
@@ -14,8 +14,8 @@ def get_tSZ_signal_aperture_photometry(dT_map, radmax_arcmin, pixel_scale,
         the radius of the inner aperture, in arcmin
     pixel_scale: float
         How many arcmin per pixel for the current settings
-    fmax_arcmin: float
-        fmax+radmax is the radius of the outer aperture, in arcmin
+    fmax: float
+        fmax * radmax_arcmin is the radius of the outer aperture, in arcmin
 
     Returns:
     -------
@@ -28,7 +28,7 @@ def get_tSZ_signal_aperture_photometry(dT_map, radmax_arcmin, pixel_scale,
     """
 
     radmax_pixels = radmax_arcmin / pixel_scale
-    radius_out_pixels = radmax_pixels * fmax_arcmin
+    radius_out_pixels = radmax_pixels * fmax
     
     center = np.array(dT_map.shape) // 2
     x, y = np.indices(dT_map.shape)
