@@ -27,7 +27,8 @@ Authors: E. M. Vavagiakis, S. McDermott, H. Awan, E. Ran, K. Banker, S. Usman, C
 
 ---
 
-based on: https://joss.theoj.org/papers/10.21105/joss.00388
+% based on: https://joss.theoj.org/papers/10.21105/joss.00388
+% https://docs.google.com/document/d/1hWugcJOrWVEdLS7d64hyYCPsSkR14KRxNG6-kmdVLcU/edit
 
 # Summary
 
