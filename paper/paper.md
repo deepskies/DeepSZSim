@@ -52,6 +52,7 @@ The `DeepCMBsim` package combines physical processes and sources of noise in a s
 
 DeepCMBSim’s primary physics module is `camb_power_spectrum`, which defines the `CAMBPowerSpectrum` class. This calls `CAMB` `[@Lewis:1999bs; @Howlett:2012mh]`. The power spectrum of the noise follows the form in `[@Hu:2001kj]`, assuming statistical independence in the Stokes parameters `[@Knox:1995dq; @Zaldarriaga:1996xe]`.
 This software allows the user to specify cosmological parameters (e.g., omega matter, omega baryon, the lensing scale, the tensor-to-scalar ratio, which are inputs to CAMB) and experiment parameters (e.g., white noise level, beam size) in a  `yaml` configuration file to permit a user-friendly interface to permit reproducible simulations. The default parameters reproduce the Planck 2018 cosmology `[@Planck:2018vyg]`. ![Software workflow for the `DeepSZSim`package, including the elements of `DeepCMBsim`.\label{fig:workflow}](figures/DeepSZSim_Workflow.png)
+
 The package workflow is demonstrated in \autoref{fig:workflow}. 
 
 We provide an example notebook in `notebooks/simcmb_example.ipynb` which demonstrates the software functionality.
@@ -66,8 +67,8 @@ From these inputs, pressure profiles [cite], Compton-y profiles [cite], and tSZ 
 
 We present examples of the primary outputs from `DeepCMBSim` and `DeepSZSim` in, \autoref{fig:cmb} and \autoref{fig:sz}, respectively. 
 
-![Example output angular spectra for the `DeepCMBsim` package for a set of tensor-to-scalar ratios r and lens scaling factors A_lens.These\label{fig:cmb}](ex_cmb.pdf)
-![Example outputs for the `DeepSZsim` package for a set of masses, redshifts, and noise configurations.\label{fig:sz}](ex_sz.pdf)
+![Example output angular spectra for the `DeepCMBsim` package for a set of tensor-to-scalar ratios r and lens scaling factors A_lens.\label{fig:cmb}](figures/CMBSpectra_Examples.pdf)
+![Example outputs for the `DeepSZsim` package for a set of masses, redshifts, and noise configurations.\label{fig:sz}](figures/SZCluster_Examples,png)
 
 
 
