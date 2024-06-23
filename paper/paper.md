@@ -27,8 +27,6 @@ Authors: E. M. Vavagiakis, S. McDermott, H. Awan, E. Ran, K. Banker, S. Usman, C
 
 ---
 
-% based on: https://joss.theoj.org/papers/10.21105/joss.00388
-% https://docs.google.com/document/d/1hWugcJOrWVEdLS7d64hyYCPsSkR14KRxNG6-kmdVLcU/edit
 
 # Summary
 
@@ -51,7 +49,15 @@ While lacking the fidelity of N-body simulations, DeepSZSim meets a need for a u
 The `DeepCMBsim` package combines physical processes and sources of noise in a software framework that enables fast and realistic simulation of the CMB in which key cosmological parameters can be varied. DeepCMBSim simulates correlations of temperatures and polarization signals from the CMB, including large-scale gravitational lensing and BB polarization caused by non-zero tensor-to-scalar ratios.
 
 DeepCMBSim’s primary physics module is `camb_power_spectrum`, which defines the `CAMBPowerSpectrum` class. This calls `CAMB` `[@Lewis:1999bs; @Howlett:2012mh]`. The power spectrum of the noise follows the form in `[@Hu:2001kj]`, assuming statistical independence in the Stokes parameters `[@Knox:1995dq; @Zaldarriaga:1996xe]`.
-This software allows the user to specify cosmological parameters (e.g., omega matter, omega baryon, the lensing scale, the tensor-to-scalar ratio, which are inputs to CAMB) and experiment parameters (e.g., white noise level, beam size) in a  `yaml` configuration file to permit a user-friendly interface to permit reproducible simulations. The default parameters reproduce the Planck 2018 cosmology `[@Planck:2018vyg]`. ![Software workflow for the `DeepSZSim`package, including the elements of `DeepCMBsim`.\label{fig:workflow}](figures/DeepSZSim_Workflow.png)
+This software allows the user to specify cosmological parameters (e.g., omega matter, omega baryon, the lensing scale, the tensor-to-scalar ratio, which are inputs to CAMB) and experiment parameters (e.g., white noise level, beam size) in a  `yaml` configuration file to permit a user-friendly interface to permit reproducible simulations. The default parameters reproduce the Planck 2018 cosmology `[@Planck:2018vyg]`. 
+
+![Software workflow for the `DeepSZSim` package, including the elements of `DeepCMBsim`.\label{fig:workflow}](figures/DeepSZSim_Workflow.png)
+![Example outputs for the `DeepSZsim` package for a set of masses, redshifts, and noise configurations.\label{fig:sz}](figures/SZCluster_Examples.png)
+![Software workflow for the `DeepSZSim` package, including the elements of `DeepCMBsim`.\label{fig:workflow}](figures/CMBSpectra_Examples.pdf)
+
+![Example output angular spectra for the `DeepCMBsim` package for a set of tensor-to-scalar ratios r and lens scaling factors A_lens.\label{fig:cmb}](figures/.png)
+
+
 
 The package workflow is demonstrated in \autoref{fig:workflow}. 
 
@@ -67,8 +73,6 @@ From these inputs, pressure profiles [cite], Compton-y profiles [cite], and tSZ 
 
 We present examples of the primary outputs from `DeepCMBSim` and `DeepSZSim` in, \autoref{fig:cmb} and \autoref{fig:sz}, respectively. 
 
-![Example output angular spectra for the `DeepCMBsim` package for a set of tensor-to-scalar ratios r and lens scaling factors A_lens.\label{fig:cmb}](figures/CMBSpectra_Examples.pdf)
-![Example outputs for the `DeepSZsim` package for a set of masses, redshifts, and noise configurations.\label{fig:sz}](figures/SZCluster_Examples,png)
 
 
 
