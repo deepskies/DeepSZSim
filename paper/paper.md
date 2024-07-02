@@ -7,19 +7,55 @@ tags:
   - galaxy clusters
   - astronomy
 authors:
-  - name: Author 1
+  - name: Eve M. Vavagiakis
+    orcid: 0000-0002-2105-7589
+    equal-contrib: true
+    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+  - name: Samuel D. McDermott
+    orcid: 0000-0001-5513-1938
+    equal-contrib: true
+    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+  - name: Humna Awan
     orcid: 0000-0000-0000-0000
+    equal-contrib: true
+    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+  - name: Elaine Y. Ran
+    orcid: 0009-0007-1681-4745
+    equal-contrib: true
+    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+  - name: Kush Banker
+    orcid: 0009-0000-8099-2609
+    equal-contrib: true
+    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+  - name: Samantha Usman
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
+    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+  - name: Camille Avestruz
+    orcid: 0000-0001-8868-0810
+    equal-contrib: true
+    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+  - name: Brian Nord
+    orcid: 0000-0001-6706-8972
     equal-contrib: true
     affiliation: "1, 2" # (Multiple affiliations must be quoted)
 
 affiliations:
  - name: Affil 1
    index: 1
- - name: Affil 2
+ - name: Department of Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
    index: 2
- - name: Affil 3
+ - name: Kavli Institute for Cosmological Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
    index: 3
-date: 13 August 2023
+ - name: Department of Physics, Duke University, Durham, NC 27708, USA b. Department of Physics, Cornell University, Ithaca, NY 14853, USA
+   index: 4
+ - name: Department of Physics University of Michigan, Ann Arbor, MI 48109
+   index: 5
+ - name: Leinweber Center for Theoretical Physics, University of Michigan, Ann Arbor, MI 48109
+   index: 6
+ - name: Department of Astronomy and Astrophysics University of Chicago, Chicago, IL
+   index: 7
+date: 12 July 2024
 bibliography: paper.bib
 
 Authors: E. M. Vavagiakis, S. McDermott, H. Awan, E. Ran, K. Banker, S. Usman, C. Avestruz, Brian Nord
@@ -30,9 +66,9 @@ Authors: E. M. Vavagiakis, S. McDermott, H. Awan, E. Ran, K. Banker, S. Usman, C
 
 # Summary
 
-Current and upcoming measurements of the cosmic microwave background (CMB), the oldest observable light in the universe, elucidate the fundamental physics of our universe, including the development of large-scale structure. Galaxy clusters are the largest gravitationally bound structures in our universe and make up a significant portion of this large-scale structure. Through measurements of galaxy clusters, we can derive insights into the growth of structure and place powerful constraints on cosmology. Simulations of galaxy clusters that are well-matched to upcoming data sets are a key tool for addressing systematics (e.g., cluster mass inference) that limit these current and future cluster-based cosmology constraints. However, most state-of-the-art simulations are too computationally intensive to produce multiple versions of significant  systematic effects: from underlying gas physics to observational modeling uncertainties. 
+Current and upcoming measurements of the cosmic microwave background (CMB), the oldest observable light in the universe, elucidate the fundamental physics of our universe, including the development of cosmic large-scale structure. Galaxy clusters are the largest gravitationally bound structures in our universe and make up a significant portion of this large-scale structure. Through measurements of galaxy clusters, we can derive insights into the growth of structure and place powerful constraints on cosmology. Simulations of galaxy clusters that are well-matched to upcoming data sets are a key tool for addressing systematics (e.g., cluster mass inference) that limit these current and future cluster-based cosmology constraints. However, most state-of-the-art simulations are too computationally intensive to produce multiple versions of significant  systematic effects: from underlying gas physics to observational modeling uncertainties. 
 
-We present DeepSZSim, a novel user-friendly Python framework for generating simulations of the CMB and the thermal Sunyaev–Zel’dovich (tSZ) effect in galaxy clusters, which is  based on average galaxy cluster thermal pressure profile models. DeepSZSim includes CMB power spectra generation using CAMB and simulated CMB temperature maps using `namaster` [@alonsoUnifiedPseudoC_2019], as well as tSZ signal modeling, instrument beam convolution and noise. By tuning the input parameters based on a cosmology, distributions of halo mass and redshift, and experiment properties (e.g., map depth and observation frequency), users are able to generate a variety of simulated primary and secondary CMB anisotropy images. These simulations offer a fast and flexible method for generating large datasets to test mass inference methods like machine learning and simulation-based inference. 
+We present DeepSZSim, a novel user-friendly Python framework for generating simulations of the CMB and the thermal Sunyaev–Zel’dovich (tSZ) effect in galaxy clusters, which is  based on average galaxy cluster thermal pressure profile models. DeepSZSim includes CMB power spectra generation using CAMB and simulated CMB temperature maps using `namaster` [@alonsoUnifiedPseudoC_2019], as well as tSZ signal modeling, instrument beam convolution, and noise. By tuning the input parameters based on a cosmology, distributions of halo mass and redshift, and experiment properties (e.g., map depth and observation frequency), users are able to generate a variety of simulated primary and secondary CMB anisotropy images. These simulations offer a fast and flexible method for generating large datasets to test mass inference methods like machine learning and simulation-based inference. 
 
 # Statement of Need
 
@@ -55,7 +91,6 @@ This software allows the user to specify cosmological parameters (e.g., omega ma
 
 ![Example output angular spectra for the `DeepCMBsim` package for a set of tensor-to-scalar ratios r and lens scaling factors A_lens.\label{fig:cmb}](figures/CMBSpectra_Examples.png)
 
-
 The package workflow is demonstrated in \autoref{fig:workflow}. 
 
 We provide an example notebook in `notebooks/simcmb_example.ipynb` which demonstrates the software functionality.
@@ -64,7 +99,7 @@ We provide an example notebook in `notebooks/simcmb_example.ipynb` which demonst
 
 `DeepSZsim` includes code for producing fast simulations of the thermal Sunyaev-Zeldovich effect for galaxy halos of varying mass and redshift, based on average thermal pressure profile fits from Battaglia et al. 2012 `[@Battaglia:2012]`. The output is an array of simulated submaps of the tSZ effect associated with galaxy halos, which can include simulated CMB, instrument beam convolution, and/or white noise. 
 
-The user provides inputs to generate an array of redshift and mass (M_200) for dark matter halos, the desired pixel and submap size for the output submaps, and inputs such as experiment properties (observation frequency, noise level, beam size) and a cosmological model. These inputs are easily customizable, or the user can run defaults based on the Atacama Cosmology Telescope `[@ACT:2021]` and Planck cosmology `[@Planck:2019]`. Cosmology computations depend on `colossus` `[@Colossus:2018]` and `astropy` `[@Astropy:2013]`.
+The user provides inputs to generate an array of redshift and mass ($M_200$) for dark matter halos, the desired pixel and submap size for the output submaps, and inputs such as experiment properties (observation frequency, noise level, beam size) and a cosmological model. These inputs are easily customizable, or the user can run defaults based on the Atacama Cosmology Telescope `[@ACT:2021]` and Planck cosmology `[@Planck:2019]`. Cosmology computations depend on `colossus` `[@Colossus:2018]` and `astropy` `[@Astropy:2013]`.
 
 From these inputs, pressure profiles [cite], Compton-y profiles [cite], and tSZ signal maps are generated for the dark matter halo array. Simulated CMB primary anisotropy maps can be generated through a dependency on `DeepCMBSim`. Final simulated submaps can include instrument beam convolution and white noise `[@actnotebooks:2015]`. Plotting functions for the simulations and an aperture photometry filter are included as tools. The submap handling functions rely on `pixell` `[@pixell:2024]`.
 
@@ -86,9 +121,12 @@ We present examples of the primary outputs from `DeepCMBSim` and `DeepSZSim` in,
 
 We acknowledge contributions from Maggie Voetberg, Junhe Zhang, Helen Tan, Ioana Corescu, and Antwine Willis.
 
-We acknowledge the Deep Skies Lab as a community of multi-domain experts and collaborators who’ve facilitated an environment of open discussion, idea-generation, and collaboration. This community was important for the development of this project.
+We acknowledge the Deep Skies Lab as a community of multi-domain experts and collaborators who’ve facilitated an environment of open discussion, idea generation, and collaboration. This community was important for the development of this project.
 
-Work supported by the Fermi National Accelerator Laboratory, managed and operated by Fermi Research Alliance, LLC under Contract No. DE-AC02-07CH11359 with the U.S. Department of Energy. The U.S. Government retains and the publisher, by accepting the article for publication, acknowledges that the U.S. Government retains a non-exclusive, paid-up, irrevocable, world-wide license to publish or reproduce the published form of this manuscript, or allow others to do so, for U.S. Government purposes. EMV acknowledges support from NSF award AST-2202237.
+Work supported by the Fermi National Accelerator Laboratory, managed and operated by Fermi Research Alliance, LLC under Contract No. DE-AC02-07CH11359 with the U.S. Department of Energy. The U.S. Government retains and the publisher, by accepting the article for publication, acknowledges that the U.S. Government retains a non-exclusive, paid-up, irrevocable, world-wide license to publish or reproduce the published form of this manuscript, or allow others to do so, for U.S. Government purposes. 
 
+EMV acknowledges support from NSF award AST-2202237.
+
+This material is based upon work supported by the National Science Foundation under Grant No. 2009944.
 
 # References
