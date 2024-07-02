@@ -10,11 +10,11 @@ authors:
   - name: Eve M. Vavagiakis
     orcid: 0000-0002-2105-7589
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "1" 
   - name: Samuel D. McDermott
     orcid: 0000-0001-5513-1938
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "2"
   - name: Humna Awan
     orcid: 0000-0000-0000-0000
     equal-contrib: true
@@ -38,22 +38,24 @@ authors:
   - name: Brian Nord
     orcid: 0000-0001-6706-8972
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "2" # (Multiple affiliations must be quoted)
 
 affiliations:
- - name: Affil 1
+ - name: Department of Physics, Duke University, Durham, NC 27708, USA 
    index: 1
- - name: Department of Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
+ - name: Department of Physics, Cornell University, Ithaca, NY 14853, USA
    index: 2
+ - name: Department of Astronomy and Astrophysics University of Chicago, Chicago, IL
+   index: 2
+  - name: Department of Physics University of Michigan, Ann Arbor, MI 48109
+   index: 5
  - name: Kavli Institute for Cosmological Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
    index: 3
- - name: Department of Physics, Duke University, Durham, NC 27708, USA b. Department of Physics, Cornell University, Ithaca, NY 14853, USA
+ - name: Department of Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
    index: 4
- - name: Department of Physics University of Michigan, Ann Arbor, MI 48109
-   index: 5
  - name: Leinweber Center for Theoretical Physics, University of Michigan, Ann Arbor, MI 48109
    index: 6
- - name: Department of Astronomy and Astrophysics University of Chicago, Chicago, IL
+ - name: Fermi National Accelerator Laboratory, Batavia, IL 60510, USA
    index: 7
 date: 12 July 2024
 bibliography: paper.bib
@@ -91,7 +93,7 @@ This software allows the user to specify cosmological parameters (e.g., omega ma
 
 ![Example output angular spectra for the `DeepCMBsim` package for a set of tensor-to-scalar ratios r and lens scaling factors A_lens.\label{fig:cmb}](figures/CMBSpectra_Examples.png)
 
-The package workflow is demonstrated in \autoref{fig:workflow}. 
+The package workflow is demonstrated in Figure \autoref{fig:workflow}. 
 
 We provide an example notebook in `notebooks/simcmb_example.ipynb` which demonstrates the software functionality.
 
@@ -103,7 +105,7 @@ The user provides inputs to generate an array of redshift and mass ($M_200$) for
 
 From these inputs, pressure profiles [cite], Compton-y profiles [cite], and tSZ signal maps are generated for the dark matter halo array. Simulated CMB primary anisotropy maps can be generated through a dependency on `DeepCMBSim`. Final simulated submaps can include instrument beam convolution and white noise `[@actnotebooks:2015]`. Plotting functions for the simulations and an aperture photometry filter are included as tools. The submap handling functions rely on `pixell` `[@pixell:2024]`.
 
-We present examples of the primary outputs from `DeepCMBSim` and `DeepSZSim` in, \autoref{fig:cmb} and \autoref{fig:sz}, respectively. 
+We present examples of the primary outputs from `DeepCMBSim` and `DeepSZSim` in, Figure \autoref{fig:cmb} and Figure \autoref{fig:sz}, respectively. 
 
 ![Example outputs for the `DeepSZsim` package for a set of masses, redshifts, and noise configurations.\label{fig:sz}](figures/SZCluster_Examples.png)
 
