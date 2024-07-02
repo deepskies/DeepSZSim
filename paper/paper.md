@@ -47,7 +47,7 @@ affiliations:
    index: 2
  - name: Department of Astronomy and Astrophysics University of Chicago, Chicago, IL
    index: 2
-  - name: Department of Physics University of Michigan, Ann Arbor, MI 48109
+ - name: Department of Physics University of Michigan, Ann Arbor, MI 48109
    index: 5
  - name: Kavli Institute for Cosmological Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
    index: 3
