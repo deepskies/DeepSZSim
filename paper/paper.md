@@ -10,35 +10,35 @@ authors:
   - name: Eve M. Vavagiakis
     orcid: 0000-0002-2105-7589
     equal-contrib: true
-    affiliation: "1" 
+    affiliation: "1, 2" 
   - name: Samuel D. McDermott
     orcid: 0000-0001-5513-1938
     equal-contrib: true
-    affiliation: "2"
+    affiliation: "3"
   - name: Humna Awan
     orcid: 0000-0000-0000-0000
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "4" 
   - name: Elaine Y. Ran
     orcid: 0009-0007-1681-4745
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "2"
   - name: Kush Banker
     orcid: 0009-0000-8099-2609
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "5" 
   - name: Samantha Usman
     orcid: 0000-0000-0000-0000
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "3" 
   - name: Camille Avestruz
     orcid: 0000-0001-8868-0810
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "4, 7" 
   - name: Brian Nord
     orcid: 0000-0001-6706-8972
     equal-contrib: true
-    affiliation: "2" # (Multiple affiliations must be quoted)
+    affiliation: "3, 5, 6" 
 
 affiliations:
  - name: Department of Physics, Duke University, Durham, NC 27708, USA 
@@ -46,17 +46,17 @@ affiliations:
  - name: Department of Physics, Cornell University, Ithaca, NY 14853, USA
    index: 2
  - name: Department of Astronomy and Astrophysics University of Chicago, Chicago, IL
-   index: 2
+   index: 3
  - name: Department of Physics University of Michigan, Ann Arbor, MI 48109
+   index: 4
+ - name: Department of Physics, The College, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
    index: 5
  - name: Kavli Institute for Cosmological Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
-   index: 3
- - name: Department of Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
-   index: 4
- - name: Leinweber Center for Theoretical Physics, University of Michigan, Ann Arbor, MI 48109
    index: 6
- - name: Fermi National Accelerator Laboratory, Batavia, IL 60510, USA
+ - name: Leinweber Center for Theoretical Physics, University of Michigan, Ann Arbor, MI 48109
    index: 7
+ - name: Fermi National Accelerator Laboratory, Batavia, IL 60510, USA
+   index: 8
 date: 12 July 2024
 bibliography: paper.bib
 
