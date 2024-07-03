@@ -15,11 +15,10 @@ jobs:
         python-version: '3.10'
     - uses: conda-incubator/setup-miniconda@v3
       with:
-        activate-environment: base
-        auto-activate-base: true
+        activate-environment: base-test
     - name: Install dependencies
       run: |
-        conda env update --file=environment.yml --name=base
+        conda env update --file=environment.yml --name=base-test
         python -m pip install colossus pixell camb
         python -m pip install .
     - name: Test with pytest
