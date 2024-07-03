@@ -20,6 +20,8 @@ jobs:
       run: |
         # conda env update --file=../environment.yml --name=base-test
         # python -m pip install colossus pixell camb
+        ls
+        pwd
         python -m pip install .
     - name: Test with pytest
       run: |
