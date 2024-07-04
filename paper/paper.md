@@ -16,9 +16,9 @@ authors:
     equal-contrib: true
     affiliation: "3"
   - name: Humna Awan
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0003-2296-7717
     equal-contrib: true
-    affiliation: "4" 
+    affiliation: "4, 5" 
   - name: Elaine Y. Ran
     orcid: 0009-0007-1681-4745
     equal-contrib: true
@@ -26,7 +26,7 @@ authors:
   - name: Kush Banker
     orcid: 0009-0000-8099-2609
     equal-contrib: true
-    affiliation: "5" 
+    affiliation: "6" 
   - name: Samantha Usman
     orcid: 0000-0000-0000-0000
     equal-contrib: true
@@ -34,11 +34,11 @@ authors:
   - name: Camille Avestruz
     orcid: 0000-0001-8868-0810
     equal-contrib: true
-    affiliation: "4, 7" 
+    affiliation: "4, 5" 
   - name: Brian Nord
     orcid: 0000-0001-6706-8972
     equal-contrib: true
-    affiliation: "3, 5, 6" 
+    affiliation: "3, 6, 8" 
 
 affiliations:
  - name: Department of Physics, Duke University, Durham, NC 27708, USA 
@@ -49,11 +49,11 @@ affiliations:
    index: 3
  - name: Department of Physics University of Michigan, Ann Arbor, MI 48109
    index: 4
- - name: Department of Physics, The College, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
-   index: 5
- - name: Kavli Institute for Cosmological Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
-   index: 6
  - name: Leinweber Center for Theoretical Physics, University of Michigan, Ann Arbor, MI 48109
+   index: 5
+ - name: Department of Physics, The College, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
+   index: 6
+ - name: Kavli Institute for Cosmological Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637
    index: 7
  - name: Fermi National Accelerator Laboratory, Batavia, IL 60510, USA
    index: 8
@@ -82,9 +82,15 @@ While lacking the fidelity of N-body simulations, DeepSZSim meets a need for a u
 
 # Features
 
+The DeepSZSim package uses the DeepCMBSim package to simulate large-scale modes of the CMB. These modes are combined with the SZ effect to generate realistic simulations of cluster images.
+
+The full package workflow is demonstrated in Figure \autoref{fig:workflow}. 
+
 ![Software workflow for the `DeepSZSim` package, including the elements of `DeepCMBsim`.\label{fig:workflow}](figures/DeepSZSim_Workflow.png)
 
-## DeepCMBSim
+
+
+## DeepCMBSim Modul
 
 The `DeepCMBsim` package combines physical processes and sources of noise in a software framework that enables fast and realistic simulation of the CMB in which key cosmological parameters can be varied. DeepCMBSim simulates correlations of temperatures and polarization signals from the CMB, including large-scale gravitational lensing and BB polarization caused by non-zero tensor-to-scalar ratios.
 
@@ -93,29 +99,28 @@ This software allows the user to specify cosmological parameters (e.g., omega ma
 
 ![Example output angular spectra for the `DeepCMBsim` package for a set of tensor-to-scalar ratios r and lens scaling factors A_lens.\label{fig:cmb}](figures/CMBSpectra_Examples.png)
 
-The package workflow is demonstrated in Figure \autoref{fig:workflow}. 
+We present examples of the primary outputs from `DeepCMBSim` in  Figure \autoref{fig:cmb}.
 
-We provide an example notebook in `notebooks/simcmb_example.ipynb` which demonstrates the software functionality.
 
-## DeepSZSim
 
-`DeepSZsim` includes code for producing fast simulations of the thermal Sunyaev-Zeldovich effect for galaxy halos of varying mass and redshift, based on average thermal pressure profile fits from Battaglia et al. 2012 `[@Battaglia:2012]`. The output is an array of simulated submaps of the tSZ effect associated with galaxy halos, which can include simulated CMB, instrument beam convolution, and/or white noise. 
+## SZ Cluster Simulation
+
+`DeepSZsim` includes code for producing fast simulations of the thermal SZ effect for galaxy halos of varying mass and redshift, based on average thermal pressure profile fits from Battaglia et al. 2012 `[@Battaglia:2012]`. The output is an array of simulated submaps of the tSZ effect associated with galaxy halos, which can include simulated CMB, instrument beam convolution, and/or white noise. 
 
 The user provides inputs to generate an array of redshift and mass ($M_200$) for dark matter halos, the desired pixel and submap size for the output submaps, and inputs such as experiment properties (observation frequency, noise level, beam size) and a cosmological model. These inputs are easily customizable, or the user can run defaults based on the Atacama Cosmology Telescope `[@ACT:2021]` and Planck cosmology `[@Planck:2019]`. Cosmology computations depend on `colossus` `[@Colossus:2018]` and `astropy` `[@Astropy:2013]`.
 
 From these inputs, pressure profiles [cite], Compton-y profiles [cite], and tSZ signal maps are generated for the dark matter halo array. Simulated CMB primary anisotropy maps can be generated through a dependency on `DeepCMBSim`. Final simulated submaps can include instrument beam convolution and white noise `[@actnotebooks:2015]`. Plotting functions for the simulations and an aperture photometry filter are included as tools. The submap handling functions rely on `pixell` `[@pixell:2024]`.
 
-We present examples of the primary outputs from `DeepCMBSim` and `DeepSZSim` in, Figure \autoref{fig:cmb} and Figure \autoref{fig:sz}, respectively. 
-
 ![Example outputs for the `DeepSZsim` package for a set of masses, redshifts, and noise configurations.\label{fig:sz}](figures/SZCluster_Examples.png)
 
+We present examples of the primary outputs from `DeepSZSim` in Figure \autoref{fig:sz}. 
 
 # Acknowledgements
 
 *E. M. Vavagiakis*: methodology, software, writing, supervision.
-*S. McDermott*: methodology, software, writing, supervision. 
+*S. D. McDermott*: methodology, software, writing, supervision. 
 *H. Awan*: methodology, software, writing. 
-*E. Ran*: methodology, software
+*E. Y. Ran*: methodology, software
 *K. Banker*: methodology, software
 *S. Usman*: methodology, software
 *C. Avestruz*: conceptualization, methodology, project administration, funding acquisition, supervision, writing 
@@ -127,7 +132,7 @@ We acknowledge the Deep Skies Lab as a community of multi-domain experts and col
 
 Work supported by the Fermi National Accelerator Laboratory, managed and operated by Fermi Research Alliance, LLC under Contract No. DE-AC02-07CH11359 with the U.S. Department of Energy. The U.S. Government retains and the publisher, by accepting the article for publication, acknowledges that the U.S. Government retains a non-exclusive, paid-up, irrevocable, world-wide license to publish or reproduce the published form of this manuscript, or allow others to do so, for U.S. Government purposes. 
 
-EMV acknowledges support from NSF award AST-2202237.
+This material is based upon work supported by the National Science Foundation under Grant No. AST-2202237.
 
 This material is based upon work supported by the National Science Foundation under Grant No. 2009944.
 
