@@ -2,6 +2,10 @@
 
 Code for producing fast simulations of the SZ effect for galaxy halos of varying z, $M_{200}$, based on average thermal pressure profile fits from [Battaglia et al. 2012](https://ui.adsabs.harvard.edu/abs/2012ApJ...758...75B/abstract). Simulated submaps can include tSZ signal from these halos, simulated CMB, instrument beam convolution and white noise.
 
+## Code Overview
+
+The code is structured as depicted here: ![DeepSZSim workflow](figures/DeepSZSim_Workflow.png). The CMB simulations are handled by [DeepCMBSim](https://www.github.com/deepskies/deepcmbsim), based on [CAMB](https://camb.info), and further by [pixell](https://github.com/simonsobs/pixell). The SZ cluster simluations are done in `make_sz_cluster.py` and instrumental effects are added in `filters.py` and `noise.py`.  
+
 ## Quickstart
 
 ### Installation 
