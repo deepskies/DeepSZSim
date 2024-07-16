@@ -4,7 +4,8 @@ Code for producing fast simulations of the SZ effect for galaxy halos of varying
 
 ## Code Overview
 
-The code is structured as depicted here: ![DeepSZSim workflow](figures/DeepSZSim_Workflow.png). The CMB simulations are handled by [DeepCMBSim](https://www.github.com/deepskies/deepcmbsim), based on [CAMB](https://camb.info), and further by [pixell](https://github.com/simonsobs/pixell). The SZ cluster simluations are done in `make_sz_cluster.py` and instrumental effects are added in `filters.py` and `noise.py`.  
+The code is structured as depicted here: ![DeepSZSim workflow](paper/figures/DeepSZSim_Workflow.png)
+The CMB simulations are handled by [DeepCMBSim](https://www.github.com/deepskies/deepcmbsim), based on [CAMB](https://camb.info), and further by [pixell](https://github.com/simonsobs/pixell). The SZ cluster simluations are done in `make_sz_cluster.py` and instrumental effects are added in `filters.py` and `noise.py`.  
 
 ## Quickstart
 
