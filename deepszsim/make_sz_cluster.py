@@ -228,8 +228,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
     return _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc)
 
 
-def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_Mpc = None,
-            Rmaxy = None):
+def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -264,33 +263,19 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
     if R200_Mpc is None:
         R200_Mpc = get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     radii_mpc = (radii_mpc * u.Mpc).value
-    if Rmaxy is None:
-        rmax = radii_mpc.max()
-    elif '200' in Rmaxy:
-        rmax = R200_Mpc
-    else:
-        print('please specify a valid `Rmaxy`')
-        return None
     if profile != "Battaglia2012":
         print("only implementing `Battaglia2012` for profile")
     profile = Pth_Battaglia2012
     pressure_integ = np.empty_like(radii_mpc)
     P200_kevcm3 = P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = R200_Mpc).value
     
-    # integral = np.trapz(np.array([profile(np.sqrt(np.linspace(0, np.sqrt(radii_mpc.max()**2. - rv**2.)+1.,
-    #                                                               1000)**2 +
-    #                                      rv**2), M200_SM, redshift_z, load_vars_dict = None, alpha = alpha,
-    #                       gamma = gamma, R200_Mpc = r200) for rv in radii_mpc]), np.array([np.linspace(0,
-    #                                                                                             np.sqrt(radii_mpc.max(
-    # )**2. - rv**2.)+1., 1000) for rv in radii_mpc]))
-    # y_pro = integral * P200_kevcm3 * keVcm3_to_Jm3 * Thomson_scale * \
-    #         thermal_to_electron_pressure * 2*Mpc_to_m
-    # return y_pro
+    rmax = radii_mpc.max()
+    
     for i, radius in enumerate(radii_mpc):
         # Multiply profile by P200 specifically for Battaglia 2012 profile,
         # since it returns Pth/P200 instead of Pth
         rv = radius
-        if (rmax == R200_Mpc) and (rv >= R200_Mpc):
+        if (rv >= R200_Mpc):
             pressure_integ[i] = 0
         else:
             l_mpc = np.linspace(0, np.sqrt(rmax**2. - rv**2.) + 1., 1000)  # Get line of sight axis
@@ -303,7 +288,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
 
 
 def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixels, pixel_size_arcmin, alpha = 1.0,
-                   gamma = -0.3, R200_Mpc = None, Rmaxy = None):
+                   gamma = -0.3, R200_Mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -324,6 +309,10 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
         size of final submap in number of pixels
     pixel_size_arcmin: float
         size of each pixel in arcmin
+    alpha: float
+        variable fixed by Battaglia et al 2012 to 1.0
+    gamma: float
+        variable fixed by Battaglia et al 2012 to -0.3
     R200_Mpc: None or float
         if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
         and the cosmology contained in load_vars_dict
@@ -341,8 +330,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     mindist = utils.arcmin_to_Mpc(pixel_size_arcmin*0.1, redshift_z, load_vars_dict['cosmo'])
     R = np.maximum(mindist, np.sqrt(X[:, None]**2 + X[None, :]**2).flatten())
     
-    cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc,
-                 Rmaxy = Rmaxy)  #
+    cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)  #
     # evaluate compton-y for each
     # neccesary radius
 
@@ -366,7 +354,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
 
 def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
                       image_size_pixels = None, pixel_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
-                      R200_Mpc = None, Rmaxy = None):
+                      R200_Mpc = None):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -387,6 +375,10 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
     load_vars_dict: dict
         result of running the load_vars() function, which includes a dictionary of cosmological and experimental
         parameters
+    alpha: float
+        variable fixed by Battaglia et al 2012 to 1.0
+    gamma: float
+        variable fixed by Battaglia et al 2012 to -0.3
     R200_Mpc: None or float
         if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
         and the cosmology contained in load_vars_dict
@@ -406,11 +398,11 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
     
     y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
                            image_size_pixels, pixel_size_arcmin,
-                           alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc, Rmaxy = Rmaxy)
+                           alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)
 
     return y_map
 
-def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict):
+def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_density = None):
     '''
     Parameters:
     ----------
@@ -421,6 +413,9 @@ def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict):
     load_vars_dict: dict
         must contain 'cosmo' (a FlatLambaCDM instance describing the background cosmology),
         'sigma8' (float, around 0.8), and 'ns' (float, around 0.96)
+    angsize_density: None or str
+        density measure at which to calculate the angular size, if desired. If `None`, will not
+        calculate an angular size. Otherwise, use a valid choice as specified in `colossus.halo.mass_adv`
 
     Returns:
     -------
@@ -439,9 +434,19 @@ def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict):
     cosmology.addCosmology('myCosmo', **params)
     cosmo_colossus = cosmology.setCosmology('myCosmo')
     
-    M200_SM, R200_Mpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM * cosmo.h,
+    M200_SM, R200_kpc, c200 = mass_adv.changeMassDefinitionCModel(M200_SM * cosmo.h,
                                                                   redshift_z, '200c', '200c', c_model = 'ishiyama21')
     M200_SM /= cosmo.h  # From M_solar/h to M_solar
-    R200_Mpc = R200_Mpc / cosmo.h / 1000  # From kpc/h to Mpc
-    angsize_arcmin = R200_Mpc*1000/60/cosmo_colossus.kpcPerArcsec(redshift_z)
+    R200_Mpc = R200_kpc / cosmo.h / 1000  # From kpc/h to Mpc
+    
+    if angsize_density is not None:
+        if angsize_density != '200c':
+            _, Rd_kpc, _ = mass_adv.changeMassDefinitionCModel(M200_SM * cosmo.h,
+                                                               redshift_z, '200c', angsize_density,
+                                                               c_model = 'ishiyama21')
+            angsize_arcmin = Rd_kpc / cosmo.h / 60 / cosmo_colossus.kpcPerArcsec(redshift_z)
+        else:
+            angsize_arcmin = R200_Mpc * 1000 / 60 / cosmo_colossus.kpcPerArcsec(redshift_z)
+    else:
+        angsize_arcmin = None
     return M200_SM, R200_Mpc, angsize_arcmin, c200 # now returns M200, R200, angsize in arcmin, c200

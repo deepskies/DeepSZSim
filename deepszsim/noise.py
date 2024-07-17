@@ -9,8 +9,12 @@ def generate_noise_map(image_size, noise_level, pix_size):
     Generates a white noise map based on the noise level and beam size.
 
     Args:
-        image_size (int): Size of the noise map (N x N).
-        noise_level (float): Noise level of the survey.
+        image_size: int
+            Size of the noise map (N x N).
+        noise_level: float
+            Noise level of the survey.
+        pix_size: int
+            size of pixels in arcminutes
 
     Returns:
         ndarray: Noise map.

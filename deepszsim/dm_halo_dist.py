@@ -3,8 +3,6 @@ creates a mass and redshift distribution of halos
 """
 
 import numpy as np
-from colossus.cosmology import cosmology
-from colossus.halo import mass_adv
         
 def flatdist_halo(zmin, zmax, m200min_SM, m200max_SM, size, seed=None):
     '''
