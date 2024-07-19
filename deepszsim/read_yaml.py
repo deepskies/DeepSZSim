@@ -8,7 +8,7 @@ import os
 
 class YAMLOperator:
 
-    def __init__(self, file_path=os.path.join(os.path.dirname(__file__), "Settings", "inputdata.yaml")):
+    def __init__(self, file_path=os.path.join(os.path.dirname(__file__), "Settings", "config_everything.yaml")):
 
         self.file_path = file_path
 
