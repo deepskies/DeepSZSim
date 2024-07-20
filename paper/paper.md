@@ -35,7 +35,7 @@ authors:
     orcid: 0000-0001-8868-0810
     equal-contrib: true
     affiliation: "4, 5" 
-  - name: Brian Nord
+  - name: Brian D. Nord
     orcid: 0000-0001-6706-8972
     equal-contrib: true
     affiliation: "3, 6, 8" 
