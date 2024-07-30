@@ -174,9 +174,7 @@ class simulate_clusters:
                                                                       self.pixel_size_arcmin,
                                                                       self.beam_size_arcmin)
             else:
-                conv_map = simtools.convolve_map_with_gaussian_beam(
-                    self.pixel_size_arcmin, self.beam_size_arcmin, dT_map)
-                cmb_map = np.zeros_like(conv_map)
+                conv_map, cmb_map = beamsig_map, np.zeros_like(beamsig_map)
             if not self.vars['noise_level'] == 0:
                 noise_map = noise.generate_noise_map(self.image_size_pixels, self.vars['noise_level'],
                                                      self.pixel_size_arcmin)
