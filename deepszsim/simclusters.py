@@ -101,7 +101,9 @@ class simulate_clusters:
                  for i in range(self._size)]).T
         
         self.id_list = [
-            str(self.M200[i])[:5] + str(self.redshift_z[i] * 100)[:2] + str(self._rng.integers(10**6)).zfill(6)
+            str(int(self.M200[i]//1e9)).zfill(6) + "_" + str(int(self.redshift_z[i]*100)).zfill(3) + "_" + str(
+                self._rng.integers(
+                10**6)).zfill(6)
             for i in range(self._size)]
         self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i], 'redshift_z': self.redshift_z[i],
                                                             'R200': self.R200_Mpc[i],
