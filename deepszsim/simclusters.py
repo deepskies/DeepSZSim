@@ -105,8 +105,10 @@ class simulate_clusters:
                 self._rng.integers(
                 10**6)).zfill(6)
             for i in range(self._size)]
-        self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i], 'redshift_z': self.redshift_z[i],
+        self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i],
+                                                            'redshift_z': self.redshift_z[i],
                                                             'R200': self.R200_Mpc[i],
+                                                            'angsize_arcmin': self.angsize500_arcmin[i],
                                                             'angsize500_arcmin': self.angsize500_arcmin[i],
                                                             'image_size_pixels': self.image_size_pixels}} for
                                                 i in range(
@@ -243,7 +245,7 @@ class simulate_clusters:
                 for k, v in self.clusters[self.id_list[i]]['maps'].items():
                     f.create_dataset('maps/' + k, data = v)
         elif nest_h5:
-            file_name = str(self._size) + "clusters_" + dt.strftime(dt.now(),
+            file_name = "clusters_" + "N"+ str(self._size) +"_" + dt.strftime(dt.now(),
                                                                     '%y%m%d%H%M%S%f') if nest_name is None else nest_name
             with h5py.File(os.path.join(self.savedir, file_name + ".h5"), 'w') as f:
                 for j in range(self._size):
