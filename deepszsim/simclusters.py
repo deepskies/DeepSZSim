@@ -162,12 +162,15 @@ class simulate_clusters:
         dT_maps = self.get_dT_maps()
         if add_CMB: self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
         if self.tqverb: print("making convolved T maps" + (" with CMB" if add_CMB else ""))
+        _centerpix = self.image_size_pixels // 2
         for i in tqdm(range(self._size), disable = (not self.tqverb)):
-            self.clusters[self.id_list[i]]['params']['dT_central'] = dT_maps[i][self.image_size_pixels // 2][
-                self.image_size_pixels // 2]
+            dTm = dT_maps[i]
+            self.clusters[self.id_list[i]]['params']['dT_central'] = dTm[_centerpix,_centerpix]
             self.clusters[self.id_list[i]]['maps'] = {}
+            beamsig_map = simtools.convolve_map_with_gaussian_beam(self.pixel_size_arcmin,
+                                                                   self.beam_size_arcmin, dTm)
             if add_CMB:
-                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_maps[i], self.ps,
+                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dTm, self.ps,
                                                                       self.pixel_size_arcmin,
                                                                       self.beam_size_arcmin)
             else:
@@ -182,8 +185,8 @@ class simulate_clusters:
             final_map = conv_map + noise_map
             self.clusters[self.id_list[i]]['maps']['conv_map'] = conv_map
             self.clusters[self.id_list[i]]['maps']['CMB_map'] = cmb_map
-            self.clusters[self.id_list[i]]['maps']['signal_map'] = conv_map - cmb_map
-            self.clusters[self.id_list[i]]['maps']['noise_map'] = noise_map
+            self.clusters[self.id_list[i]]['maps']['signal_map'] = dTm
+            self.clusters[self.id_list[i]]['maps']['beamsig_map'] = beamsig_map
             self.clusters[self.id_list[i]]['maps']['final_map'] = final_map
         
         if returnval:
