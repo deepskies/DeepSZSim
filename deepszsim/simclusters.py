@@ -1,5 +1,5 @@
 import numpy as np
-from deepszsim import simtools, noise, load_vars, dm_halo_dist, make_sz_cluster
+from deepszsim import simtools, noise, load_vars, dm_halo_dist, make_sz_cluster, filters
 from tqdm import tqdm
 
 from astropy import constants as c
@@ -168,9 +168,10 @@ class simulate_clusters:
         if self.tqverb: print("making convolved T maps" + (" with CMB" if add_CMB else ""))
         _centerpix = self.image_size_pixels // 2
         for i in tqdm(range(self._size), disable = (not self.tqverb)):
-            dTm = dT_maps[i]
-            self.clusters[self.id_list[i]]['params']['dT_central'] = dTm[_centerpix,_centerpix]
-            self.clusters[self.id_list[i]]['maps'] = {}
+            dTm, name = dT_maps[i], self.id_list[i]
+            curdic = self.clusters[name]
+            curdic['params']['dT_central'] = dTm[_centerpix,_centerpix]
+            curdic['maps'] = {}
             beamsig_map = simtools.convolve_map_with_gaussian_beam(self.pixel_size_arcmin,
                                                                    self.beam_size_arcmin, dTm)
             if add_CMB:
@@ -185,11 +186,14 @@ class simulate_clusters:
             else:
                 noise_map = np.zeros_like(conv_map)
             final_map = conv_map + noise_map
-            self.clusters[self.id_list[i]]['maps']['conv_map'] = conv_map
-            self.clusters[self.id_list[i]]['maps']['CMB_map'] = cmb_map
-            self.clusters[self.id_list[i]]['maps']['signal_map'] = dTm
-            self.clusters[self.id_list[i]]['maps']['beamsig_map'] = beamsig_map
-            self.clusters[self.id_list[i]]['maps']['final_map'] = final_map
+            curdic['maps']['conv_map'] = conv_map
+            curdic['maps']['CMB_map'] = cmb_map
+            curdic['maps']['signal_map'] = dTm
+            curdic['maps']['beamsig_map'] = beamsig_map
+            curdic['maps']['final_map'] = final_map
+            curdic['params']['ap'] = filters.get_tSZ_signal_aperture_photometry(final_map,
+                                                                                curdic['params']['angsize_arcmin'],
+                                                                                self.pixel_size_arcmin)[-1]
         
         if returnval:
             return self.clusters
