@@ -36,6 +36,9 @@ def convolve_map_with_gaussian_beam(pix_size_arcmin,
 
 def f_sz(freq_ghz, T_CMB_K):
     '''
+    the leading order correction to blackbody from Compton scattering
+    see Eq 3.31 of https://background.uchicago.edu/~whu/thesis/chap3.pdf
+    
     Parameters:
     ----------
     freq_ghz: float
