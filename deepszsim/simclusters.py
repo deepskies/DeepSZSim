@@ -1,5 +1,5 @@
 import numpy as np
-from deepszsim import simtools, noise, load_vars, dm_halo_dist, make_sz_cluster
+from deepszsim import simtools, noise, load_vars, dm_halo_dist, make_sz_cluster, filters
 from tqdm import tqdm
 
 from astropy import constants as c
@@ -101,10 +101,14 @@ class simulate_clusters:
                  for i in range(self._size)]).T
         
         self.id_list = [
-            str(self.M200[i])[:5] + str(self.redshift_z[i] * 100)[:2] + str(self._rng.integers(10**6)).zfill(6)
+            str(int(self.M200[i]//1e9)).zfill(6) + "_" + str(int(self.redshift_z[i]*100)).zfill(3) + "_" + str(
+                self._rng.integers(
+                10**6)).zfill(6)
             for i in range(self._size)]
-        self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i], 'redshift_z': self.redshift_z[i],
+        self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i],
+                                                            'redshift_z': self.redshift_z[i],
                                                             'R200': self.R200_Mpc[i],
+                                                            'angsize_arcmin': self.angsize500_arcmin[i],
                                                             'angsize500_arcmin': self.angsize500_arcmin[i],
                                                             'image_size_pixels': self.image_size_pixels}} for
                                                 i in range(
@@ -162,29 +166,34 @@ class simulate_clusters:
         dT_maps = self.get_dT_maps()
         if add_CMB: self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
         if self.tqverb: print("making convolved T maps" + (" with CMB" if add_CMB else ""))
+        _centerpix = self.image_size_pixels // 2
         for i in tqdm(range(self._size), disable = (not self.tqverb)):
-            self.clusters[self.id_list[i]]['params']['dT_central'] = dT_maps[i][self.image_size_pixels // 2][
-                self.image_size_pixels // 2]
-            self.clusters[self.id_list[i]]['maps'] = {}
+            dTm, name = dT_maps[i], self.id_list[i]
+            curdic = self.clusters[name]
+            curdic['params']['dT_central'] = dTm[_centerpix,_centerpix]
+            curdic['maps'] = {}
+            beamsig_map = simtools.convolve_map_with_gaussian_beam(self.pixel_size_arcmin,
+                                                                   self.beam_size_arcmin, dTm)
             if add_CMB:
-                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_maps[i], self.ps,
+                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dTm, self.ps,
                                                                       self.pixel_size_arcmin,
                                                                       self.beam_size_arcmin)
             else:
-                conv_map = simtools.convolve_map_with_gaussian_beam(
-                    self.pixel_size_arcmin, self.beam_size_arcmin, dT_map)
-                cmb_map = np.zeros_like(conv_map)
+                conv_map, cmb_map = beamsig_map, np.zeros_like(beamsig_map)
             if not self.vars['noise_level'] == 0:
                 noise_map = noise.generate_noise_map(self.image_size_pixels, self.vars['noise_level'],
                                                      self.pixel_size_arcmin)
             else:
                 noise_map = np.zeros_like(conv_map)
             final_map = conv_map + noise_map
-            self.clusters[self.id_list[i]]['maps']['conv_map'] = conv_map
-            self.clusters[self.id_list[i]]['maps']['CMB_map'] = cmb_map
-            self.clusters[self.id_list[i]]['maps']['signal_map'] = conv_map - cmb_map
-            self.clusters[self.id_list[i]]['maps']['noise_map'] = noise_map
-            self.clusters[self.id_list[i]]['maps']['final_map'] = final_map
+            curdic['maps']['conv_map'] = conv_map
+            curdic['maps']['CMB_map'] = cmb_map
+            curdic['maps']['signal_map'] = dTm
+            curdic['maps']['beamsig_map'] = beamsig_map
+            curdic['maps']['final_map'] = final_map
+            curdic['params']['ap'] = filters.get_tSZ_signal_aperture_photometry(final_map,
+                                                                                curdic['params']['angsize_arcmin'],
+                                                                                self.pixel_size_arcmin)[-1]
         
         if returnval:
             return self.clusters
@@ -240,7 +249,7 @@ class simulate_clusters:
                 for k, v in self.clusters[self.id_list[i]]['maps'].items():
                     f.create_dataset('maps/' + k, data = v)
         elif nest_h5:
-            file_name = str(self._size) + "clusters_" + dt.strftime(dt.now(),
+            file_name = "clusters_" + "N"+ str(self._size) +"_" + dt.strftime(dt.now(),
                                                                     '%y%m%d%H%M%S%f') if nest_name is None else nest_name
             with h5py.File(os.path.join(self.savedir, file_name + ".h5"), 'w') as f:
                 for j in range(self._size):
