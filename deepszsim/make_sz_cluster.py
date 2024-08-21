@@ -288,7 +288,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
 
 
 def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixels, pixel_size_arcmin, alpha = 1.0,
-                   gamma = -0.3, R200_Mpc = None):
+                   gamma = -0.3, R200_Mpc = None, ctr_pix_res = 0.1):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -327,7 +327,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     X = utils.arcmin_to_Mpc(X, redshift_z, load_vars_dict['cosmo'])
     # Solves issues of div by 0
     #X[(X <= pixel_size_arcmin / 10) & (X >= -pixel_size_arcmin / 10)] = pixel_size_arcmin / 10
-    mindist = utils.arcmin_to_Mpc(pixel_size_arcmin*0.1, redshift_z, load_vars_dict['cosmo'])
+    mindist = utils.arcmin_to_Mpc(pixel_size_arcmin*ctr_pix_res, redshift_z, load_vars_dict['cosmo'])
     R = np.maximum(mindist, np.sqrt(X[:, None]**2 + X[None, :]**2).flatten())
     
     cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)  #
@@ -354,7 +354,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
 
 def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
                       image_size_pixels = None, pixel_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
-                      R200_Mpc = None):
+                      R200_Mpc = None, ctr_pix_res = 0.1):
     '''
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
@@ -398,7 +398,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
     
     y_map = _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict,
                            image_size_pixels, pixel_size_arcmin,
-                           alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)
+                           alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc, ctr_pix_res = ctr_pix_res)
 
     return y_map
 

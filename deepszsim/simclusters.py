@@ -10,7 +10,7 @@ from datetime import datetime as dt
 
 class simulate_clusters:
     def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
-                 R200_Mpc = None, profile = "Battaglia2012",
+                 R200_Mpc = None, ctr_pix_res = 0.1, profile = "Battaglia2012",
                  image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
                  alpha = 1.0, gamma = -0.3,
                  load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'config_everything.yaml'),
@@ -88,6 +88,7 @@ class simulate_clusters:
         self.beam_size_arcmin = self.vars['beam_size_arcmin']
         self.cosmo = self.vars['cosmo']
         self.tqverb = tqverb
+        self.ctr_pix_res = ctr_pix_res
         
         self.alpha, self.gamma = alpha, gamma
         self.seed, self._rng = seed, np.random.default_rng(seed)
@@ -128,7 +129,8 @@ class simulate_clusters:
             self.y_maps = np.array([make_sz_cluster.generate_y_submap(self.M200[i],
                                                       self.redshift_z[i],
                                                       R200_Mpc = self.R200_Mpc[i],
-                                                      load_vars_dict = self.vars)
+                                                      load_vars_dict = self.vars,
+                                                      ctr_pix_res = self.ctr_pix_res)
                                     for i in tqdm(range(self._size), disable = (not self.tqverb))])
             return self.y_maps
     
