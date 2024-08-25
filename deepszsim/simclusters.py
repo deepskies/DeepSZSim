@@ -101,7 +101,7 @@ class simulate_clusters:
                  for i in range(self._size)]).T
         
         self.id_list = [
-            str(int(self.M200[i]//1e9)).zfill(6) + "_" + str(int(self.redshift_z[i]*100)).zfill(3) + "_" + str(
+            str(int(self.M200[i]//1e9)).zfill(7) + "_" + str(int(self.redshift_z[i]*100)).zfill(3) + "_" + str(
                 self._rng.integers(
                 10**6)).zfill(6)
             for i in range(self._size)]
