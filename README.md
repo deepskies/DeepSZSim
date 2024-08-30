@@ -28,4 +28,4 @@ If you would like to contribute, please open a new [issue](https://github.com/de
 
 ## Contact
 
-The code was developed by [Eve M. Vavagiakis](http://evevavagiakis.com), [Camille Avestruz](https://sites.google.com/view/camilleavestruz), Kush Banker, Ioana Cristescu, [Samuel D. McDermott](https://samueldmcdermott.github.io), [Brian Nord](http://briandnord.com/bio), Elaine Ran, Hanzhi Tan, and Brian Zhang, and is maintained by the [DeepSkies lab](https://deepskieslab.com)
+The code was developed by [Eve M. Vavagiakis](http://evevavagiakis.com), [Samuel D. McDermott](https://samueldmcdermott.github.io), Humna Awan, Elaine Ran, Kush Banker, Samantha Usman, [Camille Avestruz](https://sites.google.com/view/camilleavestruz), and [Brian Nord](http://briandnord.com/bio). This was done in collaboration with Hanzhi Tan, Brian Zhang, and Ioana Cristescu, and the code is maintained by the [DeepSkies lab](https://deepskieslab.com) 
