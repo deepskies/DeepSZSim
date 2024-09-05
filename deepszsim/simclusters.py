@@ -99,11 +99,11 @@ class simulate_clusters:
                 [make_sz_cluster.get_r200_angsize_and_c200(self.M200[i], self.redshift_z[i], self.vars,
                                                            angsize_density = '500c')[1:3]
                  for i in range(self._size)]).T
-        
-        self.id_list = [
-            str(int(self.M200[i]//1e9)).zfill(7) + "_" + str(int(self.redshift_z[i]*100)).zfill(3) + "_" + str(
-                self._rng.integers(
-                10**6)).zfill(6)
+            
+        self.id_list = [f"{int(self.M200[i]/1e9):07}_{int(self.redshift_z[i]*100):03}_{self._rng.integers(10**6):06}"
+            # str(int(self.M200[i]//1e9)).zfill(7) + "_" + str(int(self.redshift_z[i]*100)).zfill(3) + "_" + str(
+            #     self._rng.integers(
+            #     10**6)).zfill(6)
             for i in range(self._size)]
         self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i],
                                                             'redshift_z': self.redshift_z[i],
