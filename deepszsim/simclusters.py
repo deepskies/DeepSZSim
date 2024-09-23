@@ -13,7 +13,7 @@ class simulate_clusters:
                  R200_Mpc = None, profile = "Battaglia2012",
                  image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
                  alpha = 1.0, gamma = -0.3,
-                 load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'config_everything.yaml'),
+                 load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'config_simACTDR5.yaml'),
                  seed = None, tqverb = False
                  ):
         """

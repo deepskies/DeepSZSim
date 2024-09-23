@@ -1,4 +1,14 @@
 COSMOLOGY:
+  Planck2018: #https://arxiv.org/abs/1807.06209:
+    flat: True 
+    H0: 67.4
+    Omega_m0: 0.315
+    Omega_b0: 0.049
+    Omega_d0: 0.636
+    sigma8: 0.83
+    ns: 0.965
+    cosmo_h: 0.674
+    t_cmb: 2.725 #K
   Battaglia2012:
     flat: True 
     H0: 70
@@ -10,14 +20,35 @@ COSMOLOGY:
     t_cmb: 2.725 #K
 
 SURVEYS:
-  ACTDR5:
+  ACTDR4: #https://arxiv.org/pdf/2007.07290
+    90: #Observation frequency [GHz]
+      beam_size: 2.1 #From published survey properties 
+      noise_level: 100 #From published survey properties 
     150: #Observation frequency [GHz]
-      beam_size: 1.4 #From published survey properties
-      noise_level: 8 #[uK/arcmin]
+      beam_size: 1.4 #From published survey properties 
+      noise_level: 75 #From published survey properties 
+    220: #Observation frequency [GHz]
+      beam_size: 1.05 #From published survey properties
+      noise_level: 41 #From published survey properties
+  ACTDR5:
+    90: #Observation frequency [GHz]
+      beam_size: 2.1 #From published survey properties
+      noise_level: 40 #From published survey properties
+    150: #Observation frequency [GHz]
+      beam_size: 1.3 #From published survey properties
+      noise_level: 30 #From published survey properties
+    220: #Observation frequency [GHz]
+      beam_size: 1.0 #From published survey properties
+      noise_level: 125 #From published survey properties
+  SPT: #https://arxiv.org/pdf/1111.7245
+    150: #Observation frequency [GHz]
+      beam_size: 1.15 #From published survey properties
+      noise_level: 17 #From published survey properties
   
 IMAGES:
-  image_size_pixels: 41
-  pixel_size_arcmin: 0.5
-    
+  image_size: 37
+  pixel_scale: 0.5
 
+  
+#SEED: need to put this in
     
