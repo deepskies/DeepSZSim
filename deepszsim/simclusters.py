@@ -26,15 +26,16 @@ class simulate_clusters:
         num_halos: None or int
             number of halos to simulate if none supplied
         halo_params_dict: None or dict
-            parameters from which to sample halos if num_halos specified,
-            must contain zmin, zmax, m200min_SM, m200max_SM
+            parameters from which to sample halos if `num_halos` specified,
+            must contain `zmin`, `zmax`, `m200min_SM`, `m200max_SM`
         R200_Mpc: None or float or np.ndarray(float)
             if None, will calculate the R200 values corresponding to a given set of
             M200 and redshift_z values for the specified cosmology
         profile: str
             Name of profile, currently only supports "Battaglia2012"
         image_size_pixels: None or int
-            image size in pixels (should be odd)
+            image size in pixels (should be odd; if even, will return images whose
+            sides are `image_size_pixels+1` in length)
         image_size_arcmin: None or float
             image size in arcmin
         pixel_size_arcmin: None or float
@@ -43,8 +44,8 @@ class simulate_clusters:
             fixed to equal 1.0 in Battaglia 2012
         gamma: float
             fixed to equal -0.3 in Battaglia 2012
-        load_vars_yaml: str
-            path to yaml file with params
+        load_vars_yaml: None or str
+            path to yaml file with params; if `None`, must explicitly include image specifications
         seed: None or int
             random seed value to sample with
         tqverb: bool
@@ -81,7 +82,8 @@ class simulate_clusters:
             print("only `Battaglia2012` is implemented, using that for now")
         self.profile = "Battaglia2012"
         
-        self.vars = load_vars(load_vars_yaml)
+        if load_vars_yaml is not None:
+            self.vars = load_vars(load_vars_yaml)
         self.image_size_pixels = self.vars['image_size_pixels'] if (image_size_pixels is None) else image_size_pixels
         self.image_size_arcmin = self.vars['image_size_arcmin'] if (image_size_arcmin is None) else image_size_arcmin
         self.pixel_size_arcmin = self.vars['pixel_size_arcmin'] if (pixel_size_arcmin is None) else pixel_size_arcmin
@@ -99,20 +101,16 @@ class simulate_clusters:
                 [make_sz_cluster.get_r200_angsize_and_c200(self.M200[i], self.redshift_z[i], self.vars,
                                                            angsize_density = '500c')[1:3]
                  for i in range(self._size)]).T
-            
+        
         self.id_list = [f"{int(self.M200[i]/1e9):07}_{int(self.redshift_z[i]*100):03}_{self._rng.integers(10**6):06}"
-            # str(int(self.M200[i]//1e9)).zfill(7) + "_" + str(int(self.redshift_z[i]*100)).zfill(3) + "_" + str(
-            #     self._rng.integers(
-            #     10**6)).zfill(6)
-            for i in range(self._size)]
+                        for i in range(self._size)]
         self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i],
                                                             'redshift_z': self.redshift_z[i],
                                                             'R200': self.R200_Mpc[i],
                                                             'angsize_arcmin': self.angsize500_arcmin[i],
                                                             'angsize500_arcmin': self.angsize500_arcmin[i],
-                                                            'image_size_pixels': self.image_size_pixels}} for
-                                                i in range(
-                self._size)]))
+                                                            'image_size_pixels': self.image_size_pixels}}
+                                                for i in range(self._size)]))
     
     def get_y_maps(self):
         """
