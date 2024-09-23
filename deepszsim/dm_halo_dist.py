@@ -21,6 +21,8 @@ def flatdist_halo(zmin, zmax, m200min_SM, m200max_SM, size, seed=None):
         maximum value of the mass distribution, in units of solar masses
     size: int
         size of the distribution
+    seed: int
+        seed for random number generation
 
     Returns:
     -------
