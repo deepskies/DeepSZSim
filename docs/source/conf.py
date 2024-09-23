@@ -2,9 +2,9 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'DeepSZSim'
+copyright = '2024, DeepSkies'
+author = 'DeepSkies'
 
 release = '0.1'
 version = '0.1.0'
