@@ -2,6 +2,7 @@ API
 ===
 
 .. autosummary::
-   :toctree: generated
+  :toctree::
+  :maxdepth: 2
 
-   deepszsim
+  deepszsim
