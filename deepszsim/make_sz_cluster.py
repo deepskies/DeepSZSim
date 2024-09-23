@@ -416,6 +416,7 @@ def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_densi
     angsize_density: None or str
         density measure at which to calculate the angular size, if desired. If `None`, will not
         calculate an angular size. Otherwise, use a valid choice as specified in `colossus.halo.mass_adv`
+        such as `500c`
 
     Returns:
     -------
