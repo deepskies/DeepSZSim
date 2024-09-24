@@ -5,9 +5,6 @@ Welcome to DeepSZSim's documentation!
 
 Check out the `github <https://www.github.com/DeepSkies/DeepSZSim/>`_ for installation and usage examples.
 
-Contents
---------
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
