@@ -1,6 +1,0 @@
-﻿deepszsim
-=========
-
-.. automodule:: deepszsim
-
-   
