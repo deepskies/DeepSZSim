@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>deepszsim.make_sz_cluster &mdash; DeepSZSim 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="deepszsim.noise" href="../noise/index.html" />
+    <link rel="prev" title="deepszsim.load_vars" href="../load_vars/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            DeepSZSim
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../deepszsim.html">deepszsim package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">deepszsim</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../dm_halo_dist/index.html">deepszsim.dm_halo_dist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../filters/index.html">deepszsim.filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../io_params/index.html">deepszsim.io_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../load_vars/index.html">deepszsim.load_vars</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">deepszsim.make_sz_cluster</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../noise/index.html">deepszsim.noise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../read_yaml/index.html">deepszsim.read_yaml</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simclusters/index.html">deepszsim.simclusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simtools/index.html">deepszsim.simtools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html">deepszsim.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../visualization/index.html">deepszsim.visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">DeepSZSim</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">deepszsim</a></li>
+      <li class="breadcrumb-item active">deepszsim.make_sz_cluster</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/deepszsim/make_sz_cluster/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-deepszsim.make_sz_cluster">
+<span id="deepszsim-make-sz-cluster"></span><h1>deepszsim.make_sz_cluster<a class="headerlink" href="#module-deepszsim.make_sz_cluster" title="Link to this heading"></a></h1>
+<p>pressure profile, Compton-y, R200, C200 and temperature submap generating functions based on halo redshift and mass information</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster.keVcm3_to_Jm3" title="deepszsim.make_sz_cluster.keVcm3_to_Jm3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keVcm3_to_Jm3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster.thermal_to_electron_pressure" title="deepszsim.make_sz_cluster.thermal_to_electron_pressure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thermal_to_electron_pressure</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster.Mpc_to_m" title="deepszsim.make_sz_cluster.Mpc_to_m"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mpc_to_m</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster.Thomson_scale" title="deepszsim.make_sz_cluster.Thomson_scale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Thomson_scale</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster._param_Battaglia2012" title="deepszsim.make_sz_cluster._param_Battaglia2012"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_param_Battaglia2012</span></code></a>(A0, alpha_m, alpha_z, M200_SM, ...)</p></td>
+<td><p>Calculates independent params using the formula from Battaglia 2012, Equation 11</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster._P0_Battaglia2012" title="deepszsim.make_sz_cluster._P0_Battaglia2012"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_P0_Battaglia2012</span></code></a>(M200_SM, redshift_z)</p></td>
+<td><p>Calculates P0, the normalization factor/amplitude,</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster._xc_Battaglia2012" title="deepszsim.make_sz_cluster._xc_Battaglia2012"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_xc_Battaglia2012</span></code></a>(M200_SM, redshift_z)</p></td>
+<td><p>Calculates xc, the core-scale factor,</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster._beta_Battaglia2012" title="deepszsim.make_sz_cluster._beta_Battaglia2012"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_beta_Battaglia2012</span></code></a>(M200_SM, redshift_z)</p></td>
+<td><p>Calculates beta, the power law index,</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../deepszsim.html#deepszsim.make_sz_cluster.P200_Battaglia2012" title="deepszsim.make_sz_cluster.P200_Battaglia2012"><code class="xref py py-obj docutils literal notranslate"><span class="pre">P200_Battaglia2012</span></code></a>(M200_SM, redshift_z, load_vars_dict)</p></td>
+<td><p>Calculates the P200 pressure of a cluster, as defined in</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster._Pth_Battaglia2012" title="deepszsim.make_sz_cluster._Pth_Battaglia2012"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_Pth_Battaglia2012</span></code></a>(P0, radius_mpc, R200_Mpc, alpha, ...)</p></td>
+<td><p>Calculates the Pth profile using the Battaglia profile, Battaglia 2012,</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../deepszsim.html#deepszsim.make_sz_cluster.Pth_Battaglia2012" title="deepszsim.make_sz_cluster.Pth_Battaglia2012"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pth_Battaglia2012</span></code></a>(radius_mpc, M200_SM, redshift_z[, ...])</p></td>
+<td><p>Calculates the Pth profile using the Battaglia profile, Battaglia 2012,</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../deepszsim.html#deepszsim.make_sz_cluster.Pe_to_y" title="deepszsim.make_sz_cluster.Pe_to_y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pe_to_y</span></code></a>(profile, radii_mpc, M200_SM, redshift_z, ...)</p></td>
+<td><p>Converts from an electron pressure profile to a compton-y profile,</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deepszsim.make_sz_cluster._make_y_submap" title="deepszsim.make_sz_cluster._make_y_submap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_make_y_submap</span></code></a>(profile, M200_SM, redshift_z, ...[, ...])</p></td>
+<td><p>Converts from an electron pressure profile to a compton-y profile,</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../deepszsim.html#deepszsim.make_sz_cluster.generate_y_submap" title="deepszsim.make_sz_cluster.generate_y_submap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_y_submap</span></code></a>(M200_SM, redshift_z[, profile, ...])</p></td>
+<td><p>Converts from an electron pressure profile to a compton-y profile,</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../deepszsim.html#deepszsim.make_sz_cluster.get_r200_angsize_and_c200" title="deepszsim.make_sz_cluster.get_r200_angsize_and_c200"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_r200_angsize_and_c200</span></code></a>(M200_SM, redshift_z, ...[, ...])</p></td>
+<td><p>Parameters:</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.keVcm3_to_Jm3">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">keVcm3_to_Jm3</span></span><a class="headerlink" href="#deepszsim.make_sz_cluster.keVcm3_to_Jm3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.thermal_to_electron_pressure">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">thermal_to_electron_pressure</span></span><a class="headerlink" href="#deepszsim.make_sz_cluster.thermal_to_electron_pressure" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.Mpc_to_m">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">Mpc_to_m</span></span><a class="headerlink" href="#deepszsim.make_sz_cluster.Mpc_to_m" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.Thomson_scale">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">Thomson_scale</span></span><a class="headerlink" href="#deepszsim.make_sz_cluster.Thomson_scale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster._param_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">_param_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster._param_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates independent params using the formula from Battaglia 2012, Equation 11
+in order for use in the pressure profile defined in Equation 10</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>A0: float</dt><dd><p>normalization factor</p>
+</dd>
+<dt>alpha_m: float</dt><dd><p>power law index for the mass-dependent part of the function</p>
+</dd>
+<dt>alpha_z: float</dt><dd><p>power law index for the redshift dependent part</p>
+</dd>
+<dt>M200_SM: float</dt><dd><p>the mass of the cluster at 200 times the critical density of the
+universe in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>A: float</dt><dd><p>the parameter A given the formula from Battaglia 2012, Eq 11</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster._P0_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">_P0_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster._P0_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates P0, the normalization factor/amplitude,
+from Battaglia 2012, using the values from Table 1,</p>
+<section id="id1">
+<h3>Parameters:<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass of the cluster at 200 times the critical density of the
+universe, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns:<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>P0: float</dt><dd><p>the normalization factor for the Battaglia 2012 profile</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster._xc_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">_xc_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster._xc_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates xc, the core-scale factor,
+from Battaglia 2012, using the values from Table 1,</p>
+<section id="id3">
+<h3>Parameters:<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass of the cluster at 200 times the critical density of the
+universe, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h3>Returns:<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>xc: float</dt><dd><p>the core-scale factor for the Battaglia 2012 profile</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster._beta_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">_beta_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster._beta_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates beta, the power law index,
+from Battaglia 2012, using the values from Table 1,</p>
+<section id="id5">
+<h3>Parameters:<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass of the cluster at 200 times the critical density of the
+universe, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns:<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>beta: float</dt><dd><p>the power law index for the Battaglia 2012 profile</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.P200_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">P200_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.P200_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates the P200 pressure of a cluster, as defined in
+Battaglia 2012</p>
+<section id="id7">
+<h3>Parameters:<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: instance of load_vars.load_vars()</dt><dd><p>dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+calculation of R200 and c200)</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns:<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>P200_kevcm3: Quantity instance</dt><dd><p>the thermal pressure of the shell defined by R200 in units
+of keV/cm**3</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster._Pth_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">_Pth_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_mpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster._Pth_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
+Equation 10. Pth is unitless. It is normalized by P200</p>
+<section id="id9">
+<h3>Parameters:<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>P0: float</dt><dd><p>the normalization factor/amplitude,</p>
+</dd>
+<dt>radius_mpc: float or np.ndarray(float)</dt><dd><p>the radius or radii for the pressure to be calculated at, in units of Mpc</p>
+</dd>
+<dt>R200_Mpc: float</dt><dd><p>the radius of the cluster at 200 times the critical density of the
+universe, in units of Mpc</p>
+</dd>
+<dt>alpha: float</dt><dd><p>fixed parameter equal to 1.0 in Battaglia 2012</p>
+</dd>
+<dt>beta: float</dt><dd><p>power law index</p>
+</dd>
+<dt>gamma: float</dt><dd><p>fixed paremeter equal to -0.3 in Battaglia 2012</p>
+</dd>
+<dt>xc: float</dt><dd><p>core-scale radius</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h3>Returns:<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Pth: float or np.ndarray(float)</dt><dd><p>the thermal pressure profile normalized by P200 (which itself has units of
+keV/cm**3)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.Pth_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">Pth_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius_mpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.Pth_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
+Equation 10. Pth is unitless. It is normalized by P200</p>
+<section id="id11">
+<h3>Parameters:<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>radius_mpc: float or np.ndarray(float)</dt><dd><p>the radius for the pressure to be calculated at, in units of Mpc</p>
+</dd>
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: instance of load_vars.load_vars()</dt><dd><p>dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+calculation of R200 and c200)</p>
+</dd>
+<dt>alpha: float</dt><dd><p>variable fixed by Battaglia et al 2012 to 1.0</p>
+</dd>
+<dt>gamma: float</dt><dd><p>variable fixed by Battaglia et al 2012 to -0.3</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Returns:<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Pth: float or np.ndarray(float)</dt><dd><p>the thermal pressure profile normalized by P200 (which itself has units of
+keV/cm**3)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.Pe_to_y">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">Pe_to_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radii_mpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.Pe_to_y" title="Link to this definition"></a></dt>
+<dd><p>Converts from an electron pressure profile to a compton-y profile,
+integrates over line of sight from -1 to 1 Mpc relative to center.</p>
+<section id="id13">
+<h3>Parameters:<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>profile: method</dt><dd><p>Method to get thermal pressure profile, accepts radius, M200, redshift_z, cosmo,
+and two additional parameters alpha and gamma that are usually fixed</p>
+</dd>
+<dt>radii_mpc: array</dt><dd><p>the array of radii corresponding to the profile in Mpc</p>
+</dd>
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: instance of load_vars.load_vars()</dt><dd><p>dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+calculation of R200 and c200)</p>
+</dd>
+<dt>alpha: float</dt><dd><p>variable fixed by Battaglia et al 2012 to 1.0</p>
+</dd>
+<dt>gamma: float</dt><dd><p>variable fixed by Battaglia et al 2012 to -0.3</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="return">
+<h3>Return:<a class="headerlink" href="#return" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>y_pro: array</dt><dd><p>Compton-y profile corresponding to the radii</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster._make_y_submap">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">_make_y_submap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size_pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_size_arcmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster._make_y_submap" title="Link to this definition"></a></dt>
+<dd><p>Converts from an electron pressure profile to a compton-y profile,
+integrates over line of sight from -1 to 1 Mpc relative to center.</p>
+<section id="id14">
+<h3>Parameters:<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>profile:</dt><dd><dl class="simple">
+<dt>Method to get thermal pressure profile in Kev/cm^3, accepts radius,</dt><dd><p>R200 and <a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs</p>
+</dd>
+</dl>
+</dd>
+<dt>M200_SM: float</dt><dd><p>mass contained in R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: instance of load_vars.load_vars()</dt><dd><p>dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+calculation of R200 and c200)</p>
+</dd>
+<dt>image_size_pixels: int</dt><dd><p>size of final submap in number of pixels</p>
+</dd>
+<dt>pixel_size_arcmin: float</dt><dd><p>size of each pixel in arcmin</p>
+</dd>
+<dt>alpha: float</dt><dd><p>variable fixed by Battaglia et al 2012 to 1.0</p>
+</dd>
+<dt>gamma: float</dt><dd><p>variable fixed by Battaglia et al 2012 to -0.3</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h3>Return:<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>y_map: array</dt><dd><p>Compton-y submap with shape (image_size_pixels, image_size_pixels)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.generate_y_submap">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">generate_y_submap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Battaglia2012'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size_pixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_size_arcmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.generate_y_submap" title="Link to this definition"></a></dt>
+<dd><p>Converts from an electron pressure profile to a compton-y profile,
+integrates over line of sight from -1 to 1 Mpc relative to center.</p>
+<section id="id18">
+<h3>Parameters:<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM:</dt><dd><p>the mass contained within R200 in solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>profile: str</dt><dd><p>name of profile, currently only supports “Battaglia2012”</p>
+</dd>
+<dt>image_size_pixels: float</dt><dd><p>num pixels to each side of center; end shape of submap will be
+(image_size_pixels, image_size_pixels)</p>
+</dd>
+<dt>pixel_size_arcmin: float</dt><dd><p>size of each pixel in arcmin</p>
+</dd>
+<dt>load_vars_dict: dict</dt><dd><p>result of running the load_vars() function, which includes a dictionary of cosmological and experimental
+parameters</p>
+</dd>
+<dt>alpha: float</dt><dd><p>variable fixed by Battaglia et al 2012 to 1.0</p>
+</dd>
+<dt>gamma: float</dt><dd><p>variable fixed by Battaglia et al 2012 to -0.3</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h3>Return:<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>y_map: array</dt><dd><p>Compton-y submap with dimension (image_size_pixels, image_size_pixels)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.get_r200_angsize_and_c200">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">get_r200_angsize_and_c200</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angsize_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.get_r200_angsize_and_c200" title="Link to this definition"></a></dt>
+<dd><section id="id20">
+<h3>Parameters:<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: dict</dt><dd><p>must contain ‘cosmo’ (a FlatLambaCDM instance describing the background cosmology),
+‘sigma8’ (float, around 0.8), and ‘ns’ (float, around 0.96)</p>
+</dd>
+<dt>angsize_density: None or str</dt><dd><p>density measure at which to calculate the angular size, if desired. If <cite>None</cite>, will not
+calculate an angular size. Otherwise, use a valid choice as specified in <cite>colossus.halo.mass_adv</cite>
+such as <cite>500c</cite></p>
+</dd>
+</dl>
+</section>
+<section id="id21">
+<h3>Returns:<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>R200_Mpc: float</dt><dd><p>the radius of the cluster at 200 times the critical density of the universe in Mpc</p>
+</dd>
+<dt>c200: float</dt><dd><p>concentration parameter</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../load_vars/index.html" class="btn btn-neutral float-left" title="deepszsim.load_vars" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../noise/index.html" class="btn btn-neutral float-right" title="deepszsim.noise" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, DeepSkies.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

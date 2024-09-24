@@ -1,0 +1,67 @@
+deepszsim.load_vars
+===================
+
+.. py:module:: deepszsim.load_vars
+
+.. autoapi-nested-parse::
+
+   read-in functions for input parameter yaml and h5 files  
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   deepszsim.load_vars.load_vars
+   deepszsim.load_vars.readh5
+
+
+Module Contents
+---------------
+
+.. py:function:: load_vars(file_name='config_simACTDR5.yaml', file_dir=os.path.join(os.path.dirname(__file__), 'Settings'), survey_num: int = None, survey_name: str = None, survey_freq_val: int = None, cosmo_name: str = None, enforce_odd_pix: bool = True)
+
+   Parameters
+   ----------
+   file_name: str
+       name of a yaml file that specifies the variables that you want to simulate
+   file_dir: str
+       path to the yaml file named in `file_name`
+   survey_num: None or int
+       optional -- if there are multiple surveys, choose one by its position in the list
+   survey_name: None or str
+       optional -- if there are multiple surveys, choose one by its name
+   survey_freq_val: None or int
+       optional -- if a survey has multiple frequencies, choose a frequency by its value (in GHz)
+   cosmo_name: None or str
+       optional -- if there are multiple cosmologies, choose one by its name
+   enforce_odd_pix: bool
+       whether or not to enforce an odd number of pixels in the simulated image (defaults to true so that the
+       central pixel has the maximal y-value
+
+   Returns
+   -------
+   dict
+       a dictionary that will enable you to simulate SZ clusters with a given cosmology and set of observational
+       properties.
+
+
+
+.. py:function:: readh5(fname, fdir=None)
+
+   Parameters
+   ----------
+   fname: str
+       name of the file you want to read (must include the suffix, eg '.h5' or '.hd5' or '.hdf5')
+   fdir: None or str
+       path to the directory that contains the file you want to read
+   Returns
+   -------
+   dict
+       dictionary that represents a single cluster (if `fname` represents a single cluster) or a nested set of
+       clusters. Each cluster that is returned will itself have a dictionary with 'maps' and 'params' as keys,
+       containing the output maps and the parameters that were used to make them, respectively
+
+

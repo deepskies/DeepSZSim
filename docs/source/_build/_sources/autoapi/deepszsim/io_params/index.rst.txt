@@ -1,0 +1,95 @@
+deepszsim.io_params
+===================
+
+.. py:module:: deepszsim.io_params
+
+.. autoapi-nested-parse::
+
+   CAMB and yaml-handling tools  
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   deepszsim.io_params.config_obj
+
+
+Module Contents
+---------------
+
+.. py:class:: config_obj(user_config=os.path.join(os.path.dirname(__file__), 'settings', 'user_config.yaml'))
+
+   configuration object that is used to obtain power spectra
+
+   Attributes
+   ----------
+   CAMBparams : CAMBparams instance
+       this is necessary for CAMB to return results
+   UserParams : dict
+       a dictionary of values that the user has specified (smaller than the corresponding
+       dictionary that would be necessary to fully specify a CAMBparams instance)
+   dict_iterables : dict
+       a dictionary of all of the iterables that the user has specified, which will be made
+       available to loop over in camb_power_spectrum.CAMBPowerSpectrum
+
+
+   .. py:attribute:: _all_params_dict
+
+
+   .. py:attribute:: _outdir
+
+
+   .. py:attribute:: UserParams
+
+
+   .. py:attribute:: dict_iterables
+
+
+   .. py:method:: update_val(attr, new_val)
+
+      updates values in the config_obj
+      Parameters
+      ----------
+      attr : str
+          a key of the UserParams dictionary
+      new_val : float
+          new value that you wish attr to take on
+
+
+
+   .. py:method:: write_params_yaml_new()
+
+      write updated yaml file to disk
+      incorporate run id
+
+
+
+   .. py:method:: _generate_run_id()
+
+              
+
+
+
+   .. py:method:: cosmology_param(ref)
+
+              
+
+
+
+   .. py:method:: _quick_yaml_load()
+
+      simply load yaml files without remembering the syntax or yaml.safe_load command
+      Parameters
+      ----------
+      infile : str
+          path to yaml file that you wish to load
+      Returns
+      -------
+      dict
+          a "safe load" dictionary version of infile
+
+
+

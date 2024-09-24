@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>deepszsim package &mdash; DeepSZSim 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="autoapi/index.html" />
+    <link rel="prev" title="Welcome to DeepSZSim’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            DeepSZSim
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">deepszsim package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.dm_halo_dist">deepszsim.dm_halo_dist module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.dm_halo_dist.flatdist_halo"><code class="docutils literal notranslate"><span class="pre">flatdist_halo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.filters">deepszsim.filters module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.filters.get_tSZ_signal_aperture_photometry"><code class="docutils literal notranslate"><span class="pre">get_tSZ_signal_aperture_photometry()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.io_params">deepszsim.io_params module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.io_params.config_obj"><code class="docutils literal notranslate"><span class="pre">config_obj</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.io_params.config_obj.cosmology_param"><code class="docutils literal notranslate"><span class="pre">config_obj.cosmology_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.io_params.config_obj.update_val"><code class="docutils literal notranslate"><span class="pre">config_obj.update_val()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.io_params.config_obj.write_params_yaml_new"><code class="docutils literal notranslate"><span class="pre">config_obj.write_params_yaml_new()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.load_vars">deepszsim.load_vars module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.load_vars.load_vars"><code class="docutils literal notranslate"><span class="pre">load_vars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.load_vars.readh5"><code class="docutils literal notranslate"><span class="pre">readh5()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.make_sz_cluster">deepszsim.make_sz_cluster module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.make_sz_cluster.P200_Battaglia2012"><code class="docutils literal notranslate"><span class="pre">P200_Battaglia2012()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.make_sz_cluster.Pe_to_y"><code class="docutils literal notranslate"><span class="pre">Pe_to_y()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.make_sz_cluster.Pth_Battaglia2012"><code class="docutils literal notranslate"><span class="pre">Pth_Battaglia2012()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.make_sz_cluster.generate_y_submap"><code class="docutils literal notranslate"><span class="pre">generate_y_submap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.make_sz_cluster.get_r200_angsize_and_c200"><code class="docutils literal notranslate"><span class="pre">get_r200_angsize_and_c200()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.noise">deepszsim.noise module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.noise.generate_noise_map"><code class="docutils literal notranslate"><span class="pre">generate_noise_map()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.read_yaml">deepszsim.read_yaml module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.read_yaml.YAMLOperator"><code class="docutils literal notranslate"><span class="pre">YAMLOperator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.read_yaml.YAMLOperator.parse_yaml"><code class="docutils literal notranslate"><span class="pre">YAMLOperator.parse_yaml()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.simclusters">deepszsim.simclusters module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.simclusters.simulate_clusters"><code class="docutils literal notranslate"><span class="pre">simulate_clusters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.simclusters.simulate_clusters.get_T_maps"><code class="docutils literal notranslate"><span class="pre">simulate_clusters.get_T_maps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.simclusters.simulate_clusters.get_dT_maps"><code class="docutils literal notranslate"><span class="pre">simulate_clusters.get_dT_maps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.simclusters.simulate_clusters.get_y_maps"><code class="docutils literal notranslate"><span class="pre">simulate_clusters.get_y_maps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.simclusters.simulate_clusters.ith_T_map"><code class="docutils literal notranslate"><span class="pre">simulate_clusters.ith_T_map()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deepszsim.simclusters.simulate_clusters.save_map"><code class="docutils literal notranslate"><span class="pre">simulate_clusters.save_map()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.simtools">deepszsim.simtools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.simtools.add_cmb_map_and_convolve"><code class="docutils literal notranslate"><span class="pre">add_cmb_map_and_convolve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.simtools.convolve_map_with_gaussian_beam"><code class="docutils literal notranslate"><span class="pre">convolve_map_with_gaussian_beam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.simtools.f_sz"><code class="docutils literal notranslate"><span class="pre">f_sz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.simtools.get_cls"><code class="docutils literal notranslate"><span class="pre">get_cls()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.simtools.make_cmb_map"><code class="docutils literal notranslate"><span class="pre">make_cmb_map()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.utils">deepszsim.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.utils.Mpc_to_arcmin"><code class="docutils literal notranslate"><span class="pre">Mpc_to_arcmin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.utils.arcmin_to_Mpc"><code class="docutils literal notranslate"><span class="pre">arcmin_to_Mpc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.utils.gaussian_kernal"><code class="docutils literal notranslate"><span class="pre">gaussian_kernal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.utils.save_sim_to_h5"><code class="docutils literal notranslate"><span class="pre">save_sim_to_h5()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim.visualization">deepszsim.visualization module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.visualization.plot_graphs"><code class="docutils literal notranslate"><span class="pre">plot_graphs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.visualization.plot_img"><code class="docutils literal notranslate"><span class="pre">plot_img()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.visualization.plot_pdf"><code class="docutils literal notranslate"><span class="pre">plot_pdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.visualization.plot_y"><code class="docutils literal notranslate"><span class="pre">plot_y()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deepszsim.visualization.plotting_specs"><code class="docutils literal notranslate"><span class="pre">plotting_specs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-deepszsim">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DeepSZSim</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">deepszsim package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/deepszsim.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="deepszsim-package">
+<h1>deepszsim package<a class="headerlink" href="#deepszsim-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-deepszsim.dm_halo_dist">
+<span id="deepszsim-dm-halo-dist-module"></span><h2>deepszsim.dm_halo_dist module<a class="headerlink" href="#module-deepszsim.dm_halo_dist" title="Link to this heading"></a></h2>
+<p>creates a mass and redshift distribution of halos</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.dm_halo_dist.flatdist_halo">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.dm_halo_dist.</span></span><span class="sig-name descname"><span class="pre">flatdist_halo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m200min_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m200max_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.dm_halo_dist.flatdist_halo" title="Link to this definition"></a></dt>
+<dd><p>Creates a random uniform distribution of redshifts and masses for use in 
+creating simulations.</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>zmin: float</dt><dd><p>minimum value of the redshift distribution</p>
+</dd>
+<dt>zmax: float</dt><dd><p>maximum value of the redshift distribution</p>
+</dd>
+<dt>m200min_SM: float</dt><dd><p>minimum value of the mass distribution, in units of solar masses.</p>
+</dd>
+<dt>m200max_SM: float</dt><dd><p>maximum value of the mass distribution, in units of solar masses</p>
+</dd>
+<dt>size: int</dt><dd><p>size of the distribution</p>
+</dd>
+<dt>seed: int</dt><dd><p>seed for random number generation</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>zdist: float array</dt><dd><p>distribution of random uniform redshifts starting at <cite>zmin</cite> ending at 
+<cite>zmax</cite> with size <cite>size</cite></p>
+</dd>
+<dt>mdist: float array</dt><dd><p>distribution of random uniform redshifts starting at <cite>m500min_SM</cite> ending
+at <cite>m500max_SM</cite> with size <cite>size</cite></p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.filters">
+<span id="deepszsim-filters-module"></span><h2>deepszsim.filters module<a class="headerlink" href="#module-deepszsim.filters" title="Link to this heading"></a></h2>
+<p>submap filtering tools to analyze SZ submaps</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.filters.get_tSZ_signal_aperture_photometry">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.filters.</span></span><span class="sig-name descname"><span class="pre">get_tSZ_signal_aperture_photometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dT_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radmax_arcmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.4142135623730951</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.filters.get_tSZ_signal_aperture_photometry" title="Link to this definition"></a></dt>
+<dd><section id="id1">
+<h3>Parameters:<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>dT_map: array to represent the map in uK
+radmax_arcmin: float</p>
+<blockquote>
+<div><p>the radius of the inner aperture, in arcmin</p>
+</div></blockquote>
+<dl class="simple">
+<dt>pixel_scale: float</dt><dd><p>How many arcmin per pixel for the current settings</p>
+</dd>
+<dt>fmax: float</dt><dd><p>fmax * radmax_arcmin is the radius of the outer aperture, in arcmin</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns:<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>disk_mean: float</dt><dd><p>The average value within an annulus of inner radius R</p>
+</dd>
+<dt>ring_mean: float</dt><dd><p>The average value within an annulus of outer radius sqrt(2)*R</p>
+</dd>
+<dt>tSZ signal: float</dt><dd><p>thermal SZ effect signal</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.io_params">
+<span id="deepszsim-io-params-module"></span><h2>deepszsim.io_params module<a class="headerlink" href="#module-deepszsim.io_params" title="Link to this heading"></a></h2>
+<p>CAMB and yaml-handling tools</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="deepszsim.io_params.config_obj">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deepszsim.io_params.</span></span><span class="sig-name descname"><span class="pre">config_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/sammcd/locgit/DeepSZSim/deepszsim/settings/user_config.yaml'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.io_params.config_obj" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>configuration object that is used to obtain power spectra</p>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>CAMBparams<span class="classifier">CAMBparams instance</span></dt><dd><p>this is necessary for CAMB to return results</p>
+</dd>
+<dt>UserParams<span class="classifier">dict</span></dt><dd><p>a dictionary of values that the user has specified (smaller than the corresponding
+dictionary that would be necessary to fully specify a CAMBparams instance)</p>
+</dd>
+<dt>dict_iterables<span class="classifier">dict</span></dt><dd><p>a dictionary of all of the iterables that the user has specified, which will be made
+available to loop over in camb_power_spectrum.CAMBPowerSpectrum</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.io_params.config_obj.cosmology_param">
+<span class="sig-name descname"><span class="pre">cosmology_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.io_params.config_obj.cosmology_param" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.io_params.config_obj.update_val">
+<span class="sig-name descname"><span class="pre">update_val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.io_params.config_obj.update_val" title="Link to this definition"></a></dt>
+<dd><p>updates values in the config_obj
+Parameters
+———-
+attr : str</p>
+<blockquote>
+<div><p>a key of the UserParams dictionary</p>
+</div></blockquote>
+<dl class="simple">
+<dt>new_val<span class="classifier">float</span></dt><dd><p>new value that you wish attr to take on</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.io_params.config_obj.write_params_yaml_new">
+<span class="sig-name descname"><span class="pre">write_params_yaml_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.io_params.config_obj.write_params_yaml_new" title="Link to this definition"></a></dt>
+<dd><p>write updated yaml file to disk
+incorporate run id</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.load_vars">
+<span id="deepszsim-load-vars-module"></span><h2>deepszsim.load_vars module<a class="headerlink" href="#module-deepszsim.load_vars" title="Link to this heading"></a></h2>
+<p>read-in functions for input parameter yaml and h5 files</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.load_vars.load_vars">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.load_vars.</span></span><span class="sig-name descname"><span class="pre">load_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config_simACTDR5.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/sammcd/locgit/DeepSZSim/deepszsim/Settings'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">survey_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">survey_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">survey_freq_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_odd_pix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.load_vars.load_vars" title="Link to this definition"></a></dt>
+<dd><section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>file_name: str</dt><dd><p>name of a yaml file that specifies the variables that you want to simulate</p>
+</dd>
+<dt>file_dir: str</dt><dd><p>path to the yaml file named in <cite>file_name</cite></p>
+</dd>
+<dt>survey_num: None or int</dt><dd><p>optional – if there are multiple surveys, choose one by its position in the list</p>
+</dd>
+<dt>survey_name: None or str</dt><dd><p>optional – if there are multiple surveys, choose one by its name</p>
+</dd>
+<dt>survey_freq_val: None or int</dt><dd><p>optional – if a survey has multiple frequencies, choose a frequency by its value (in GHz)</p>
+</dd>
+<dt>cosmo_name: None or str</dt><dd><p>optional – if there are multiple cosmologies, choose one by its name</p>
+</dd>
+<dt>enforce_odd_pix: bool</dt><dd><p>whether or not to enforce an odd number of pixels in the simulated image (defaults to true so that the
+central pixel has the maximal y-value</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict</dt><dd><p>a dictionary that will enable you to simulate SZ clusters with a given cosmology and set of observational
+properties.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.load_vars.readh5">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.load_vars.</span></span><span class="sig-name descname"><span class="pre">readh5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.load_vars.readh5" title="Link to this definition"></a></dt>
+<dd><section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fname: str</dt><dd><p>name of the file you want to read (must include the suffix, eg ‘.h5’ or ‘.hd5’ or ‘.hdf5’)</p>
+</dd>
+<dt>fdir: None or str</dt><dd><p>path to the directory that contains the file you want to read</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict</dt><dd><p>dictionary that represents a single cluster (if <cite>fname</cite> represents a single cluster) or a nested set of
+clusters. Each cluster that is returned will itself have a dictionary with ‘maps’ and ‘params’ as keys,
+containing the output maps and the parameters that were used to make them, respectively</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.make_sz_cluster">
+<span id="deepszsim-make-sz-cluster-module"></span><h2>deepszsim.make_sz_cluster module<a class="headerlink" href="#module-deepszsim.make_sz_cluster" title="Link to this heading"></a></h2>
+<p>pressure profile, Compton-y, R200, C200 and temperature submap generating functions based on halo redshift and mass information</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.P200_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">P200_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.P200_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates the P200 pressure of a cluster, as defined in
+Battaglia 2012</p>
+<section id="id7">
+<h3>Parameters:<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: instance of load_vars.load_vars()</dt><dd><p>dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+calculation of R200 and c200)</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns:<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>P200_kevcm3: Quantity instance</dt><dd><p>the thermal pressure of the shell defined by R200 in units
+of keV/cm**3</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.Pe_to_y">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">Pe_to_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radii_mpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.Pe_to_y" title="Link to this definition"></a></dt>
+<dd><p>Converts from an electron pressure profile to a compton-y profile,
+integrates over line of sight from -1 to 1 Mpc relative to center.</p>
+<section id="id9">
+<h3>Parameters:<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>profile: method</dt><dd><p>Method to get thermal pressure profile, accepts radius, M200, redshift_z, cosmo,
+and two additional parameters alpha and gamma that are usually fixed</p>
+</dd>
+<dt>radii_mpc: array</dt><dd><p>the array of radii corresponding to the profile in Mpc</p>
+</dd>
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: instance of load_vars.load_vars()</dt><dd><p>dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+calculation of R200 and c200)</p>
+</dd>
+<dt>alpha: float</dt><dd><p>variable fixed by Battaglia et al 2012 to 1.0</p>
+</dd>
+<dt>gamma: float</dt><dd><p>variable fixed by Battaglia et al 2012 to -0.3</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="return">
+<h3>Return:<a class="headerlink" href="#return" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>y_pro: array</dt><dd><p>Compton-y profile corresponding to the radii</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.Pth_Battaglia2012">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">Pth_Battaglia2012</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius_mpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.Pth_Battaglia2012" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
+Equation 10. Pth is unitless. It is normalized by P200</p>
+<section id="id10">
+<h3>Parameters:<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>radius_mpc: float or np.ndarray(float)</dt><dd><p>the radius for the pressure to be calculated at, in units of Mpc</p>
+</dd>
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: instance of load_vars.load_vars()</dt><dd><p>dictionary that includes background cosmology, ns, and sigma8 (necessary for the
+calculation of R200 and c200)</p>
+</dd>
+<dt>alpha: float</dt><dd><p>variable fixed by Battaglia et al 2012 to 1.0</p>
+</dd>
+<dt>gamma: float</dt><dd><p>variable fixed by Battaglia et al 2012 to -0.3</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h3>Returns:<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Pth: float or np.ndarray(float)</dt><dd><p>the thermal pressure profile normalized by P200 (which itself has units of
+keV/cm**3)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.generate_y_submap">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">generate_y_submap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Battaglia2012'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size_pixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_size_arcmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.generate_y_submap" title="Link to this definition"></a></dt>
+<dd><p>Converts from an electron pressure profile to a compton-y profile,
+integrates over line of sight from -1 to 1 Mpc relative to center.</p>
+<section id="id12">
+<h3>Parameters:<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM:</dt><dd><p>the mass contained within R200 in solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift of the cluster (unitless)</p>
+</dd>
+<dt>profile: str</dt><dd><p>name of profile, currently only supports “Battaglia2012”</p>
+</dd>
+<dt>image_size_pixels: float</dt><dd><p>num pixels to each side of center; end shape of submap will be 
+(image_size_pixels, image_size_pixels)</p>
+</dd>
+<dt>pixel_size_arcmin: float</dt><dd><p>size of each pixel in arcmin</p>
+</dd>
+<dt>load_vars_dict: dict</dt><dd><p>result of running the load_vars() function, which includes a dictionary of cosmological and experimental
+parameters</p>
+</dd>
+<dt>alpha: float</dt><dd><p>variable fixed by Battaglia et al 2012 to 1.0</p>
+</dd>
+<dt>gamma: float</dt><dd><p>variable fixed by Battaglia et al 2012 to -0.3</p>
+</dd>
+<dt>R200_Mpc: None or float</dt><dd><p>if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
+and the cosmology contained in load_vars_dict</p>
+</dd>
+</dl>
+</section>
+<section id="id13">
+<h3>Return:<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>y_map: array</dt><dd><p>Compton-y submap with dimension (image_size_pixels, image_size_pixels)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.make_sz_cluster.get_r200_angsize_and_c200">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.make_sz_cluster.</span></span><span class="sig-name descname"><span class="pre">get_r200_angsize_and_c200</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200_SM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angsize_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.make_sz_cluster.get_r200_angsize_and_c200" title="Link to this definition"></a></dt>
+<dd><section id="id14">
+<h3>Parameters:<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>redshift of the cluster (unitless)</p>
+</dd>
+<dt>load_vars_dict: dict</dt><dd><p>must contain ‘cosmo’ (a FlatLambaCDM instance describing the background cosmology),
+‘sigma8’ (float, around 0.8), and ‘ns’ (float, around 0.96)</p>
+</dd>
+<dt>angsize_density: None or str</dt><dd><p>density measure at which to calculate the angular size, if desired. If <cite>None</cite>, will not
+calculate an angular size. Otherwise, use a valid choice as specified in <cite>colossus.halo.mass_adv</cite>
+such as <cite>500c</cite></p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Returns:<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>M200_SM: float</dt><dd><p>the mass contained within R200, in units of solar masses</p>
+</dd>
+<dt>R200_Mpc: float</dt><dd><p>the radius of the cluster at 200 times the critical density of the universe in Mpc</p>
+</dd>
+<dt>c200: float</dt><dd><p>concentration parameter</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.noise">
+<span id="deepszsim-noise-module"></span><h2>deepszsim.noise module<a class="headerlink" href="#module-deepszsim.noise" title="Link to this heading"></a></h2>
+<p>functions to generate simulated CMB map noise</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.noise.generate_noise_map">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.noise.</span></span><span class="sig-name descname"><span class="pre">generate_noise_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pix_size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.noise.generate_noise_map" title="Link to this definition"></a></dt>
+<dd><p>Generates a white noise map based on the noise level and beam size.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>image_size: int</dt><dd><p>Size of the noise map (N x N).</p>
+</dd>
+<dt>noise_level: float</dt><dd><p>Noise level of the survey.</p>
+</dd>
+<dt>pix_size: int</dt><dd><p>size of pixels in arcminutes</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>ndarray: Noise map.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.read_yaml">
+<span id="deepszsim-read-yaml-module"></span><h2>deepszsim.read_yaml module<a class="headerlink" href="#module-deepszsim.read_yaml" title="Link to this heading"></a></h2>
+<p>parsing a yaml file and returning a directory</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="deepszsim.read_yaml.YAMLOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deepszsim.read_yaml.</span></span><span class="sig-name descname"><span class="pre">YAMLOperator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/sammcd/locgit/DeepSZSim/deepszsim/Settings/config_simACTDR5.yaml'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.read_yaml.YAMLOperator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.read_yaml.YAMLOperator.parse_yaml">
+<span class="sig-name descname"><span class="pre">parse_yaml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.read_yaml.YAMLOperator.parse_yaml" title="Link to this definition"></a></dt>
+<dd><p>Parse a YAML file and return a dictionary.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>file_path (str): Path to the YAML file.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Dictionary containing the parsed YAML file.</p>
+</dd>
+<dt>Raises:</dt><dd><p>yaml.YAMLError: If the YAML file is not valid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.simclusters">
+<span id="deepszsim-simclusters-module"></span><h2>deepszsim.simclusters module<a class="headerlink" href="#module-deepszsim.simclusters" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="deepszsim.simclusters.simulate_clusters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deepszsim.simclusters.</span></span><span class="sig-name descname"><span class="pre">simulate_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M200</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_halos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">halo_params_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R200_Mpc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Battaglia2012'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size_pixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size_arcmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_size_arcmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_vars_yaml</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/sammcd/locgit/DeepSZSim/deepszsim/Settings/config_simACTDR5.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tqverb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simclusters.simulate_clusters" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.simclusters.simulate_clusters.get_T_maps">
+<span class="sig-name descname"><span class="pre">get_T_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">add_CMB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simclusters.simulate_clusters.get_T_maps" title="Link to this definition"></a></dt>
+<dd><section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>add_CMB: bool</dt><dd><p>whether or not to include the CMB contribution to the final map</p>
+</dd>
+<dt>returnval: bool</dt><dd><p>whether or not to return the T maps themselves or simply update internal attribute</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>np.ndarray(float)</dt><dd><p>self._size many maps of the sky in units of uK, each of which is image_size_pixels x image_size_pixels in
+size</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.simclusters.simulate_clusters.get_dT_maps">
+<span class="sig-name descname"><span class="pre">get_dT_maps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simclusters.simulate_clusters.get_dT_maps" title="Link to this definition"></a></dt>
+<dd><section id="id18">
+<h3>Returns<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>np.ndarray(float)</dt><dd><p>self._size many maps of the dT values in units of uK, each of which is image_size_pixels x
+image_size_pixels in size</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.simclusters.simulate_clusters.get_y_maps">
+<span class="sig-name descname"><span class="pre">get_y_maps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simclusters.simulate_clusters.get_y_maps" title="Link to this definition"></a></dt>
+<dd><section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>np.ndarray(float)</dt><dd><p>self._size many maps of the Compton <cite>y</cite> value, each of which is image_size_pixels x image_size_pixels in size</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.simclusters.simulate_clusters.ith_T_map">
+<span class="sig-name descname"><span class="pre">ith_T_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_CMB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simclusters.simulate_clusters.ith_T_map" title="Link to this definition"></a></dt>
+<dd><section id="id20">
+<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>i: int</dt><dd><p>the map you want to return</p>
+</dd>
+<dt>add_CMB: bool</dt><dd><p>whether or not to include the CMB contribution to the final map</p>
+</dd>
+</dl>
+</section>
+<section id="id21">
+<h3>Returns<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>np.ndarray(float)</dt><dd><p>the ith map of the sky in units of uK, which is image_size_pixels x image_size_pixels in size</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepszsim.simclusters.simulate_clusters.save_map">
+<span class="sig-name descname"><span class="pre">save_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nest_h5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nest_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/sammcd/locgit/DeepSZSim/deepszsim/outfiles'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simclusters.simulate_clusters.save_map" title="Link to this definition"></a></dt>
+<dd><section id="id22">
+<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>i: None or int</dt><dd><p>the map you want to save, if you only want to save a single map</p>
+</dd>
+<dt>nest_h5: bool</dt><dd><p>whether or not to nest the clusters into a single h5 file, assuming that you are saving all of the
+clusters that you have calculated</p>
+</dd>
+<dt>nest_name: None or str</dt><dd><p>a name for the overall file if you are nesting them (otherwise, it will name it with the number of
+clusters plus the date plus a random string)</p>
+</dd>
+<dt>savedir: str</dt><dd><p>the path to the directory you want to save into</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.simtools">
+<span id="deepszsim-simtools-module"></span><h2>deepszsim.simtools module<a class="headerlink" href="#module-deepszsim.simtools" title="Link to this heading"></a></h2>
+<p>beam convolution, SZ function and CMB simulation tools</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.simtools.add_cmb_map_and_convolve">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.simtools.</span></span><span class="sig-name descname"><span class="pre">add_cmb_map_and_convolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dT_map_uK</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pix_size_arcmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beam_size_fwhp_arcmin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simtools.add_cmb_map_and_convolve" title="Link to this definition"></a></dt>
+<dd><section id="id23">
+<h3>Parameters:<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dT_map_uK: array</dt><dd><p>the map to add to the CMB, units of -uK</p>
+</dd>
+<dt>ps: array</dt><dd><p>power spectrum with shape (3, 3, lmax); clTT spectrum at ps[0][0]</p>
+</dd>
+<dt>pix_size_arcmin: float</dt><dd><p>size of each pixel in arcmin</p>
+</dd>
+<dt>beam_size_fwhp_arcmin: float or None</dt><dd><p>beam size in arcmin</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h3>Return:<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dT submap: array</dt><dd><p>dT submap with same shape as dT_map, in units of -uK</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.simtools.convolve_map_with_gaussian_beam">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.simtools.</span></span><span class="sig-name descname"><span class="pre">convolve_map_with_gaussian_beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pix_size_arcmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beam_size_fwhm_arcmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_to_convolve</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simtools.convolve_map_with_gaussian_beam" title="Link to this definition"></a></dt>
+<dd><section id="id25">
+<h3>Parameters:<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>pix_size_arcmin: float</dt><dd><p>size of each pixel in arcmin</p>
+</dd>
+<dt>beam_size_fwhm_arcmin: float</dt><dd><p>beam size in arcmin</p>
+</dd>
+<dt>map_to_convolve: array</dt><dd><p>image to apply beam convolution to</p>
+</dd>
+</dl>
+</section>
+<section id="id26">
+<h3>Return:<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<p>convolved_map: array</p>
+<p>Note - pixel size and beam_size need to be in the same units</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.simtools.f_sz">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.simtools.</span></span><span class="sig-name descname"><span class="pre">f_sz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_ghz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_CMB_K</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simtools.f_sz" title="Link to this definition"></a></dt>
+<dd><p>the leading order correction to blackbody from Compton scattering
+see Eq 3.31 of <a class="reference external" href="https://background.uchicago.edu/~whu/thesis/chap3.pdf">https://background.uchicago.edu/~whu/thesis/chap3.pdf</a></p>
+<section id="id27">
+<h3>Parameters:<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>freq_ghz: float</dt><dd><p>Observation frequency f, in units of GHz</p>
+</dd>
+<dt>T_CMB_K: Quantity instance</dt><dd><p>Temperature of CMB in K</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h3>Return:<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fsz: float</dt><dd><p>radiation frequency</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.simtools.get_cls">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.simtools.</span></span><span class="sig-name descname"><span class="pre">get_cls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simtools.get_cls" title="Link to this definition"></a></dt>
+<dd><p>Makes a cmb temperature map based on the given power spectrum</p>
+<section id="id29">
+<h3>Parameters:<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ns: float</dt><dd><p>scalar spectral index of the power-spectrum</p>
+</dd>
+<dt>cosmo: FlatLambaCDM instance</dt><dd><p>background cosmology</p>
+</dd>
+</dl>
+</section>
+<section id="id30">
+<h3>Return:<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ps array</dt><dd><p>power spectrum as can be used in szluster.make_cmb_map</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.simtools.make_cmb_map">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.simtools.</span></span><span class="sig-name descname"><span class="pre">make_cmb_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pix_size_arcmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.simtools.make_cmb_map" title="Link to this definition"></a></dt>
+<dd><p>Makes a cmb temperature map based on the given power spectrum</p>
+<section id="id31">
+<h3>Parameters:<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>shape: tuple</dt><dd><p>shape of submap in arcmin</p>
+</dd>
+<dt>pix_size_arcmin: float</dt><dd><p>size of each pixel in arcmin</p>
+</dd>
+<dt>ps: array</dt><dd><p>power spectrum with shape (3, 3, lmax); clTT spectrum at ps[0][0]</p>
+</dd>
+</dl>
+</section>
+<section id="id32">
+<h3>Return:<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<p>cmb T map: array</p>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.utils">
+<span id="deepszsim-utils-module"></span><h2>deepszsim.utils module<a class="headerlink" href="#module-deepszsim.utils" title="Link to this heading"></a></h2>
+<p>unit conversions and data saving functions</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.utils.Mpc_to_arcmin">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.utils.</span></span><span class="sig-name descname"><span class="pre">Mpc_to_arcmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_arcmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.utils.Mpc_to_arcmin" title="Link to this definition"></a></dt>
+<dd><p>Changes the units of r from Mpc to arcmin</p>
+<section id="id33">
+<h3>Parameters:<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>r_arcmin: float or array</dt><dd><p>the distance r, in units of arcmin</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift (unitless)</p>
+</dd>
+<dt>cosmo: FlatLambaCDM instance</dt><dd><p>background cosmology for density calculation</p>
+</dd>
+</dl>
+</section>
+<section id="id34">
+<h3>Returns:<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>r_arcmin / Mpc_per_arcmin: float or array (same type as r_arcmin)</dt><dd><p>r_arcmin in units of Mpc</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.utils.arcmin_to_Mpc">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.utils.</span></span><span class="sig-name descname"><span class="pre">arcmin_to_Mpc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_Mpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.utils.arcmin_to_Mpc" title="Link to this definition"></a></dt>
+<dd><p>Changes the units of r from arcmin to Mpc</p>
+<section id="id35">
+<h3>Parameters:<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>r_Mpc: float or array</dt><dd><p>the distance r, in units of Mpc</p>
+</dd>
+<dt>redshift_z: float</dt><dd><p>the redshift (unitless)</p>
+</dd>
+<dt>cosmo: FlatLambaCDM instance</dt><dd><p>background cosmology for density calculation</p>
+</dd>
+</dl>
+</section>
+<section id="id36">
+<h3>Returns:<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>r_Mpc / Mpc_per_arcmin: float or array (same type as r_Mpc)</dt><dd><p>r_Mpc in units of arcmin</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.utils.gaussian_kernal">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.utils.</span></span><span class="sig-name descname"><span class="pre">gaussian_kernal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pix_size_arcmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beam_size_fwhp_arcmin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.utils.gaussian_kernal" title="Link to this definition"></a></dt>
+<dd><section id="id37">
+<h3>Parameters:<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>pix_size_arcmin: float</dt><dd><p>size of each pixel in arcmin</p>
+</dd>
+<dt>beam_size_fwhp_arcmin: float</dt><dd><p>beam size in arcmin</p>
+</dd>
+</dl>
+</section>
+<section id="id38">
+<h3>Returns:<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>gaussian: array</dt><dd><p>2d gaussian kernal</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.utils.save_sim_to_h5">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.utils.</span></span><span class="sig-name descname"><span class="pre">save_sim_to_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.utils.save_sim_to_h5" title="Link to this definition"></a></dt>
+<dd><p>Save simulated data to h5 file</p>
+<section id="id39">
+<h3>Parameters:<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>file<span class="classifier">h5py.File</span></dt><dd><p>The HDF5 file where the data will be saved.</p>
+</dd>
+<dt>name<span class="classifier">str</span></dt><dd><p>The name under which the data will be stored in the HDF5 file.</p>
+</dd>
+<dt>data<span class="classifier">dict</span></dt><dd><p>A dictionary where keys are dataset names (strings) and values are 
+the corresponding dataset arrays or values.</p>
+</dd>
+</dl>
+</section>
+<section id="id40">
+<h3>Returns:<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-deepszsim.visualization">
+<span id="deepszsim-visualization-module"></span><h2>deepszsim.visualization module<a class="headerlink" href="#module-deepszsim.visualization" title="Link to this heading"></a></h2>
+<p>plotting functions</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.visualization.plot_graphs">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_graphs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbarlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logNorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.visualization.plot_graphs" title="Link to this definition"></a></dt>
+<dd><p>Plotting tool function for our 2D submaps and CMB maps.</p>
+<section id="id41">
+<h3>Parameters:<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>image - float array</dt><dd><p>the graph we are plotting</p>
+</dd>
+<dt>title - str</dt><dd><p>title of the graph</p>
+</dd>
+<dt>xlabel - str</dt><dd><p>label of the x-axis</p>
+</dd>
+<dt>ylabel - str</dt><dd><p>label of the y-axis</p>
+</dd>
+<dt>cbarlabel - str</dt><dd><p>label of the color bar</p>
+</dd>
+<dt>width: int</dt><dd><p>half rounded down of the width of output plot in pixels (eg, image size = 2*width+1)</p>
+</dd>
+</dl>
+</section>
+<section id="id42">
+<h3>Returns:<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<p>none</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.visualization.plot_img">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.visualization.plot_img" title="Link to this definition"></a></dt>
+<dd><p>Input: image, mode (option of 0.5/5 Mpc, default to 0.5), cmb (option of y/delta_T, default to y)
+Return: angular scale</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.visualization.plot_pdf">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ITS</span> <span class="pre">method'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.visualization.plot_pdf" title="Link to this definition"></a></dt>
+<dd><p>by Andrey Kravtsov
+wrapper convenience function for plotting  histogram of a sequence of floats xr
+and comparing it to a theoretical distribution given by func</p>
+<section id="id43">
+<h3>Parameters:<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<p>xr: 1d numpy array of floats, values in the sequence to plot
+func: Python function object handle
+args: list of arguments to the function
+other parameters are used for plotting</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.visualization.plot_y">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.visualization.</span></span><span class="sig-name descname"><span class="pre">plot_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.visualization.plot_y" title="Link to this definition"></a></dt>
+<dd><p>Input: profile as function of radius
+Return: visulization (non-log &amp; log scale)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepszsim.visualization.plotting_specs">
+<span class="sig-prename descclassname"><span class="pre">deepszsim.visualization.</span></span><span class="sig-name descname"><span class="pre">plotting_specs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deepszsim.visualization.plotting_specs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-deepszsim">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-deepszsim" title="Link to this heading"></a></h2>
+<p>package for fast simulations of the Sunyaev-Zel’dovich effect from galaxy clusters</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to DeepSZSim’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="autoapi/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, DeepSkies.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

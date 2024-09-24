@@ -1,0 +1,78 @@
+deepszsim.visualization
+=======================
+
+.. py:module:: deepszsim.visualization
+
+.. autoapi-nested-parse::
+
+   plotting functions
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   deepszsim.visualization.plot_graphs
+   deepszsim.visualization.plot_img
+   deepszsim.visualization.plot_y
+   deepszsim.visualization.plot_pdf
+   deepszsim.visualization.plotting_specs
+
+
+Module Contents
+---------------
+
+.. py:function:: plot_graphs(image, title=None, xlabel=None, ylabel=None, cbarlabel=None, width=None, specs=None, extend=False, logNorm=False)
+
+   Plotting tool function for our 2D submaps and CMB maps. 
+
+   Parameters:
+   -----------
+   image - float array
+       the graph we are plotting
+   title - str
+       title of the graph
+   xlabel - str
+       label of the x-axis
+   ylabel - str
+       label of the y-axis
+   cbarlabel - str
+       label of the color bar
+   width: int
+       half rounded down of the width of output plot in pixels (eg, image size = 2*width+1)
+
+   Returns:
+   -------
+   none
+
+
+.. py:function:: plot_img(image, z, opt=0, path=None)
+
+   Input: image, mode (option of 0.5/5 Mpc, default to 0.5), cmb (option of y/delta_T, default to y)
+   Return: angular scale
+
+
+.. py:function:: plot_y(r, y, z, path)
+
+   Input: profile as function of radius
+   Return: visulization (non-log & log scale)
+
+
+.. py:function:: plot_pdf(xr, title, func=None, args=None, label='ITS method', ylog=True, bins=50, xlims=[], ylims=[], figsize=3)
+
+   by Andrey Kravtsov
+   wrapper convenience function for plotting  histogram of a sequence of floats xr
+   and comparing it to a theoretical distribution given by func
+
+   Parameters:
+   -----------
+   xr: 1d numpy array of floats, values in the sequence to plot
+   func: Python function object handle
+   args: list of arguments to the function
+   other parameters are used for plotting
+
+
+.. py:function:: plotting_specs(cluster)
+

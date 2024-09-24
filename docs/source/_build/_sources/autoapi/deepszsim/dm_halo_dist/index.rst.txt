@@ -1,0 +1,52 @@
+deepszsim.dm_halo_dist
+======================
+
+.. py:module:: deepszsim.dm_halo_dist
+
+.. autoapi-nested-parse::
+
+   creates a mass and redshift distribution of halos 
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   deepszsim.dm_halo_dist.flatdist_halo
+
+
+Module Contents
+---------------
+
+.. py:function:: flatdist_halo(zmin, zmax, m200min_SM, m200max_SM, size, seed=None)
+
+   Creates a random uniform distribution of redshifts and masses for use in 
+   creating simulations.
+
+   Parameters:
+   ----------
+   zmin: float
+       minimum value of the redshift distribution
+   zmax: float
+       maximum value of the redshift distribution
+   m200min_SM: float
+       minimum value of the mass distribution, in units of solar masses.
+   m200max_SM: float
+       maximum value of the mass distribution, in units of solar masses
+   size: int
+       size of the distribution
+   seed: int
+       seed for random number generation
+
+   Returns:
+   -------
+   zdist: float array
+       distribution of random uniform redshifts starting at `zmin` ending at 
+       `zmax` with size `size`
+   mdist: float array
+       distribution of random uniform redshifts starting at `m500min_SM` ending
+       at `m500max_SM` with size `size`
+
+
