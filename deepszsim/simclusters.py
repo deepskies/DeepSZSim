@@ -11,6 +11,39 @@ from datetime import datetime as dt
 class simulate_clusters:
     """
     class for simulating a distribution of clusters
+    Parameters
+    ----------
+    M200: float or array-like of float
+        the mass contained within R200 in solar masses (same length as z_dist)
+    redshift_z: float or array-like of float
+        the redshift of the cluster (unitless) (same length as M200_dist)
+    num_halos: None or int
+        number of halos to simulate if none supplied
+    halo_params_dict: None or dict
+        parameters from which to sample halos if `num_halos` specified,
+        must contain `zmin`, `zmax`, `m200min_SM`, `m200max_SM`
+    R200_Mpc: None or float or np.ndarray(float)
+        if None, will calculate the R200 values corresponding to a given set of
+        M200 and redshift_z values for the specified cosmology
+    profile: str
+        Name of profile, currently only supports "Battaglia2012"
+    image_size_pixels: None or int
+        image size in pixels (should be odd; if even, will return images whose
+        sides are `image_size_pixels+1` in length)
+    image_size_arcmin: None or float
+        image size in arcmin
+    pixel_size_arcmin: None or float
+        pixel size in arcmin
+    alpha: float
+        fixed to equal 1.0 in Battaglia 2012
+    gamma: float
+        fixed to equal -0.3 in Battaglia 2012
+    load_vars_yaml: None or str
+        path to yaml file with params; if `None`, must explicitly include image specifications
+    seed: None or int
+        random seed value to sample with
+    tqverb: bool
+        whether or not to display tqdm progress bar while making T maps
     """
     def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
                  R200_Mpc = None, profile = "Battaglia2012",
@@ -19,41 +52,6 @@ class simulate_clusters:
                  load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'config_simACTDR5.yaml'),
                  seed = None, tqverb = False
                  ):
-        """
-        Parameters
-        ----------
-        M200: float or array-like of float
-            the mass contained within R200 in solar masses (same length as z_dist)
-        redshift_z: float or array-like of float
-            the redshift of the cluster (unitless) (same length as M200_dist)
-        num_halos: None or int
-            number of halos to simulate if none supplied
-        halo_params_dict: None or dict
-            parameters from which to sample halos if `num_halos` specified,
-            must contain `zmin`, `zmax`, `m200min_SM`, `m200max_SM`
-        R200_Mpc: None or float or np.ndarray(float)
-            if None, will calculate the R200 values corresponding to a given set of
-            M200 and redshift_z values for the specified cosmology
-        profile: str
-            Name of profile, currently only supports "Battaglia2012"
-        image_size_pixels: None or int
-            image size in pixels (should be odd; if even, will return images whose
-            sides are `image_size_pixels+1` in length)
-        image_size_arcmin: None or float
-            image size in arcmin
-        pixel_size_arcmin: None or float
-            pixel size in arcmin
-        alpha: float
-            fixed to equal 1.0 in Battaglia 2012
-        gamma: float
-            fixed to equal -0.3 in Battaglia 2012
-        load_vars_yaml: None or str
-            path to yaml file with params; if `None`, must explicitly include image specifications
-        seed: None or int
-            random seed value to sample with
-        tqverb: bool
-            whether or not to display tqdm progress bar while making T maps
-        """
         
         if (M200 is not None) and (redshift_z is not None):
             self.M200, self.redshift_z = M200, redshift_z
