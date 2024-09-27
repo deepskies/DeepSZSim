@@ -1,6 +1,11 @@
 deepszsim package
 =================
 
+Documentation for `DeepSZSim <https://www.github.com/DeepSkies/DeepSZSim/>`_.
+
+To create a simulation of two SZ clusters as quickly as possible, run
+``tc = deepszsim.simulate_clusters(num_halos=2).get_T_maps()``, which will return a dictionary with two entries, accessed by ``tc.clusters``. Each of these entries includes a ``params`` subdirectory and a ``maps`` subdirectory.
+
 Submodules
 ----------
 
