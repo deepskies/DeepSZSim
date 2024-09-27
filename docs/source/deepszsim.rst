@@ -65,6 +65,7 @@ deepszsim.simclusters module
 
 .. automodule:: deepszsim.simclusters
    :members:
+   :special-members:
    :undoc-members:
    :show-inheritance:
 
