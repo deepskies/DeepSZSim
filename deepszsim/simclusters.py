@@ -11,6 +11,7 @@ from datetime import datetime as dt
 class simulate_clusters:
     """
     class for simulating a distribution of clusters
+    
     Parameters
     ----------
     M200: float or array-like of float
