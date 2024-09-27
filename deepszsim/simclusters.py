@@ -9,6 +9,16 @@ import h5py
 from datetime import datetime as dt
 
 class simulate_clusters:
+    """
+    class for simulating a distribution of clusters
+    """
+    def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
+                 R200_Mpc = None, profile = "Battaglia2012",
+                 image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
+                 alpha = 1.0, gamma = -0.3,
+                 load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'config_simACTDR5.yaml'),
+                 seed = None, tqverb = False
+                 ):
         """
         Parameters
         ----------
@@ -44,13 +54,6 @@ class simulate_clusters:
         tqverb: bool
             whether or not to display tqdm progress bar while making T maps
         """
-    def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
-                 R200_Mpc = None, profile = "Battaglia2012",
-                 image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
-                 alpha = 1.0, gamma = -0.3,
-                 load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'config_simACTDR5.yaml'),
-                 seed = None, tqverb = False
-                 ):
         
         if (M200 is not None) and (redshift_z is not None):
             self.M200, self.redshift_z = M200, redshift_z

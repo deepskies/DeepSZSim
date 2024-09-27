@@ -8,3 +8,4 @@ colossus
 tqdm
 pixell
 pandas
+scipy
