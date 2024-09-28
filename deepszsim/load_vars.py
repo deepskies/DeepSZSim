@@ -10,7 +10,7 @@ import os
 import sys
 import h5py
 
-def load_vars(file_name= "inputdata.yaml",
+def load_vars(file_name= "config_simACTDR5.yaml",
               file_dir = os.path.join(os.path.dirname(__file__), "Settings"),
               survey_num : int = None,
               survey_name : str = None,

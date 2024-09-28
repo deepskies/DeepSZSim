@@ -1,5 +1,5 @@
 import numpy as np
-from deepszsim import simtools, noise, load_vars, dm_halo_dist, make_sz_cluster
+from deepszsim import simtools, noise, load_vars, dm_halo_dist, make_sz_cluster, filters
 from tqdm import tqdm
 
 from astropy import constants as c
@@ -10,31 +10,32 @@ from datetime import datetime as dt
 
 class simulate_clusters:
     def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
-                 R200_Mpc = None, Rmaxy = None, profile = "Battaglia2012",
+                 R200_Mpc = None, profile = "Battaglia2012",
                  image_size_pixels = None, image_size_arcmin = None, pixel_size_arcmin = None,
                  alpha = 1.0, gamma = -0.3,
-                 load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'inputdata.yaml'),
+                 load_vars_yaml = os.path.join(os.path.dirname(__file__), 'Settings', 'config_simACTDR5.yaml'),
                  seed = None, tqverb = False
                  ):
         """
         Parameters
         ----------
-        M200_dist: float or array-like of float
+        M200: float or array-like of float
             the mass contained within R200 in solar masses (same length as z_dist)
-        z_dist: float or array-like of float
+        redshift_z: float or array-like of float
             the redshift of the cluster (unitless) (same length as M200_dist)
         num_halos: None or int
             number of halos to simulate if none supplied
         halo_params_dict: None or dict
-            parameters from which to sample halos if num_halos specified,
-            must contain zmin, zmax, m200min_SM, m200max_SM
+            parameters from which to sample halos if `num_halos` specified,
+            must contain `zmin`, `zmax`, `m200min_SM`, `m200max_SM`
         R200_Mpc: None or float or np.ndarray(float)
             if None, will calculate the R200 values corresponding to a given set of
             M200 and redshift_z values for the specified cosmology
         profile: str
             Name of profile, currently only supports "Battaglia2012"
         image_size_pixels: None or int
-            image size in pixels (should be odd)
+            image size in pixels (should be odd; if even, will return images whose
+            sides are `image_size_pixels+1` in length)
         image_size_arcmin: None or float
             image size in arcmin
         pixel_size_arcmin: None or float
@@ -43,10 +44,12 @@ class simulate_clusters:
             fixed to equal 1.0 in Battaglia 2012
         gamma: float
             fixed to equal -0.3 in Battaglia 2012
-        load_vars_yaml: str
-            path to yaml file with params
+        load_vars_yaml: None or str
+            path to yaml file with params; if `None`, must explicitly include image specifications
         seed: None or int
             random seed value to sample with
+        tqverb: bool
+            whether or not to display tqdm progress bar while making T maps
         """
         
         if (M200 is not None) and (redshift_z is not None):
@@ -79,7 +82,8 @@ class simulate_clusters:
             print("only `Battaglia2012` is implemented, using that for now")
         self.profile = "Battaglia2012"
         
-        self.vars = load_vars(load_vars_yaml)
+        if load_vars_yaml is not None:
+            self.vars = load_vars(load_vars_yaml)
         self.image_size_pixels = self.vars['image_size_pixels'] if (image_size_pixels is None) else image_size_pixels
         self.image_size_arcmin = self.vars['image_size_arcmin'] if (image_size_arcmin is None) else image_size_arcmin
         self.pixel_size_arcmin = self.vars['pixel_size_arcmin'] if (pixel_size_arcmin is None) else pixel_size_arcmin
@@ -93,25 +97,23 @@ class simulate_clusters:
         if R200_Mpc is not None:
             self.R200_Mpc = R200_Mpc
         else:
-            self.R200_Mpc, self.angsize_arcmin = np.array(
-                [make_sz_cluster.get_r200_angsize_and_c200(self.M200[i], self.redshift_z[i], self.vars)[1:-1]
+            self.R200_Mpc, self.angsize500_arcmin = np.array(
+                [make_sz_cluster.get_r200_angsize_and_c200(self.M200[i], self.redshift_z[i], self.vars,
+                                                           angsize_density = '500c')[1:3]
                  for i in range(self._size)]).T
         
-        self.Rmaxy = Rmaxy
-        
-        self.id_list = [
-            str(self.M200[i])[:5] + str(self.redshift_z[i] * 100)[:2] + str(self._rng.integers(10**6)).zfill(6)
-            for i in range(self._size)]
-        self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i], 'redshift_z': self.redshift_z[i],
+        self.id_list = [f"{int(self.M200[i]/1e9):07}_{int(self.redshift_z[i]*100):03}_{self._rng.integers(10**6):06}"
+                        for i in range(self._size)]
+        self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i],
+                                                            'redshift_z': self.redshift_z[i],
                                                             'R200': self.R200_Mpc[i],
-                                                            'angsize_arcmin': self.angsize_arcmin[i],
-                                                            'image_size_pixels': self.image_size_pixels}} for
-                                                i in range(
-                self._size)]))
+                                                            'angsize_arcmin': self.angsize500_arcmin[i],
+                                                            'angsize500_arcmin': self.angsize500_arcmin[i],
+                                                            'image_size_pixels': self.image_size_pixels}}
+                                                for i in range(self._size)]))
     
     def get_y_maps(self):
         """
-
         Returns
         -------
         np.ndarray(float)
@@ -124,14 +126,12 @@ class simulate_clusters:
             self.y_maps = np.array([make_sz_cluster.generate_y_submap(self.M200[i],
                                                       self.redshift_z[i],
                                                       R200_Mpc = self.R200_Mpc[i],
-                                                      Rmaxy = self.Rmaxy,
                                                       load_vars_dict = self.vars)
                                     for i in tqdm(range(self._size), disable = (not self.tqverb))])
             return self.y_maps
     
     def get_dT_maps(self):
         """
-
         Returns
         -------
         np.ndarray(float)
@@ -152,6 +152,8 @@ class simulate_clusters:
         ----------
         add_CMB: bool
             whether or not to include the CMB contribution to the final map
+        returnval: bool
+            whether or not to return the T maps themselves or simply update internal attribute
 
         Returns
         -------
@@ -162,29 +164,34 @@ class simulate_clusters:
         dT_maps = self.get_dT_maps()
         if add_CMB: self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
         if self.tqverb: print("making convolved T maps" + (" with CMB" if add_CMB else ""))
+        _centerpix = self.image_size_pixels // 2
         for i in tqdm(range(self._size), disable = (not self.tqverb)):
-            self.clusters[self.id_list[i]]['params']['dT_central'] = dT_maps[i][self.image_size_pixels // 2][
-                self.image_size_pixels // 2]
-            self.clusters[self.id_list[i]]['maps'] = {}
+            dTm, name = dT_maps[i], self.id_list[i]
+            curdic = self.clusters[name]
+            curdic['params']['dT_central'] = dTm[_centerpix,_centerpix]
+            curdic['maps'] = {}
+            beamsig_map = simtools.convolve_map_with_gaussian_beam(self.pixel_size_arcmin,
+                                                                   self.beam_size_arcmin, dTm)
             if add_CMB:
-                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dT_maps[i], self.ps,
+                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dTm, self.ps,
                                                                       self.pixel_size_arcmin,
                                                                       self.beam_size_arcmin)
             else:
-                conv_map = simtools.convolve_map_with_gaussian_beam(
-                    self.pixel_size_arcmin, self.beam_size_arcmin, dT_map)
-                cmb_map = np.zeros_like(conv_map)
+                conv_map, cmb_map = beamsig_map, np.zeros_like(beamsig_map)
             if not self.vars['noise_level'] == 0:
                 noise_map = noise.generate_noise_map(self.image_size_pixels, self.vars['noise_level'],
                                                      self.pixel_size_arcmin)
             else:
                 noise_map = np.zeros_like(conv_map)
             final_map = conv_map + noise_map
-            self.clusters[self.id_list[i]]['maps']['conv_map'] = conv_map
-            self.clusters[self.id_list[i]]['maps']['CMB_map'] = cmb_map
-            self.clusters[self.id_list[i]]['maps']['signal_map'] = conv_map - cmb_map
-            self.clusters[self.id_list[i]]['maps']['noise_map'] = noise_map
-            self.clusters[self.id_list[i]]['maps']['final_map'] = final_map
+            curdic['maps']['conv_map'] = conv_map
+            curdic['maps']['CMB_map'] = cmb_map
+            curdic['maps']['signal_map'] = dTm
+            curdic['maps']['beamsig_map'] = beamsig_map
+            curdic['maps']['final_map'] = final_map
+            curdic['params']['ap'] = filters.get_tSZ_signal_aperture_photometry(final_map,
+                                                                                curdic['params']['angsize_arcmin'],
+                                                                                self.pixel_size_arcmin)[-1]
         
         if returnval:
             return self.clusters
@@ -240,7 +247,7 @@ class simulate_clusters:
                 for k, v in self.clusters[self.id_list[i]]['maps'].items():
                     f.create_dataset('maps/' + k, data = v)
         elif nest_h5:
-            file_name = str(self._size) + "clusters_" + dt.strftime(dt.now(),
+            file_name = "clusters_" + "N"+ str(self._size) +"_" + dt.strftime(dt.now(),
                                                                     '%y%m%d%H%M%S%f') if nest_name is None else nest_name
             with h5py.File(os.path.join(self.savedir, file_name + ".h5"), 'w') as f:
                 for j in range(self._size):
