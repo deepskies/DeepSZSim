@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deepszsim"
-version = "0.1.0"
+version = "0.1.1"
 description = "code for fast simulations of galaxy clusters"
 authors = [{name = "Eve Vavagiakis", email = "ev66@cornell.edu"}]
 license = {text="LICENSE.txt"}
@@ -23,8 +23,9 @@ dependencies = [
 pytest = "^7.3.1"
 pytest-cov = "^4.0.0"
 
-[tool.setuptools.packages.find]
-namespaces = false
+[tool.setuptools]
+packages = ["deepszsim"]
+include-package-data = true
 
 [tool.setuptools.package-data]
-"deepszsim.Settings" = ["*.yaml"]
+"deepszsim" = ["Settings/*.yaml"]
