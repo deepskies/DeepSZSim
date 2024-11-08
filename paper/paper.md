@@ -28,7 +28,7 @@ authors:
     equal-contrib: true
     affiliation: "6" 
   - name: Samantha Usman
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0003-0918-7185
     equal-contrib: true
     affiliation: "3" 
   - name: Camille Avestruz
