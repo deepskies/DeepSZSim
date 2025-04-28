@@ -43,7 +43,7 @@ A full list of potential inputs is documented in `settings/config.yaml` and you 
 
 ### Tests
 
-Tests are provided in the `tests` directory. They are automatically run via CircleCI on pushes to the repository. Users can verify tests with `python -m pytest tests/*`.
+Tests are provided in the `tests` directory. They are automatically run via CircleCI on pushes to the repository in this [workflow](https://github.com/deepskies/DeepSZSim/actions/runs/14297088348/workflow). Users can verify tests and coverage locally with `python -m pytest tests/*`.
 
 ### Example
 
