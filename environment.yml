@@ -1,7 +1,7 @@
 name: szsims
 dependencies:
   - python < 3.12
-  - numpy
+  - numpy < 2
   - pandas
   - astropy
   - scipy

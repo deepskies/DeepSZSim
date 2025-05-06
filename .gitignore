@@ -11,6 +11,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+deepszsim.egg-info/
 develop-eggs/
 dist/
 downloads/
@@ -129,3 +130,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+notebooks/sbi-logs/
