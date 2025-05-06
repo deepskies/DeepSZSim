@@ -33,9 +33,10 @@ def flatdist_halo(zmin, zmax, m200min_SM, m200max_SM, size, seed=None):
         distribution of random uniform redshifts starting at `m500min_SM` ending
         at `m500max_SM` with size `size`
     '''
-    _rng = np.random.default_rng(seed=seed)
+    rng = np.random.default_rng(seed=seed)
+    rng_M, rng_z = rng.spawn(2)
 
-    zdist=_rng.uniform(low=zmin, high=zmax, size=size)
-    mdist=_rng.uniform(low=m200min_SM, high=m200max_SM, size=size)
+    zdist=rng_z.uniform(low=zmin, high=zmax, size=size)
+    mdist=rng_M.uniform(low=m200min_SM, high=m200max_SM, size=size)
     
     return zdist, mdist

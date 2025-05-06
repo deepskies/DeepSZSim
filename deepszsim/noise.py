@@ -4,7 +4,7 @@ functions to generate simulated CMB map noise
 
 import numpy as np
 
-def generate_noise_map(image_size, noise_level, pix_size):
+def generate_noise_map(image_size, noise_level, pix_size, seed):
     """
     Generates a white noise map based on the noise level and beam size.
 
@@ -21,7 +21,8 @@ def generate_noise_map(image_size, noise_level, pix_size):
     """
     
     # Create random noise map
-    random_noise_map = np.random.normal(0, 1, (image_size, image_size))
+    rng = np.random.default_rng(seed)
+    random_noise_map = rng.normal(0, 1, (image_size, image_size))
 
     # Scale random noise map by noise level
     scaled_noise_map = random_noise_map * noise_level
