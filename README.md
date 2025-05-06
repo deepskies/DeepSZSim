@@ -61,6 +61,13 @@ The clusters and their maps are now in a dictionary which is in a `clusters` att
 
 To access the clusters in this set, you can refer to the cluster ID, which itself is obtained from the first five digits of the cluster mass and two digits of the cluster redshift, followed by six random digits. For example, to access a dictionary of the maps and the parameters describing the eleventh cluster, you would do `tc0.clusters[tc0.id_list[11]]`. Alternately, to get the ''final'' temperature map (with noise) for the eleventh cluster, we also provide a convenience function: `tc0.ith_T_map(11)` is the same as `tc0.clusters[tc0.id_list[11]]['maps']['final_map']`.
 
+For further examples, see the notebooks [[1](./notebooks/demo_full_pipeline.ipynb)] [[2](./notebooks/demo_simulation.ipynb)]. To run these locally, you will need to install as described in the [Installation](#installation) section, and then do
+```commandline
+python -m ipykernel install --user --name szsims --display-name "deepszsim"
+cd notebooks
+Jupyter notebook
+```
+
 ## Citation
 
 If you use this code in your research, please cite this GitHub repo and our JOSS paper. Please also make use of the citation instructions for `camb` provided [here](https://camb.info).
