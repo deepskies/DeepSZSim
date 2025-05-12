@@ -131,4 +131,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# data stuff
 notebooks/sbi-logs/
+*.h5
+*.npy
