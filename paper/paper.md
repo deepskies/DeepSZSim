@@ -124,7 +124,9 @@ We present examples of the primary outputs from `DeepSZSim` in Figure \autoref{f
 *K. Banker*: methodology, software
 *S. Usman*: methodology, software
 *C. Avestruz*: conceptualization, methodology, project administration, funding acquisition, supervision, writing 
-*Brian Nord*: conceptualization, methodology, project administration, funding acquisition, supervision, writing.
+*B. Nord*: conceptualization, methodology, project administration, funding acquisition, supervision, writing.
+
+For contributions, questions, or maintainance, contact: E. M. Vavagiakis (ev66 [at] cornell [dot] edu), S. D. McDermott (sammcd [at] uchicago [dot] edu), B. Nord (nord [at] fnal [dot] gov) or C. Avestruz (cavestru [at] umich [dot] edu).
 
 We acknowledge contributions from Maggie Voetberg, Junhe Zhang, Helen Tan, Ioana Corescu, and Antwine Willis.
 
