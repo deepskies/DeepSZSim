@@ -93,8 +93,15 @@ class config_obj:
 
             
     def _generate_run_id(random_digits=6):
-        '''
-        '''
+        """
+        <>
+        Parameters
+        ----------
+        attr : str
+            a key of the UserParams dictionary
+        new_val : float
+            new value that you wish attr to take on
+        """
 
         _rint = np.random.randint(10**random_digits)
         runid = 'runid_'+dt.now().strftime('%y%m%d%H%M%S%f_')+str(_rint).zfill(random_digits)
@@ -104,6 +111,13 @@ class config_obj:
 
     def cosmology_param(self, ref):
         """
+        <>
+        Parameters
+        ----------
+        attr : str
+            a key of the UserParams dictionary
+        new_val : float
+            new value that you wish attr to take on
         """
         
         for key in ref['COSMOLOGY'].keys():
