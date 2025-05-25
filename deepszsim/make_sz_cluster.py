@@ -23,7 +23,7 @@ thermal_to_electron_pressure = 1 / 1.932
 def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
     """
     Calculates independent params using the formula from Battaglia 2012, Equation 11
-    in order for use in the pressure profile defined in Equation 10
+    in order for use in the pressure profile defined in Equation 10.
 
     Parameters:
     -----------
@@ -53,7 +53,7 @@ def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
 def _P0_Battaglia2012(M200_SM, redshift_z):
     """
     Calculates P0, the normalization factor/amplitude, 
-    from Battaglia 2012, using the values from Table 1,
+    from Battaglia 2012, using the values from Table 1.
 
     Parameters:
     -----------
@@ -75,7 +75,7 @@ def _P0_Battaglia2012(M200_SM, redshift_z):
 def _xc_Battaglia2012(M200_SM, redshift_z):
     """
     Calculates xc, the core-scale factor,
-    from Battaglia 2012, using the values from Table 1,
+    from Battaglia 2012, using the values from Table 1.
 
     Parameters:
     -----------
@@ -96,7 +96,7 @@ def _xc_Battaglia2012(M200_SM, redshift_z):
 
 def _beta_Battaglia2012(M200_SM, redshift_z):
     """
-    Calculates beta, the power law index, from Battaglia 2012 from Table 1
+    Calculates beta, the power law index, from Battaglia 2012 from Table 1.
 
     Parameters:
     ----------
@@ -117,7 +117,7 @@ def _beta_Battaglia2012(M200_SM, redshift_z):
 
 def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
     """
-    Calculates the P200 pressure of a cluster, as defined in Battaglia 2012
+    Calculates the P200 pressure of a cluster, as defined in Battaglia 2012.
 
     Parameters:
     -----------
@@ -152,7 +152,7 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
 def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
     """
     Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
-    Equation 10. Pth is unitless. It is normalized by P200
+    Equation 10. Pth is unitless. It is normalized by P200.
 
     Parameters:
     -----------
@@ -188,7 +188,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
                       alpha = 1.0, gamma = -0.3, R200_Mpc = None):
     """
     Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
-    Equation 10. Pth is unitless. It is normalized by P200
+    Equation 10. Pth is unitless. It is normalized by P200.
 
     Parameters:
     -----------
@@ -257,7 +257,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
     Returns:
     --------
     y_pro: array
-        Compton-y profile corresponding to the radii
+        Compton-y profile corresponding to the radii.
     """
     if R200_Mpc is None:
         R200_Mpc = get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
@@ -403,7 +403,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
 
 def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_density = None):
     """
-    get radius r200 and concentration c200
+    Get radius r200 and concentration c200.
     
     Parameters:
     ----------
