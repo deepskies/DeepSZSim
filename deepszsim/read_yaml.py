@@ -17,13 +17,15 @@ class YAMLOperator:
         Parse a YAML file and return a dictionary.
 
         Parameters:
-            file_path (str): Path to the YAML file.
+        -----------
+            file_path (str): 
+                Path to the YAML file.
 
         Returns:
-            dict: Dictionary containing the parsed YAML file.
-
-        Raises:
-            yaml.YAMLError: If the YAML file is not valid.
+        --------
+            dict: 
+                Dictionary containing the parsed YAML file.
+            
         """
         with open(self.file_path, 'r') as stream:
             try:
