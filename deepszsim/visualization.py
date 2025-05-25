@@ -10,7 +10,7 @@ from deepszsim.utils import arcmin_to_Mpc
 def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = None, width = None, specs = None,
                 extend = False,
                 logNorm = False):
-    '''
+    """
     Plotting tool function for our 2D submaps and CMB maps. 
     
     Parameters:
@@ -36,7 +36,7 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
     Returns:
     -------
     none
-    '''
+    """
     
     if specs is not None:
         title, xlabel, ylabel, cbarlabel, width = specs['title'], specs['xlabel'], specs['ylabel'], \
@@ -60,7 +60,7 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
 def plotting_specs(cluster):
     """
     
-    Args:
+    Parameters:
         cluster:
             dictionary representing a cluster instance, which contains a `parameters` dictionary which itself has 'M200', 'redshift', and 'image_size_pixels' keys
 
