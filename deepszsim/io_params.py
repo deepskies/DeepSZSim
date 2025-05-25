@@ -132,6 +132,7 @@ class config_obj:
     def cosmology_param(self, ref):
         """
         Set cosmology parameters
+        
         Parameters
         ----------
         attr : str
@@ -153,6 +154,7 @@ class config_obj:
     def _quick_yaml_load(infile):
         """
         Load yaml files without remembering the syntax or yaml.safe_load command
+        
         Parameters
         ----------
         infile : str
