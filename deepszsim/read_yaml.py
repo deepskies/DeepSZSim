@@ -16,7 +16,7 @@ class YAMLOperator:
         """
         Parse a YAML file and return a dictionary.
 
-        Args:
+        Parameters:
             file_path (str): Path to the YAML file.
 
         Returns:
