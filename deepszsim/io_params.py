@@ -135,10 +135,8 @@ class config_obj:
         
         Parameters
         ----------
-        attr : str
-            a key of the UserParams dictionary
-        new_val : float
-            new value that you wish attr to take on
+        ref: dict
+            dictionary containing cosmology parameters
         """
         for key in ref['COSMOLOGY'].keys():
             cosmo_dict=ref['COSMOLOGY'][key] #Read in cosmological parameters
