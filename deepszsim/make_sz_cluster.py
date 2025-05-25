@@ -10,11 +10,15 @@ from colossus.halo import mass_adv
 from astropy import constants as c
 from astropy import units as u
 
+# constants
 keVcm3_to_Jm3 = ((1 * u.keV / (u.cm**3.)).to(u.J / (u.m**3.))).value
-thermal_to_electron_pressure = 1 / 1.932  # from Battaglia 2012, assumes
 Mpc_to_m = (1 * u.Mpc).to(u.m).value
 Thomson_scale = (c.sigma_T/(c.m_e * c.c**2)).value
-# fully ionized medium
+
+# conversion factor from Battaglia 2012
+thermal_to_electron_pressure = 1 / 1.932  
+
+
 
 def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
     """
@@ -30,15 +34,15 @@ def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
     alpha_z: float
         power law index for the redshift dependent part
     M200_SM: float
-        the mass of the cluster at 200 times the critical density of the 
+        mass of the cluster at 200 times the critical density of the 
         universe in units of solar masses
     redshift_z: float
-        the redshift of the cluster
+        redshift of the cluster
 
     Returns:
     --------
     A: float
-        the parameter A given the formula from Battaglia 2012, Eq 11
+        formula from Battaglia 2012, Eq 11
     """
     
     A = A0 * (M200_SM / 1e14)**alpha_m * (1. + redshift_z)**alpha_z
@@ -54,15 +58,15 @@ def _P0_Battaglia2012(M200_SM, redshift_z):
     Parameters:
     -----------
     M200_SM: float
-        the mass of the cluster at 200 times the critical density of the 
+        mass of the cluster at 200 times the critical density of the 
         universe, in units of solar masses
     redshift_z: float
-        the redshift of the cluster (unitless)
+        redshift of the cluster (unitless)
 
     Returns:
     -------
     P0: float
-        the normalization factor for the Battaglia 2012 profile
+        normalization factor for the Battaglia 2012 profile
 
     """
     return _param_Battaglia2012(18.1, 0.154, -0.758, M200_SM, redshift_z)
@@ -76,15 +80,15 @@ def _xc_Battaglia2012(M200_SM, redshift_z):
     Parameters:
     -----------
     M200_SM: float
-        the mass of the cluster at 200 times the critical density of the 
+        mass of the cluster at 200 times the critical density of the 
         universe, in units of solar masses
     redshift_z: float
-        the redshift of the cluster (unitless)
+        redshift of the cluster (unitless)
 
     Returns:
     --------
     xc: float
-        the core-scale factor for the Battaglia 2012 profile
+        core-scale factor for the Battaglia 2012 profile
 
     """
     return _param_Battaglia2012(0.497, -0.00865, 0.731, M200_SM, redshift_z)
@@ -92,21 +96,20 @@ def _xc_Battaglia2012(M200_SM, redshift_z):
 
 def _beta_Battaglia2012(M200_SM, redshift_z):
     """
-    Calculates beta, the power law index, 
-    from Battaglia 2012, using the values from Table 1,
+    Calculates beta, the power law index, from Battaglia 2012 from Table 1
 
     Parameters:
     ----------
     M200_SM: float
-        the mass of the cluster at 200 times the critical density of the 
+        mass of the cluster at 200 times the critical density of the 
         universe, in units of solar masses
     redshift_z: float
-        the redshift of the cluster (unitless)
+        redshift of the cluster (unitless)
 
     Returns:
     -------
     beta: float
-        the power law index for the Battaglia 2012 profile
+        power law index for the Battaglia 2012 profile
 
     """
     return _param_Battaglia2012(4.35, 0.0393, 0.415, M200_SM, redshift_z)
@@ -114,15 +117,14 @@ def _beta_Battaglia2012(M200_SM, redshift_z):
 
 def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
     """
-    Calculates the P200 pressure of a cluster, as defined in
-    Battaglia 2012
+    Calculates the P200 pressure of a cluster, as defined in Battaglia 2012
 
     Parameters:
     -----------
     M200_SM: float
-        the mass contained within R200, in units of solar masses
+         mass contained within R200, in units of solar masses
     redshift_z: float
-        the redshift of the cluster (unitless)
+         redshift of the cluster (unitless)
     load_vars_dict: instance of load_vars.load_vars()
         dictionary that includes background cosmology, ns, and sigma8 (necessary for the
         calculation of R200 and c200)
@@ -133,8 +135,7 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
     Returns:
     --------
     P200_kevcm3: Quantity instance
-        the thermal pressure of the shell defined by R200 in units
-        of keV/cm**3
+        thermal pressure of the shell defined by R200 in units of keV/cm**3
     """
     cosmo = load_vars_dict['cosmo']
 
@@ -156,11 +157,11 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
     Parameters:
     -----------
     P0: float
-        the normalization factor/amplitude,
+        normalization factor/amplitude,
     radius_mpc: float or np.ndarray(float)
-        the radius or radii for the pressure to be calculated at, in units of Mpc
+        radius or radii for the pressure to be calculated at, in units of Mpc
     R200_Mpc: float
-        the radius of the cluster at 200 times the critical density of the
+        radius of the cluster at 200 times the critical density of the
         universe, in units of Mpc
     alpha: float
         fixed parameter equal to 1.0 in Battaglia 2012
@@ -174,8 +175,7 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
     Returns:
     --------
     Pth: float or np.ndarray(float)
-        the thermal pressure profile normalized by P200 (which itself has units of
-        keV/cm**3)
+        thermal pressure profile normalized by P200, which has units keV/cm**3
     """
     
     x = radius_mpc / R200_Mpc
@@ -193,18 +193,18 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
     Parameters:
     -----------
     radius_mpc: float or np.ndarray(float)
-        the radius for the pressure to be calculated at, in units of Mpc
+        radius for the pressure to be calculated at, in units of Mpc
     M200_SM: float
-        the mass contained within R200, in units of solar masses
+        mass contained within R200, in units of solar masses
     redshift_z: float
-        the redshift of the cluster (unitless)
+        redshift of the cluster (unitless)
     load_vars_dict: instance of load_vars.load_vars()
         dictionary that includes background cosmology, ns, and sigma8 (necessary for the
         calculation of R200 and c200)
     alpha: float
-        variable fixed by Battaglia et al 2012 to 1.0
+        fixed by Battaglia et al 2012 to 1.0
     gamma: float
-        variable fixed by Battaglia et al 2012 to -0.3
+        fixed by Battaglia et al 2012 to -0.3
     R200_Mpc: None or float
         if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
         and the cosmology contained in load_vars_dict
@@ -212,8 +212,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
     Returns:
     --------
     Pth: float or np.ndarray(float)
-        the thermal pressure profile normalized by P200 (which itself has units of
-        keV/cm**3)
+        thermal pressure profile normalized by P200, which has units keV/cm**3
     """
     
     if R200_Mpc is None:
@@ -230,7 +229,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
 
 def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
     """
-    Converts from an electron pressure profile to a compton-y profile,
+    Converts from an electron pressure profile to a compton-y profile;
     integrates over line of sight from -1 to 1 Mpc relative to center.
 
     Parameters:
@@ -239,11 +238,11 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
         Method to get thermal pressure profile, accepts radius, M200, redshift_z, cosmo,
         and two additional parameters alpha and gamma that are usually fixed
     radii_mpc: array
-        the array of radii corresponding to the profile in Mpc
+        array of radii corresponding to the profile in Mpc
     M200_SM: float
-        the mass contained within R200, in units of solar masses
+        mass contained within R200, in units of solar masses
     redshift_z: float
-        the redshift of the cluster (unitless)
+        redshift of the cluster (unitless)
     load_vars_dict: instance of load_vars.load_vars()
         dictionary that includes background cosmology, ns, and sigma8 (necessary for the
         calculation of R200 and c200)
@@ -255,8 +254,8 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
         if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
         and the cosmology contained in load_vars_dict
 
-    Return:
-    -------
+    Returns:
+    --------
     y_pro: array
         Compton-y profile corresponding to the radii
     """
@@ -301,7 +300,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     M200_SM: float
         mass contained in R200, in units of solar masses
     redshift_z: float
-        the redshift of the cluster (unitless)
+        redshift of the cluster (unitless)
     load_vars_dict: instance of load_vars.load_vars()
         dictionary that includes background cosmology, ns, and sigma8 (necessary for the
         calculation of R200 and c200)
@@ -326,13 +325,13 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     X = np.linspace(0, (image_size_pixels // 2) * pixel_size_arcmin, image_size_pixels//2 + 1)
     X = utils.arcmin_to_Mpc(X, redshift_z, load_vars_dict['cosmo'])
     # Solves issues of div by 0
+    
     #X[(X <= pixel_size_arcmin / 10) & (X >= -pixel_size_arcmin / 10)] = pixel_size_arcmin / 10
     mindist = utils.arcmin_to_Mpc(pixel_size_arcmin*0.1, redshift_z, load_vars_dict['cosmo'])
     R = np.maximum(mindist, np.sqrt(X[:, None]**2 + X[None, :]**2).flatten())
     
     cy = Pe_to_y(profile, R, M200_SM, redshift_z, load_vars_dict, alpha = alpha, gamma = gamma, R200_Mpc = R200_Mpc)  #
-    # evaluate compton-y for each
-    # neccesary radius
+    # evaluate compton-y for each neccesary radius
 
     y_map = np.zeros((X.size*2 - 1, X.size*2 - 1))
     for i, x in enumerate(X):
@@ -383,8 +382,8 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
         if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
         and the cosmology contained in load_vars_dict
 
-    Return:
-    ------
+    Returns:
+    --------
     y_map: array
         Compton-y submap with dimension (image_size_pixels, image_size_pixels)
     """
@@ -404,10 +403,12 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
 
 def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_density = None):
     """
+    get radius r200 and concentration c200
+    
     Parameters:
     ----------
     M200_SM: float
-        the mass contained within R200, in units of solar masses
+        mass contained within R200, in units of solar masses
     redshift_z: float
         redshift of the cluster (unitless)
     load_vars_dict: dict
@@ -421,9 +422,9 @@ def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_densi
     Returns:
     -------
     M200_SM: float
-        the mass contained within R200, in units of solar masses
+        mass contained within R200, in units of solar masses
     R200_Mpc: float
-        the radius of the cluster at 200 times the critical density of the universe in Mpc
+        radius of the cluster at 200 times the critical density of the universe in Mpc
     c200: float
         concentration parameter
     """
