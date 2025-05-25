@@ -13,7 +13,7 @@ import camb
 def convolve_map_with_gaussian_beam(pix_size_arcmin,
                                     beam_size_fwhm_arcmin, map_to_convolve):
     """
-    Convolve the map with a Gaussian beam
+    Convolve the map with a Gaussian beam.
     
     Parameters:
     ----------
@@ -27,8 +27,7 @@ def convolve_map_with_gaussian_beam(pix_size_arcmin,
     Return:
     -------
     convolved_map: array
-
-    Note - pixel size and beam_size need to be in the same units
+        map that has been convolved with beam
     """
     gaussian = utils.gaussian_kernal(pix_size_arcmin, beam_size_fwhm_arcmin)
     convolved_map = scipy.signal.fftconvolve(map_to_convolve, 
@@ -45,7 +44,7 @@ def f_sz(freq_ghz, T_CMB_K):
     ----------
     freq_ghz: float
         Observation frequency f, in units of GHz
-    T_CMB_K: Quantity instance
+    T_CMB_K: instance of temperature spectrum
         Temperature of CMB in K
 
     Return:
@@ -53,9 +52,11 @@ def f_sz(freq_ghz, T_CMB_K):
     fsz: float
         radiation frequency
     """
+    #Takes input in units of GHz
+    f=freq_ghz*u.GHz 
 
-    f=freq_ghz*u.GHz #Takes input in units of GHz
-    f=f.to(1/u.s) #Unit conversion
+    #Unit conversion
+    f=f.to(1/u.s) 
     x = (c.h * f / c.k_B / T_CMB_K).value
     fsz = x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4
 
@@ -64,12 +65,12 @@ def f_sz(freq_ghz, T_CMB_K):
 def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin, 
                                  beam_size_fwhp_arcmin):
     """
-    Add CMB to the dT map and convolve with beam
+    Add CMB to the dT map and convolve with beam.
     
     Parameters:
     ----------
     dT_map_uK: array
-        the map to add to the CMB, units of -uK
+        map to add to the CMB, units of -uK
     ps: array
         power spectrum with shape (3, 3, lmax); clTT spectrum at ps[0][0]
     pix_size_arcmin: float
@@ -80,12 +81,12 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
     Return:
     ------
     dT submap: array
-        dT submap with same shape as dT_map, in units of -uK
+        dT submap with same shape as dT_map, in units -uK
     """
     padding_value = int(np.ceil(beam_size_fwhp_arcmin/pix_size_arcmin))
     expanded_shape = (dT_map_uK.shape[0] + 2*padding_value, 
                         dT_map_uK.shape[1]+2*padding_value)
-    #print(expanded_shape)
+    
     cmb_map = make_cmb_map(shape=expanded_shape, 
                                 pix_size_arcmin=pix_size_arcmin, ps=ps)
     if type(dT_map_uK) is u.Quantity:
@@ -108,7 +109,7 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
 
 def get_cls(ns, cosmo, lmax=2000):
     """
-    Makes a cmb temperature map based on the given power spectrum
+    Makes a cmb temperature map based on the given power spectrum.
 
     Parameters:
     ----------
@@ -119,7 +120,7 @@ def get_cls(ns, cosmo, lmax=2000):
 
     Return:
     ------
-    ps array
+    ps: array
         power spectrum as can be used in szluster.make_cmb_map
     """
     data = camb.set_params(ns=ns, H0=cosmo.H0.value, ombh2=cosmo.Ob0, 
@@ -128,6 +129,7 @@ def get_cls(ns, cosmo, lmax=2000):
     cls = np.swapaxes(results.get_total_cls(CMB_unit='muK', raw_cl=True),
                         0,1)
     ps = np.zeros((3,3,cls.shape[1]))
+    
     # Needs to be reshaped to match input for pixell.enmap
     ps[0][0]= cls[0] # clTT spectrum
     ps[1][0] = cls[3] #clTE
@@ -138,7 +140,7 @@ def get_cls(ns, cosmo, lmax=2000):
 
 def make_cmb_map(shape, pix_size_arcmin, ps, seed=None):
     """
-    Makes a cmb temperature map based on the given power spectrum
+    Makes a cmb temperature map based on the given power spectrum.
 
     Parameters:
     ----------
@@ -151,14 +153,16 @@ def make_cmb_map(shape, pix_size_arcmin, ps, seed=None):
 
     Return:
     -------
-    cmb T map: array
+    omap: array
+        CMB temperature map
     """
     #ps[0][0] is cltt spectrum
     shape,wcs = enmap.geometry(shape=shape,pos=(0,0),
                                 res=np.deg2rad(pix_size_arcmin/60.))
     shape = (3,) + shape
-    omap = enmap.rand_map(shape,wcs,cov=ps, seed=seed)
+    
     #omap gives TQU maps, so for temperature, we need omap[0]
-
+    omap = enmap.rand_map(shape,wcs,cov=ps, seed=seed)
+    
     return omap[0]
 
