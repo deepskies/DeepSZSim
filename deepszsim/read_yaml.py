@@ -18,13 +18,13 @@ class YAMLOperator:
 
         Parameters:
         -----------
-            file_path (str): 
-                Path to the YAML file.
+        file_path (str): 
+            Path to the YAML file.
 
         Returns:
         --------
-            dict: 
-                Dictionary containing the parsed YAML file.
+        yaml.safe_load(): dict
+            Dictionary containing the parsed YAML file.
             
         """
         with open(self.file_path, 'r') as stream:
