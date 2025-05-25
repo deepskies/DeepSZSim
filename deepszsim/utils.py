@@ -97,7 +97,7 @@ def save_sim_to_h5(file, name, data, attributes={}, overwrite=False):
 
     Returns:
     --------
-    None   
+    none   
     """
 
     if overwrite and name in file:
