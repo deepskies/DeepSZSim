@@ -10,24 +10,24 @@ from deepszsim.utils import arcmin_to_Mpc
 def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = None, width = None, specs = None,
                 extend = False,
                 logNorm = False):
-    '''
+    """
     Plotting tool function for our 2D submaps and CMB maps. 
     
     Parameters:
     -----------
-    image - float array
-        the graph we are plotting
-    title - str
+    image: float array
+        graph we are plotting
+    title: str
         title of the graph
-    xlabel - str
+    xlabel: str
         label of the x-axis
-    ylabel - str
+    ylabel: str
         label of the y-axis
-    cbarlabel - str
+    cbarlabel: str
         label of the color bar
     width: int
         half rounded down of the width of output plot in pixels (eg, image size = 2*width+1)
-    specs: Optional[dict]
+    specs: dict
         optional dictionary to pass title, xlabel, ylabel, cbarlabel, and width
     logNorm: bool
         if true, uses a logarithmic normalization for the plot (using SymLogNorm in case values are negative)
@@ -36,7 +36,7 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
     Returns:
     -------
     none
-    '''
+    """
     
     if specs is not None:
         title, xlabel, ylabel, cbarlabel, width = specs['title'], specs['xlabel'], specs['ylabel'], \
@@ -59,12 +59,16 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
 
 def plotting_specs(cluster):
     """
+    Specifications for plot formatting.
     
-    Args:
-        cluster:
-            dictionary representing a cluster instance, which contains a `parameters` dictionary which itself has 'M200', 'redshift', and 'image_size_pixels' keys
+    Parameters:
+    -----------
+    cluster: array
+        dictionary representing a cluster instance, which contains a `parameters` dictionary which itself has 'M200', 'redshift', and 'image_size_pixels' keys
 
     Returns:
+    --------
+    out: dict
         dictionary that can be passed as the value of the `specs` kwarg in `plot_graphs`
     """
     out = {}

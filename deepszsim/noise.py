@@ -8,16 +8,19 @@ def generate_noise_map(image_size, noise_level, pix_size):
     """
     Generates a white noise map based on the noise level and beam size.
 
-    Args:
-        image_size: int
-            Size of the noise map (N x N).
-        noise_level: float
-            Noise level of the survey.
-        pix_size: int
-            size of pixels in arcminutes
+    Parameters:
+    -----------
+    image_size: int
+        Size of the noise map with dimensions N x N
+    noise_level: float
+        Noise level of the survey
+    pix_size: int
+        size of pixels in arcminutes
 
     Returns:
-        ndarray: Noise map.
+    --------
+    noise_map: array
+        2D map of the white noise
     """
     
     # Create random noise map
@@ -26,6 +29,5 @@ def generate_noise_map(image_size, noise_level, pix_size):
     # Scale random noise map by noise level
     scaled_noise_map = random_noise_map * noise_level
     noise_map = scaled_noise_map / pix_size
-    
 
     return noise_map

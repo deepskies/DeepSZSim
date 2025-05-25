@@ -10,41 +10,41 @@ from datetime import datetime as dt
 
 class simulate_clusters:
     """
-    class for simulating a distribution of clusters
+    Class for simulating a distribution of clusters.
     
-    Parameters
+    Parameters:
     ----------
     M200: float or array-like of float
-        the mass contained within R200 in solar masses (same length as z_dist)
+        mass contained within R200 in solar masses (same length as z_dist).
     redshift_z: float or array-like of float
-        the redshift of the cluster (unitless) (same length as M200_dist)
+        redshift of the cluster (unitless) (same length as M200_dist).
     num_halos: None or int
-        number of halos to simulate if none supplied
+        number of halos to simulate if none supplied.
     halo_params_dict: None or dict
         parameters from which to sample halos if `num_halos` specified,
-        must contain `zmin`, `zmax`, `m200min_SM`, `m200max_SM`
+        must contain `zmin`, `zmax`, `m200min_SM`, `m200max_SM`.
     R200_Mpc: None or float or np.ndarray(float)
         if None, will calculate the R200 values corresponding to a given set of
-        M200 and redshift_z values for the specified cosmology
+        M200 and redshift_z values for the specified cosmology.
     profile: str
-        Name of profile, currently only supports "Battaglia2012"
+        Name of profile, currently only supports "Battaglia2012".
     image_size_pixels: None or int
         image size in pixels (should be odd; if even, will return images whose
-        sides are `image_size_pixels+1` in length)
+        sides are `image_size_pixels+1` in length).
     image_size_arcmin: None or float
-        image size in arcmin
+        image size in arcmin.
     pixel_size_arcmin: None or float
-        pixel size in arcmin
+        pixel size in arcmin.
     alpha: float
-        fixed to equal 1.0 in Battaglia 2012
+        fixed to equal 1.0 in Battaglia 2012.
     gamma: float
-        fixed to equal -0.3 in Battaglia 2012
+        fixed to equal -0.3 in Battaglia 2012.
     load_vars_yaml: None or str
-        path to yaml file with params; if `None`, must explicitly include image specifications
+        path to yaml file with params; if `None`, must explicitly include image specifications.
     seed: None or int
-        random seed value to sample with
+        random seed value to sample with.
     tqverb: bool
-        whether or not to display tqdm progress bar while making T maps
+        whether or not to display tqdm progress bar while making T maps.
     """
     def __init__(self, M200 = None, redshift_z = None, num_halos = None, halo_params_dict = None,
                  R200_Mpc = None, profile = "Battaglia2012",
@@ -116,10 +116,16 @@ class simulate_clusters:
     
     def get_y_maps(self):
         """
-        Returns
+        Get 'y' maps from object.
+
+        Parameters:
+        ----------
+        none
+        
+        Returns:
         -------
-        np.ndarray(float)
-            self._size many maps of the Compton `y` value, each of which is image_size_pixels x image_size_pixels in size
+        self.y_maps: array
+            self._size many maps of the Compton `y` value, each of which is image_size_pixels x image_size_pixels in size.
         """
         try:
             return self.y_maps
@@ -134,11 +140,17 @@ class simulate_clusters:
     
     def get_dT_maps(self):
         """
-        Returns
+        get 'dT' maps from object
+
+        Parameters:
+        ----------
+        none
+        
+        Returns:
         -------
-        np.ndarray(float)
+        self.dT_maps: array(float)
             self._size many maps of the dT values in units of uK, each of which is image_size_pixels x
-            image_size_pixels in size
+            image_size_pixels in size.
         """
         try:
             return self.dT_maps
@@ -150,18 +162,20 @@ class simulate_clusters:
     
     def get_T_maps(self, add_CMB = True, returnval = False):
         """
-        Parameters
+        Get 'T' maps from object
+        
+        Parameters:
         ----------
         add_CMB: bool
-            whether or not to include the CMB contribution to the final map
+            whether or not to include the CMB contribution to the final map.
         returnval: bool
-            whether or not to return the T maps themselves or simply update internal attribute
+            whether or not to return the T maps themselves or simply update internal attribute.
 
-        Returns
+        Returns:
         -------
-        np.ndarray(float)
+        self.clusters: array(float)
             self._size many maps of the sky in units of uK, each of which is image_size_pixels x image_size_pixels in
-            size
+            size.
         """
         dT_maps = self.get_dT_maps()
         if add_CMB: self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
@@ -200,17 +214,19 @@ class simulate_clusters:
     
     def ith_T_map(self, i, add_CMB = True):
         """
-        Parameters
+        Get ith 'T' map from object.
+        
+        Parameters:
         ----------
         i: int
-            the map you want to return
+            index of the returned map.
         add_CMB: bool
-            whether or not to include the CMB contribution to the final map
+            whether or not to include the CMB contribution to the final map.
 
-        Returns
+        Returns:
         -------
-        np.ndarray(float)
-            the ith map of the sky in units of uK, which is image_size_pixels x image_size_pixels in size
+        self.clusters: array(float)
+            the ith map of the sky in units of uK, which is image_size_pixels x image_size_pixels in size.
         """
         try:
             return self.clusters[self.id_list[i]]['maps']['final_map']
@@ -221,18 +237,24 @@ class simulate_clusters:
     def save_map(self, i = None, nest_h5 = True, nest_name = None,
                  savedir = os.path.join(os.path.dirname(__file__), "outfiles")):
         """
-        Parameters
+        Save map to file.
+        
+        Parameters:
         ----------
         i: None or int
-            the map you want to save, if you only want to save a single map
+            map you want to save, if you only want to save a single map.
         nest_h5: bool
-            whether or not to nest the clusters into a single h5 file, assuming that you are saving all of the
-            clusters that you have calculated
+            Whether or not to nest the clusters into a single h5 file, assuming that you are saving all of the
+            clusters that you have calculated.
         nest_name: None or str
-            a name for the overall file if you are nesting them (otherwise, it will name it with the number of
-            clusters plus the date plus a random string)
+            Name for the overall file if you are nesting them (otherwise, it will name it with the number of
+            clusters plus the date plus a random string).
         savedir: str
-            the path to the directory you want to save into
+            Path to the directory you want to save into.
+
+        Returns:
+        --------
+        None
         """
         self.savedir = savedir
         if not os.path.exists(self.savedir):

@@ -15,12 +15,12 @@ class config_obj:
     Attributes
     ----------
     CAMBparams : CAMBparams instance
-        this is necessary for CAMB to return results
+        CAMB object; returns results from CAMB
     UserParams : dict
-        a dictionary of values that the user has specified (smaller than the corresponding
+        dictionary of values that the user has specified (smaller than the corresponding
         dictionary that would be necessary to fully specify a CAMBparams instance)
     dict_iterables : dict
-        a dictionary of all of the iterables that the user has specified, which will be made
+        dictionary of all of the iterables that the user has specified, which will be made
         available to loop over in camb_power_spectrum.CAMBPowerSpectrum
     """
     def __init__(
@@ -65,13 +65,18 @@ class config_obj:
 
     def update_val(self, attr, new_val):
         """
-        updates values in the config_obj
+        Updates values in the config_obj
+        
         Parameters
         ----------
         attr : str
             a key of the UserParams dictionary
         new_val : float
             new value that you wish attr to take on
+
+        Returns
+        -------
+        none
         """
         attr_split = re.split("\.", attr)
         if attr in self._all_params_dict['USERPARAMS']:
@@ -86,6 +91,17 @@ class config_obj:
         """
         write updated yaml file to disk
         incorporate run id
+            
+        Parameters
+        ----------
+        attr : str
+            a key of the UserParams dictionary
+        new_val : float
+            new value that you wish attr to take on
+
+        Returns
+        -------
+        none
         """
         with open(os.path.join(savedir, f"{run_id}_params.yaml"), permission) as yaml_file:
             dump = pyyaml.dump(self.dict, default_flow_style = False, allow_unicode = True, encoding = None)
@@ -93,8 +109,19 @@ class config_obj:
 
             
     def _generate_run_id(random_digits=6):
-        '''
-        '''
+        """
+        Generates a run id; typically used in filenames
+        
+        Parameters
+        ----------
+        random_digits: int
+            exponent for the number of random digits in the seed
+
+        Returns
+        -------
+        runid: int
+            run identification number
+        """
 
         _rint = np.random.randint(10**random_digits)
         runid = 'runid_'+dt.now().strftime('%y%m%d%H%M%S%f_')+str(_rint).zfill(random_digits)
@@ -104,8 +131,13 @@ class config_obj:
 
     def cosmology_param(self, ref):
         """
-        """
+        Set cosmology parameters
         
+        Parameters
+        ----------
+        ref: dict
+            dictionary containing cosmology parameters
+        """
         for key in ref['COSMOLOGY'].keys():
             cosmo_dict=ref['COSMOLOGY'][key] #Read in cosmological parameters
         
@@ -119,15 +151,17 @@ class config_obj:
 
     def _quick_yaml_load(infile):
         """
-        simply load yaml files without remembering the syntax or yaml.safe_load command
+        Load yaml files without remembering the syntax or yaml.safe_load command
+        
         Parameters
         ----------
         infile : str
             path to yaml file that you wish to load
+            
         Returns
         -------
-        dict
-            a "safe load" dictionary version of infile
+        yaml.safe_load(): dict
+            "safe load" dictionary version of infile
         """
         with open(infile, "r") as f:
             return yaml.safe_load(f)

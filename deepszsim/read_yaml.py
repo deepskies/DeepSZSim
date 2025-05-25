@@ -16,14 +16,16 @@ class YAMLOperator:
         """
         Parse a YAML file and return a dictionary.
 
-        Args:
-            file_path (str): Path to the YAML file.
+        Parameters:
+        -----------
+        file_path (str): 
+            Path to the YAML file.
 
         Returns:
-            dict: Dictionary containing the parsed YAML file.
-
-        Raises:
-            yaml.YAMLError: If the YAML file is not valid.
+        --------
+        yaml.safe_load(): dict
+            Dictionary containing the parsed YAML file.
+            
         """
         with open(self.file_path, 'r') as stream:
             try:

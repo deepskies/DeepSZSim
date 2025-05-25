@@ -6,8 +6,8 @@ import numpy as np
 import os
 
 def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
-    '''
-    Changes the units of r from Mpc to arcmin
+    """
+    Changes the units of r from Mpc to arcmin.
 
     Parameters:
     -----------
@@ -21,8 +21,8 @@ def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
     Returns:
     --------
     r_arcmin / Mpc_per_arcmin: float or array (same type as r_arcmin)
-        r_arcmin in units of Mpc
-    '''
+        distance r in units of Mpc; r_arcmin converted to Mpc
+    """
     Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(redshift_z).value
     Mpc_per_arcmin = Kpc_per_arcmin/1000.
 
@@ -30,30 +30,32 @@ def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
 
 
 def arcmin_to_Mpc(r_Mpc, redshift_z, cosmo):
-    '''
-    Changes the units of r from arcmin to Mpc
+    """
+    Changes the units of r from arcmin to Mpc.
 
     Parameters:
     -----------
     r_Mpc: float or array
-        the distance r, in units of Mpc
+        distance r, in units of Mpc
     redshift_z: float
-        the redshift (unitless)
+        redshift (unitless)
     cosmo: FlatLambaCDM instance
         background cosmology for density calculation
 
     Returns:
     --------
     r_Mpc / Mpc_per_arcmin: float or array (same type as r_Mpc)
-        r_Mpc in units of arcmin
-    '''
+        distance r in units of Mpc; r_Mpc converted to Mpc r_arcmin
+    """
     Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(redshift_z).value
     arcmin_per_Mpc = 1000/Kpc_per_arcmin
     return r_Mpc / arcmin_per_Mpc
 
 
 def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
-    '''
+    """
+    Create a Gaussian kernel for the beam.
+    
     Parameters:
     -----------
     pix_size_arcmin: float
@@ -65,7 +67,7 @@ def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
     --------
     gaussian: array
         2d gaussian kernal
-    '''
+    """
     N=37
     ones = np.ones(N)
     inds  = (np.arange(N)+.5 - N/2.) * pix_size_arcmin
@@ -80,23 +82,23 @@ def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
     return(gaussian)
 
 def save_sim_to_h5(file, name, data, attributes={}, overwrite=False):
-    '''
-    Save simulated data to h5 file
+    """
+    Save data to h5 file.
 
     Parameters:
     -----------
-    file : h5py.File
+    file: h5py.File
         The HDF5 file where the data will be saved.
-    name : str
+    name: str
         The name under which the data will be stored in the HDF5 file.
-    data : dict
+    data: dict
         A dictionary where keys are dataset names (strings) and values are 
         the corresponding dataset arrays or values.
 
     Returns:
     --------
     None   
-    '''
+    """
 
     if overwrite and name in file:
         del file[name]
