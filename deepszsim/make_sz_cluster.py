@@ -17,7 +17,7 @@ Thomson_scale = (c.sigma_T/(c.m_e * c.c**2)).value
 # fully ionized medium
 
 def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
-    '''
+    """
     Calculates independent params using the formula from Battaglia 2012, Equation 11
     in order for use in the pressure profile defined in Equation 10
 
@@ -39,7 +39,7 @@ def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
     --------
     A: float
         the parameter A given the formula from Battaglia 2012, Eq 11
-    '''
+    """
     
     A = A0 * (M200_SM / 1e14)**alpha_m * (1. + redshift_z)**alpha_z
     
@@ -113,7 +113,7 @@ def _beta_Battaglia2012(M200_SM, redshift_z):
 
 
 def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
-    '''
+    """
     Calculates the P200 pressure of a cluster, as defined in
     Battaglia 2012
 
@@ -135,7 +135,7 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
     P200_kevcm3: Quantity instance
         the thermal pressure of the shell defined by R200 in units
         of keV/cm**3
-    '''
+    """
     cosmo = load_vars_dict['cosmo']
 
     if R200_Mpc is None:
@@ -149,7 +149,7 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
     return (P200_kevcm3)
 
 def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
-    '''
+    """
     Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
     Equation 10. Pth is unitless. It is normalized by P200
 
@@ -176,7 +176,7 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
     Pth: float or np.ndarray(float)
         the thermal pressure profile normalized by P200 (which itself has units of
         keV/cm**3)
-    '''
+    """
     
     x = radius_mpc / R200_Mpc
     
@@ -186,7 +186,7 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
 
 def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
                       alpha = 1.0, gamma = -0.3, R200_Mpc = None):
-    '''
+    """
     Calculates the Pth profile using the Battaglia profile, Battaglia 2012,
     Equation 10. Pth is unitless. It is normalized by P200
 
@@ -214,7 +214,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
     Pth: float or np.ndarray(float)
         the thermal pressure profile normalized by P200 (which itself has units of
         keV/cm**3)
-    '''
+    """
     
     if R200_Mpc is None:
         if load_vars_dict is None:
@@ -229,7 +229,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
 
 
 def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0, gamma = -0.3, R200_Mpc = None):
-    '''
+    """
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
 
@@ -259,7 +259,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
     -------
     y_pro: array
         Compton-y profile corresponding to the radii
-    '''
+    """
     if R200_Mpc is None:
         R200_Mpc = get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict)[1]
     radii_mpc = (radii_mpc * u.Mpc).value
@@ -289,7 +289,7 @@ def Pe_to_y(profile, radii_mpc, M200_SM, redshift_z, load_vars_dict, alpha = 1.0
 
 def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixels, pixel_size_arcmin, alpha = 1.0,
                    gamma = -0.3, R200_Mpc = None):
-    '''
+    """
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
 
@@ -321,7 +321,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
     -------
     y_map: array
         Compton-y submap with shape (image_size_pixels, image_size_pixels)
-    '''
+    """
 
     X = np.linspace(0, (image_size_pixels // 2) * pixel_size_arcmin, image_size_pixels//2 + 1)
     X = utils.arcmin_to_Mpc(X, redshift_z, load_vars_dict['cosmo'])
@@ -355,7 +355,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
 def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
                       image_size_pixels = None, pixel_size_arcmin = None, load_vars_dict = None, alpha = 1.0, gamma = -0.3,
                       R200_Mpc = None):
-    '''
+    """
     Converts from an electron pressure profile to a compton-y profile,
     integrates over line of sight from -1 to 1 Mpc relative to center.
 
@@ -387,7 +387,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
     ------
     y_map: array
         Compton-y submap with dimension (image_size_pixels, image_size_pixels)
-    '''
+    """
     if profile != "Battaglia2012":
         print("only implementing Battaglia2012")
         return None
@@ -403,7 +403,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
     return y_map
 
 def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_density = None):
-    '''
+    """
     Parameters:
     ----------
     M200_SM: float
@@ -426,7 +426,7 @@ def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_densi
         the radius of the cluster at 200 times the critical density of the universe in Mpc
     c200: float
         concentration parameter
-    '''
+    """
     
     cosmo = load_vars_dict['cosmo']
     
