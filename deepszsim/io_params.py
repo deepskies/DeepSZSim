@@ -66,6 +66,7 @@ class config_obj:
     def update_val(self, attr, new_val):
         """
         updates values in the config_obj
+        
         Parameters
         ----------
         attr : str
@@ -86,6 +87,13 @@ class config_obj:
         """
         write updated yaml file to disk
         incorporate run id
+            
+        Parameters
+        ----------
+        attr : str
+            a key of the UserParams dictionary
+        new_val : float
+            new value that you wish attr to take on
         """
         with open(os.path.join(savedir, f"{run_id}_params.yaml"), permission) as yaml_file:
             dump = pyyaml.dump(self.dict, default_flow_style = False, allow_unicode = True, encoding = None)
@@ -119,7 +127,6 @@ class config_obj:
         new_val : float
             new value that you wish attr to take on
         """
-        
         for key in ref['COSMOLOGY'].keys():
             cosmo_dict=ref['COSMOLOGY'][key] #Read in cosmological parameters
         
