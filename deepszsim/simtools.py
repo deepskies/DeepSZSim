@@ -24,7 +24,7 @@ def convolve_map_with_gaussian_beam(pix_size_arcmin,
     map_to_convolve: array
         image to apply beam convolution to
 
-    Return:
+    Returns:
     -------
     convolved_map: array
         map that has been convolved with beam
@@ -47,7 +47,7 @@ def f_sz(freq_ghz, T_CMB_K):
     T_CMB_K: instance of temperature spectrum
         Temperature of CMB in K
 
-    Return:
+    Returns:
     ------
     fsz: float
         radiation frequency
@@ -78,7 +78,7 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
     beam_size_fwhp_arcmin: float or None
         beam size in arcmin
 
-    Return:
+    Returns:
     ------
     dT submap: array
         dT submap with same shape as dT_map, in units -uK
@@ -118,7 +118,7 @@ def get_cls(ns, cosmo, lmax=2000):
     cosmo: FlatLambaCDM instance
         background cosmology
 
-    Return:
+    Returns:
     ------
     ps: array
         power spectrum as can be used in szluster.make_cmb_map
@@ -151,7 +151,7 @@ def make_cmb_map(shape, pix_size_arcmin, ps, seed=None):
     ps: array
         power spectrum with shape (3, 3, lmax); clTT spectrum at ps[0][0]
 
-    Return:
+    Returns:
     -------
     omap: array
         CMB temperature map
