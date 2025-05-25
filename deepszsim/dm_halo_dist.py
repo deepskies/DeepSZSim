@@ -5,7 +5,7 @@ creates a mass and redshift distribution of halos
 import numpy as np
         
 def flatdist_halo(zmin, zmax, m200min_SM, m200max_SM, size, seed=None):
-    '''
+    """
     Creates a random uniform distribution of redshifts and masses for use in 
     creating simulations.
     
@@ -32,7 +32,7 @@ def flatdist_halo(zmin, zmax, m200min_SM, m200max_SM, size, seed=None):
     mdist: float array
         distribution of random uniform redshifts starting at `m500min_SM` ending
         at `m500max_SM` with size `size`
-    '''
+    """
     _rng = np.random.default_rng(seed=seed)
 
     zdist=_rng.uniform(low=zmin, high=zmax, size=size)
