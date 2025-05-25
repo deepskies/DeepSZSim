@@ -12,7 +12,9 @@ import camb
 
 def convolve_map_with_gaussian_beam(pix_size_arcmin,
                                     beam_size_fwhm_arcmin, map_to_convolve):
-    '''
+    """
+    Convolve the map with a Gaussian beam
+    
     Parameters:
     ----------
     pix_size_arcmin: float
@@ -27,7 +29,7 @@ def convolve_map_with_gaussian_beam(pix_size_arcmin,
     convolved_map: array
 
     Note - pixel size and beam_size need to be in the same units
-    '''
+    """
     gaussian = utils.gaussian_kernal(pix_size_arcmin, beam_size_fwhm_arcmin)
     convolved_map = scipy.signal.fftconvolve(map_to_convolve, 
                                              gaussian, mode = 'same')
@@ -35,7 +37,7 @@ def convolve_map_with_gaussian_beam(pix_size_arcmin,
     return(convolved_map)
 
 def f_sz(freq_ghz, T_CMB_K):
-    '''
+    """
     the leading order correction to blackbody from Compton scattering
     see Eq 3.31 of https://background.uchicago.edu/~whu/thesis/chap3.pdf
     
@@ -50,7 +52,7 @@ def f_sz(freq_ghz, T_CMB_K):
     ------
     fsz: float
         radiation frequency
-    '''
+    """
 
     f=freq_ghz*u.GHz #Takes input in units of GHz
     f=f.to(1/u.s) #Unit conversion
@@ -61,7 +63,9 @@ def f_sz(freq_ghz, T_CMB_K):
 
 def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin, 
                                  beam_size_fwhp_arcmin):
-    '''
+    """
+    Add CMB to the dT map and convolve with beam
+    
     Parameters:
     ----------
     dT_map_uK: array
@@ -77,7 +81,7 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
     ------
     dT submap: array
         dT submap with same shape as dT_map, in units of -uK
-    '''
+    """
     padding_value = int(np.ceil(beam_size_fwhp_arcmin/pix_size_arcmin))
     expanded_shape = (dT_map_uK.shape[0] + 2*padding_value, 
                         dT_map_uK.shape[1]+2*padding_value)
@@ -103,7 +107,7 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
     ) 
 
 def get_cls(ns, cosmo, lmax=2000):
-    '''
+    """
     Makes a cmb temperature map based on the given power spectrum
 
     Parameters:
@@ -117,7 +121,7 @@ def get_cls(ns, cosmo, lmax=2000):
     ------
     ps array
         power spectrum as can be used in szluster.make_cmb_map
-    '''
+    """
     data = camb.set_params(ns=ns, H0=cosmo.H0.value, ombh2=cosmo.Ob0, 
                             omch2=cosmo.Om0, lmax=lmax, WantTransfer=True)
     results = camb.get_results(data)
@@ -133,7 +137,7 @@ def get_cls(ns, cosmo, lmax=2000):
     return ps
 
 def make_cmb_map(shape, pix_size_arcmin, ps, seed=None):
-    '''
+    """
     Makes a cmb temperature map based on the given power spectrum
 
     Parameters:
@@ -148,7 +152,7 @@ def make_cmb_map(shape, pix_size_arcmin, ps, seed=None):
     Return:
     -------
     cmb T map: array
-    '''
+    """
     #ps[0][0] is cltt spectrum
     shape,wcs = enmap.geometry(shape=shape,pos=(0,0),
                                 res=np.deg2rad(pix_size_arcmin/60.))
