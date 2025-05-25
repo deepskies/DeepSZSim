@@ -10,7 +10,7 @@ from datetime import datetime as dt
 
 class simulate_clusters:
     """
-    Class for simulating a distribution of clusters.
+    Class for simulating a distribution of clusters
     
     Parameters:
     ----------
@@ -116,7 +116,7 @@ class simulate_clusters:
     
     def get_y_maps(self):
         """
-        Get 'y' maps from object.
+        Get 'y' maps from object
 
         Parameters:
         ----------
@@ -124,7 +124,7 @@ class simulate_clusters:
         
         Returns:
         -------
-        self.y_maps: array
+        self.y_maps: float array
             self._size many maps of the Compton `y` value, each of which is image_size_pixels x image_size_pixels in size.
         """
         try:
@@ -148,7 +148,7 @@ class simulate_clusters:
         
         Returns:
         -------
-        self.dT_maps: array(float)
+        self.dT_maps: float array
             self._size many maps of the dT values in units of uK, each of which is image_size_pixels x
             image_size_pixels in size.
         """
@@ -173,7 +173,7 @@ class simulate_clusters:
 
         Returns:
         -------
-        self.clusters: array(float)
+        self.clusters: float array
             self._size many maps of the sky in units of uK, each of which is image_size_pixels x image_size_pixels in
             size.
         """
@@ -214,19 +214,20 @@ class simulate_clusters:
     
     def ith_T_map(self, i, add_CMB = True):
         """
-        Get ith 'T' map from object.
+        Get ith 'T' map from object
         
         Parameters:
         ----------
         i: int
-            index of the returned map.
+            index of the returned map
         add_CMB: bool
-            whether or not to include the CMB contribution to the final map.
+            whether or not to include the CMB contribution to the final map
 
         Returns:
         -------
         self.clusters: array(float)
-            the ith map of the sky in units of uK, which is image_size_pixels x image_size_pixels in size.
+            the ith map of the sky in units of uK, which is 
+            image_size_pixels x image_size_pixels in size
         """
         try:
             return self.clusters[self.id_list[i]]['maps']['final_map']
@@ -237,20 +238,20 @@ class simulate_clusters:
     def save_map(self, i = None, nest_h5 = True, nest_name = None,
                  savedir = os.path.join(os.path.dirname(__file__), "outfiles")):
         """
-        Save map to file.
+        Save map to file
         
         Parameters:
         ----------
         i: None or int
-            map you want to save, if you only want to save a single map.
+            map you want to save, if you only want to save a single map
         nest_h5: bool
             Whether or not to nest the clusters into a single h5 file, assuming that you are saving all of the
-            clusters that you have calculated.
+            clusters that you have calculated
         nest_name: None or str
             Name for the overall file if you are nesting them (otherwise, it will name it with the number of
-            clusters plus the date plus a random string).
+            clusters plus the date plus a random string)
         savedir: str
-            Path to the directory you want to save into.
+            Path to the directory you want to save into
 
         Returns:
         --------
