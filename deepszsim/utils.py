@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
-    '''
+    """
     Changes the units of r from Mpc to arcmin
 
     Parameters:
@@ -22,7 +22,7 @@ def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
     --------
     r_arcmin / Mpc_per_arcmin: float or array (same type as r_arcmin)
         r_arcmin in units of Mpc
-    '''
+    """
     Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(redshift_z).value
     Mpc_per_arcmin = Kpc_per_arcmin/1000.
 
@@ -30,7 +30,7 @@ def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
 
 
 def arcmin_to_Mpc(r_Mpc, redshift_z, cosmo):
-    '''
+    """
     Changes the units of r from arcmin to Mpc
 
     Parameters:
@@ -46,14 +46,14 @@ def arcmin_to_Mpc(r_Mpc, redshift_z, cosmo):
     --------
     r_Mpc / Mpc_per_arcmin: float or array (same type as r_Mpc)
         r_Mpc in units of arcmin
-    '''
+    """
     Kpc_per_arcmin = cosmo.kpc_comoving_per_arcmin(redshift_z).value
     arcmin_per_Mpc = 1000/Kpc_per_arcmin
     return r_Mpc / arcmin_per_Mpc
 
 
 def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
-    '''
+    """
     Parameters:
     -----------
     pix_size_arcmin: float
@@ -65,7 +65,7 @@ def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
     --------
     gaussian: array
         2d gaussian kernal
-    '''
+    """
     N=37
     ones = np.ones(N)
     inds  = (np.arange(N)+.5 - N/2.) * pix_size_arcmin
@@ -80,7 +80,7 @@ def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
     return(gaussian)
 
 def save_sim_to_h5(file, name, data, attributes={}, overwrite=False):
-    '''
+    """
     Save simulated data to h5 file
 
     Parameters:
@@ -96,7 +96,7 @@ def save_sim_to_h5(file, name, data, attributes={}, overwrite=False):
     Returns:
     --------
     None   
-    '''
+    """
 
     if overwrite and name in file:
         del file[name]
