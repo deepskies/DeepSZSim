@@ -62,10 +62,12 @@ def plotting_specs(cluster):
     Specifications for plot formatting.
     
     Parameters:
+    -----------
     cluster: array
         dictionary representing a cluster instance, which contains a `parameters` dictionary which itself has 'M200', 'redshift', and 'image_size_pixels' keys
 
     Returns:
+    --------
     out: dict
         dictionary that can be passed as the value of the `specs` kwarg in `plot_graphs`
     """
