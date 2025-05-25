@@ -18,6 +18,7 @@ def load_vars(file_name= "config_simACTDR5.yaml",
               cosmo_name : str = None,
               enforce_odd_pix : bool = True):
     """
+    Load variables from YAML file
     
     Parameters
     ----------
@@ -112,6 +113,7 @@ def load_vars(file_name= "config_simACTDR5.yaml",
 
 def readh5(fname, fdir = None):
     """
+    Read data from h5 file
     
     Parameters
     ----------
