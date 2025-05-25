@@ -7,6 +7,8 @@ import numpy as np
 def get_tSZ_signal_aperture_photometry(dT_map, radmax_arcmin, pixel_scale, 
                                        fmax=np.sqrt(2)):
     """
+    Retrieve aperture photometry of the tSZ signal
+    
     Parameters:
     ----------
     dT_map: array to represent the map in uK
