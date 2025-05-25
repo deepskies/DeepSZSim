@@ -13,7 +13,7 @@ import camb
 def convolve_map_with_gaussian_beam(pix_size_arcmin,
                                     beam_size_fwhm_arcmin, map_to_convolve):
     """
-    Convolve the map with a Gaussian beam.
+    Convolve the map with a Gaussian beam
     
     Parameters:
     ----------
@@ -37,7 +37,7 @@ def convolve_map_with_gaussian_beam(pix_size_arcmin,
 
 def f_sz(freq_ghz, T_CMB_K):
     """
-    the leading order correction to blackbody from Compton scattering
+    leading order correction to blackbody from Compton scattering
     see Eq 3.31 of https://background.uchicago.edu/~whu/thesis/chap3.pdf
     
     Parameters:
@@ -65,7 +65,7 @@ def f_sz(freq_ghz, T_CMB_K):
 def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin, 
                                  beam_size_fwhp_arcmin):
     """
-    Add CMB to the dT map and convolve with beam.
+    Add CMB to the dT map and convolve with beam
     
     Parameters:
     ----------
@@ -109,7 +109,7 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
 
 def get_cls(ns, cosmo, lmax=2000):
     """
-    Makes a cmb temperature map based on the given power spectrum.
+    Makes a cmb temperature map based on the given power spectrum
 
     Parameters:
     ----------
@@ -140,7 +140,7 @@ def get_cls(ns, cosmo, lmax=2000):
 
 def make_cmb_map(shape, pix_size_arcmin, ps, seed=None):
     """
-    Makes a cmb temperature map based on the given power spectrum.
+    Makes a cmb temperature map based on the given power spectrum
 
     Parameters:
     ----------
@@ -165,4 +165,3 @@ def make_cmb_map(shape, pix_size_arcmin, ps, seed=None):
     omap = enmap.rand_map(shape,wcs,cov=ps, seed=seed)
     
     return omap[0]
-
