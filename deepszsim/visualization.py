@@ -27,7 +27,7 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
         label of the color bar
     width: int
         half rounded down of the width of output plot in pixels (eg, image size = 2*width+1)
-    specs: Optional[dict]
+    specs: dict
         optional dictionary to pass title, xlabel, ylabel, cbarlabel, and width
     logNorm: bool
         if true, uses a logarithmic normalization for the plot (using SymLogNorm in case values are negative)
