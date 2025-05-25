@@ -10,17 +10,17 @@ def generate_noise_map(image_size, noise_level, pix_size):
 
     Parameters:
     -----------
-        image_size: int
-            Size of the noise map with dimensions N x N
-        noise_level: float
-            Noise level of the survey
-        pix_size: int
-            size of pixels in arcminutes
+    image_size: int
+        Size of the noise map with dimensions N x N
+    noise_level: float
+        Noise level of the survey
+    pix_size: int
+        size of pixels in arcminutes
 
     Returns:
     --------
-        noise_map: array
-            2D map of the white noise
+    noise_map: array
+        2D map of the white noise
     """
     
     # Create random noise map
