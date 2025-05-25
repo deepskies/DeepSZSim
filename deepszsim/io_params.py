@@ -12,7 +12,7 @@ class config_obj:
     """
     Configuration object that is used to obtain power spectra
 
-    Attributes
+    Attributes:
     ----------
     CAMBparams: CAMBparams instance
         CAMB object; returns results from CAMB
@@ -29,7 +29,7 @@ class config_obj:
     ):
         """
 
-        Parameters
+        Parameters:
         ----------
         user_config: str
             path to yaml file that contains params the user wants to change
@@ -67,14 +67,14 @@ class config_obj:
         """
         Updates values in the config_obj
         
-        Parameters
+        Parameters:
         ----------
         attr: str
             a key of the UserParams dictionary
         new_val: float
             new value that you wish attr to take on
 
-        Returns
+        Returns:
         -------
         none
         """
@@ -89,16 +89,13 @@ class config_obj:
 
     def write_params_yaml_new():
         """
-        write updated yaml file to disk
+        Write updated yaml file to disk
             
-        Parameters
+        Parameters:
         ----------
-        attr: str
-            a key of the UserParams dictionary
-        new_val : float
-            new value that you wish attr to take on
+        none
 
-        Returns
+        Returns:
         -------
         none
         """
@@ -111,12 +108,12 @@ class config_obj:
         """
         Generates a run id
         
-        Parameters
+        Parameters:
         ----------
         random_digits: int
             exponent for the number of random digits in the seed
 
-        Returns
+        Returns:
         -------
         runid: int
             run identification number
@@ -132,10 +129,15 @@ class config_obj:
         """
         Set cosmology parameters
         
-        Parameters
+        Parameters:
         ----------
         ref: dict
             dictionary containing cosmology parameters
+
+        Returns:
+        --------
+        (cosmo, sigma8, ns): tuple
+            tuple of (cosmology in astropy form, sigma8 constant, ns constant)
         """
         for key in ref['COSMOLOGY'].keys():
             cosmo_dict=ref['COSMOLOGY'][key] #Read in cosmological parameters
@@ -152,12 +154,12 @@ class config_obj:
         """
         Load yaml files without remembering the syntax or yaml.safe_load command
         
-        Parameters
+        Parameters:
         ----------
         infile: str
             path to yaml file that you wish to load
             
-        Returns
+        Returns:
         -------
         yaml.safe_load(): dict
             "safe load" dictionary version of infile
