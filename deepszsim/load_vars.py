@@ -121,6 +121,7 @@ def readh5(fname, fdir = None):
         name of the file you want to read (must include the suffix, eg '.h5' or '.hd5' or '.hdf5')
     fdir: None or str
         path to the directory that contains the file you want to read
+        
     Returns
     -------
     dict
