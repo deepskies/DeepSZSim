@@ -31,7 +31,7 @@ def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
 
 def arcmin_to_Mpc(r_Mpc, redshift_z, cosmo):
     """
-    Changes the units of r from arcmin to Mpc
+    Changes the units of r from arcmin to Mpc.
 
     Parameters:
     -----------
