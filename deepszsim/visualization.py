@@ -15,15 +15,15 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
     
     Parameters:
     -----------
-    image - float array
-        the graph we are plotting
-    title - str
+    image: float array
+        graph we are plotting
+    title: str
         title of the graph
-    xlabel - str
+    xlabel: str
         label of the x-axis
-    ylabel - str
+    ylabel: str
         label of the y-axis
-    cbarlabel - str
+    cbarlabel: str
         label of the color bar
     width: int
         half rounded down of the width of output plot in pixels (eg, image size = 2*width+1)
@@ -59,12 +59,14 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
 
 def plotting_specs(cluster):
     """
+    Specifications for plot formatting.
     
     Parameters:
-        cluster:
-            dictionary representing a cluster instance, which contains a `parameters` dictionary which itself has 'M200', 'redshift', and 'image_size_pixels' keys
+    cluster: array
+        dictionary representing a cluster instance, which contains a `parameters` dictionary which itself has 'M200', 'redshift', and 'image_size_pixels' keys
 
     Returns:
+    out: dict
         dictionary that can be passed as the value of the `specs` kwarg in `plot_graphs`
     """
     out = {}
