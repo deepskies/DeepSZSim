@@ -116,6 +116,12 @@ class simulate_clusters:
     
     def get_y_maps(self):
         """
+        get 'y' maps from object
+
+        Parameters
+        ----------
+        none
+        
         Returns
         -------
         np.ndarray(float)
@@ -134,6 +140,12 @@ class simulate_clusters:
     
     def get_dT_maps(self):
         """
+        get 'dT' maps from object
+
+        Parameters
+        ----------
+        none
+        
         Returns
         -------
         np.ndarray(float)
@@ -150,6 +162,8 @@ class simulate_clusters:
     
     def get_T_maps(self, add_CMB = True, returnval = False):
         """
+        get 'T' maps from object
+        
         Parameters
         ----------
         add_CMB: bool
@@ -200,6 +214,8 @@ class simulate_clusters:
     
     def ith_T_map(self, i, add_CMB = True):
         """
+        get ith 'T' map from object
+        
         Parameters
         ----------
         i: int
@@ -221,6 +237,8 @@ class simulate_clusters:
     def save_map(self, i = None, nest_h5 = True, nest_name = None,
                  savedir = os.path.join(os.path.dirname(__file__), "outfiles")):
         """
+        Save map to file
+        
         Parameters
         ----------
         i: None or int
