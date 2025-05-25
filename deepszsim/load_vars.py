@@ -20,7 +20,7 @@ def load_vars(file_name= "config_simACTDR5.yaml",
     """
     Load variables from YAML file.
     
-    Parameters
+    Parameters:
     ----------
     file_name: str
         name of a yaml file that specifies the variables that you want to simulate
@@ -38,7 +38,7 @@ def load_vars(file_name= "config_simACTDR5.yaml",
         whether or not to enforce an odd number of pixels in the simulated image (defaults to true so that the
         central pixel has the maximal y-value
 
-    Returns
+    Returns:
     -------
     dict: dict
         a dictionary that will enable you to simulate SZ clusters with a given cosmology and set of observational
@@ -115,14 +115,14 @@ def readh5(fname, fdir = None):
     """
     Read data from h5 file.
     
-    Parameters
+    Parameters:
     ----------
     fname: str
         name of the file you want to read (must include the suffix, eg '.h5' or '.hd5' or '.hdf5')
     fdir: None or str
         path to the directory that contains the file you want to read
         
-    Returns
+    Returns:
     -------
     fmdict: dict
         dictionary that represents a single cluster (if `fname` represents a single cluster) or a nested set of

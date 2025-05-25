@@ -10,16 +10,16 @@ import os
 
 class config_obj:
     """
-    configuration object that is used to obtain power spectra
+    Configuration object that is used to obtain power spectra
 
-    Attributes
+    Attributes:
     ----------
-    CAMBparams : CAMBparams instance
+    CAMBparams: CAMBparams instance
         CAMB object; returns results from CAMB
-    UserParams : dict
+    UserParams: dict
         dictionary of values that the user has specified (smaller than the corresponding
         dictionary that would be necessary to fully specify a CAMBparams instance)
-    dict_iterables : dict
+    dict_iterables: dict
         dictionary of all of the iterables that the user has specified, which will be made
         available to loop over in camb_power_spectrum.CAMBPowerSpectrum
     """
@@ -29,11 +29,11 @@ class config_obj:
     ):
         """
 
-        Parameters
+        Parameters:
         ----------
-        user_config : str
+        user_config: str
             path to yaml file that contains params the user wants to change
-        base_config : str
+        base_config: str
             path to yaml file that contains baseline cosmological parameters that reflect the best-fit
             2018 Planck cosmology and which instruct CAMB to calculate useful observables. A full list
             is available at https://camb.readthedocs.io/en/latest/model.html
@@ -67,14 +67,14 @@ class config_obj:
         """
         Updates values in the config_obj
         
-        Parameters
+        Parameters:
         ----------
-        attr : str
+        attr: str
             a key of the UserParams dictionary
-        new_val : float
+        new_val: float
             new value that you wish attr to take on
 
-        Returns
+        Returns:
         -------
         none
         """
@@ -89,17 +89,13 @@ class config_obj:
 
     def write_params_yaml_new():
         """
-        write updated yaml file to disk
-        incorporate run id
+        Write updated yaml file to disk
             
-        Parameters
+        Parameters:
         ----------
-        attr : str
-            a key of the UserParams dictionary
-        new_val : float
-            new value that you wish attr to take on
+        none
 
-        Returns
+        Returns:
         -------
         none
         """
@@ -110,14 +106,14 @@ class config_obj:
             
     def _generate_run_id(random_digits=6):
         """
-        Generates a run id; typically used in filenames
+        Generates a run id
         
-        Parameters
+        Parameters:
         ----------
         random_digits: int
             exponent for the number of random digits in the seed
 
-        Returns
+        Returns:
         -------
         runid: int
             run identification number
@@ -133,10 +129,15 @@ class config_obj:
         """
         Set cosmology parameters
         
-        Parameters
+        Parameters:
         ----------
         ref: dict
             dictionary containing cosmology parameters
+
+        Returns:
+        --------
+        (cosmo, sigma8, ns): tuple
+            tuple of (cosmology in astropy form, sigma8 constant, ns constant)
         """
         for key in ref['COSMOLOGY'].keys():
             cosmo_dict=ref['COSMOLOGY'][key] #Read in cosmological parameters
@@ -153,12 +154,12 @@ class config_obj:
         """
         Load yaml files without remembering the syntax or yaml.safe_load command
         
-        Parameters
+        Parameters:
         ----------
-        infile : str
+        infile: str
             path to yaml file that you wish to load
             
-        Returns
+        Returns:
         -------
         yaml.safe_load(): dict
             "safe load" dictionary version of infile

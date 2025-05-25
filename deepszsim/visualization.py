@@ -11,12 +11,12 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
                 extend = False,
                 logNorm = False):
     """
-    Plotting tool function for our 2D submaps and CMB maps. 
+    Plotting tool function for our 2D submaps and CMB maps 
     
     Parameters:
     -----------
     image: float array
-        graph we are plotting
+        graph that is plotted
     title: str
         title of the graph
     xlabel: str
@@ -59,7 +59,7 @@ def plot_graphs(image, title = None, xlabel = None, ylabel = None, cbarlabel = N
 
 def plotting_specs(cluster):
     """
-    Specifications for plot formatting.
+    Specifications for plot formatting
     
     Parameters:
     -----------

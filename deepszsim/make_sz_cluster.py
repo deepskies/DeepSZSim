@@ -22,7 +22,7 @@ thermal_to_electron_pressure = 1 / 1.932
 def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
     """
     Calculates independent params using the formula from Battaglia 2012, Equation 11
-    in order for use in the pressure profile defined in Equation 10.
+    in order for use in the pressure profile defined in Equation 10
 
     Parameters:
     -----------
@@ -52,7 +52,7 @@ def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
 def _P0_Battaglia2012(M200_SM, redshift_z):
     """
     Calculates P0, the normalization factor/amplitude, 
-    from Battaglia 2012, using the values from Table 1.
+    from Battaglia 2012, using the values from Table 1
 
     Parameters:
     -----------
@@ -73,8 +73,7 @@ def _P0_Battaglia2012(M200_SM, redshift_z):
 
 def _xc_Battaglia2012(M200_SM, redshift_z):
     """
-    Calculates xc, the core-scale factor,
-    from Battaglia 2012, using the values from Table 1.
+    Calculates xc (the core-scale factor) from Battaglia 2012 Table 1
 
     Parameters:
     -----------
@@ -133,7 +132,7 @@ def P200_Battaglia2012(M200_SM, redshift_z, load_vars_dict, R200_Mpc = None):
 
     Returns:
     --------
-    P200_kevcm3: Quantity instance
+    P200_kevcm3: instance
         thermal pressure of the shell defined by R200 in units of keV/cm**3
     """
     cosmo = load_vars_dict['cosmo']
@@ -173,7 +172,7 @@ def _Pth_Battaglia2012(P0, radius_mpc, R200_Mpc, alpha, beta, gamma, xc):
 
     Returns:
     --------
-    Pth: float or np.ndarray(float)
+    Pth: float or float array
         thermal pressure profile normalized by P200, which has units keV/cm**3
     """
     
@@ -191,7 +190,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
 
     Parameters:
     -----------
-    radius_mpc: float or np.ndarray(float)
+    radius_mpc: float or float array
         radius for the pressure to be calculated at, in units of Mpc
     M200_SM: float
         mass contained within R200, in units of solar masses
@@ -210,7 +209,7 @@ def Pth_Battaglia2012(radius_mpc, M200_SM, redshift_z, load_vars_dict = None,
 
     Returns:
     --------
-    Pth: float or np.ndarray(float)
+    Pth: float or float array
         thermal pressure profile normalized by P200, which has units keV/cm**3
     """
     
@@ -293,7 +292,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
 
     Parameters:
     -----------
-    profile:
+    profile: float array
         Method to get thermal pressure profile in Kev/cm^3, accepts radius,
             R200 and **kwargs
     M200_SM: float
@@ -359,7 +358,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
 
     Parameters:
     ----------
-    M200_SM:
+    M200_SM: float
         the mass contained within R200 in solar masses
     redshift_z: float
         the redshift of the cluster (unitless)
@@ -383,7 +382,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
 
     Returns:
     --------
-    y_map: array
+    y_map: float array
         Compton-y submap with dimension (image_size_pixels, image_size_pixels)
     """
     if profile != "Battaglia2012":
@@ -402,7 +401,7 @@ def generate_y_submap(M200_SM, redshift_z, profile = "Battaglia2012",
 
 def get_r200_angsize_and_c200(M200_SM, redshift_z, load_vars_dict, angsize_density = None):
     """
-    Get radius r200 and concentration c200.
+    Get radius r200 and concentration c200
     
     Parameters:
     ----------

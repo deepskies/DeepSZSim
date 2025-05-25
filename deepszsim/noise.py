@@ -19,7 +19,7 @@ def generate_noise_map(image_size, noise_level, pix_size):
 
     Returns:
     --------
-    noise_map: array
+    noise_map: float array
         2D map of the white noise
     """
     

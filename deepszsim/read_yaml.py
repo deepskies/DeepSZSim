@@ -14,11 +14,11 @@ class YAMLOperator:
 
     def parse_yaml(self):
         """
-        Parse a YAML file and return a dictionary.
+        Parse a YAML file and return a dictionary
 
         Parameters:
         -----------
-        file_path (str): 
+        file_path: str
             Path to the YAML file.
 
         Returns:
