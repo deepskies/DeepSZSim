@@ -12,7 +12,7 @@ class simulate_clusters:
     """
     Class for simulating a distribution of clusters.
     
-    Parameters
+    Parameters:
     ----------
     M200: float or array-like of float
         mass contained within R200 in solar masses (same length as z_dist).
@@ -118,11 +118,11 @@ class simulate_clusters:
         """
         Get 'y' maps from object.
 
-        Parameters
+        Parameters:
         ----------
         none
         
-        Returns
+        Returns:
         -------
         self.y_maps: array
             self._size many maps of the Compton `y` value, each of which is image_size_pixels x image_size_pixels in size.
@@ -142,11 +142,11 @@ class simulate_clusters:
         """
         get 'dT' maps from object
 
-        Parameters
+        Parameters:
         ----------
         none
         
-        Returns
+        Returns:
         -------
         self.dT_maps: array(float)
             self._size many maps of the dT values in units of uK, each of which is image_size_pixels x
@@ -161,17 +161,17 @@ class simulate_clusters:
             return self.dT_maps
     
     def get_T_maps(self, add_CMB = True, returnval = False):
-        """.
+        """
         Get 'T' maps from object
         
-        Parameters
+        Parameters:
         ----------
         add_CMB: bool
             whether or not to include the CMB contribution to the final map.
         returnval: bool
             whether or not to return the T maps themselves or simply update internal attribute.
 
-        Returns
+        Returns:
         -------
         self.clusters: array(float)
             self._size many maps of the sky in units of uK, each of which is image_size_pixels x image_size_pixels in
@@ -216,14 +216,14 @@ class simulate_clusters:
         """
         Get ith 'T' map from object.
         
-        Parameters
+        Parameters:
         ----------
         i: int
             index of the returned map.
         add_CMB: bool
             whether or not to include the CMB contribution to the final map.
 
-        Returns
+        Returns:
         -------
         self.clusters: array(float)
             the ith map of the sky in units of uK, which is image_size_pixels x image_size_pixels in size.
@@ -239,7 +239,7 @@ class simulate_clusters:
         """
         Save map to file.
         
-        Parameters
+        Parameters:
         ----------
         i: None or int
             map you want to save, if you only want to save a single map.
