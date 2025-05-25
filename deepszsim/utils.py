@@ -7,14 +7,14 @@ import os
 
 def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
     """
-    Changes the units of r from Mpc to arcmin.
+    Changes the units of r from Mpc to arcmin
 
     Parameters:
     -----------
     r_arcmin: float or array
-        the distance r, in units of arcmin
+        distance r, in units of arcmin
     redshift_z: float
-        the redshift (unitless)
+        redshift (unitless)
     cosmo: FlatLambaCDM instance
         background cosmology for density calculation
 
@@ -31,7 +31,7 @@ def Mpc_to_arcmin(r_arcmin, redshift_z, cosmo):
 
 def arcmin_to_Mpc(r_Mpc, redshift_z, cosmo):
     """
-    Changes the units of r from arcmin to Mpc.
+    Changes the units of r from arcmin to Mpc
 
     Parameters:
     -----------
@@ -54,7 +54,7 @@ def arcmin_to_Mpc(r_Mpc, redshift_z, cosmo):
 
 def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
     """
-    Create a Gaussian kernel for the beam.
+    Create a Gaussian kernel for the beam
     
     Parameters:
     -----------
@@ -83,17 +83,17 @@ def gaussian_kernal(pix_size_arcmin,beam_size_fwhp_arcmin):
 
 def save_sim_to_h5(file, name, data, attributes={}, overwrite=False):
     """
-    Save data to h5 file.
+    Save data to h5 file
 
     Parameters:
     -----------
     file: h5py.File
-        The HDF5 file where the data will be saved.
+        The HDF5 file where the data will be saved
     name: str
-        The name under which the data will be stored in the HDF5 file.
+        The name under which the data will be stored in the HDF5 file
     data: dict
         A dictionary where keys are dataset names (strings) and values are 
-        the corresponding dataset arrays or values.
+        the corresponding dataset arrays or values
 
     Returns:
     --------
