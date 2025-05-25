@@ -19,7 +19,6 @@ Thomson_scale = (c.sigma_T/(c.m_e * c.c**2)).value
 thermal_to_electron_pressure = 1 / 1.932  
 
 
-
 def _param_Battaglia2012(A0, alpha_m, alpha_z, M200_SM, redshift_z):
     """
     Calculates independent params using the formula from Battaglia 2012, Equation 11
@@ -316,7 +315,7 @@ def _make_y_submap(profile, M200_SM, redshift_z, load_vars_dict, image_size_pixe
         if None, will calculate the radius that corresponds to the mass M200, the redshift redshift_z,
         and the cosmology contained in load_vars_dict
 
-    Return:
+    Returns:
     -------
     y_map: array
         Compton-y submap with shape (image_size_pixels, image_size_pixels)
