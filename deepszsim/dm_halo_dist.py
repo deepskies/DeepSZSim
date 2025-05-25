@@ -7,7 +7,7 @@ import numpy as np
 def flatdist_halo(zmin, zmax, m200min_SM, m200max_SM, size, seed=None):
     """
     Creates a random uniform distribution of redshifts and masses for use in 
-    creating simulations.
+    creating simulations
     
     Parameters:
     ----------
@@ -16,7 +16,7 @@ def flatdist_halo(zmin, zmax, m200min_SM, m200max_SM, size, seed=None):
     zmax: float
         maximum value of the redshift distribution
     m200min_SM: float
-        minimum value of the mass distribution, in units of solar masses.
+        minimum value of the mass distribution, in units of solar masses
     m200max_SM: float
         maximum value of the mass distribution, in units of solar masses
     size: int
