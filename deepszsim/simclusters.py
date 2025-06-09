@@ -54,6 +54,9 @@ class simulate_clusters:
                  seed = None, tqverb = False
                  ):
         
+        self.rng_ = np.random.default_rng(seed)
+        self.rng, self.rng_ = self.rng_.spawn(2)
+        
         if (M200 is not None) and (redshift_z is not None):
             self.M200, self.redshift_z = M200, redshift_z
         else:
@@ -67,11 +70,13 @@ class simulate_clusters:
             print(f"making {num_halos} clusters uniformly sampled from"
                   f"{halo_params_dict['zmin']}<z<{halo_params_dict['zmax']}, and "
                   f"{halo_params_dict['m200min_SM']:1.1e}<M200<{halo_params_dict['m200max_SM']:1.1e}")
+            randint = self.rng.integers(2**32-1)
+            self.rng, self.rng_ = self.rng_.spawn(2)
             self.redshift_z, self.M200 = dm_halo_dist.flatdist_halo(halo_params_dict['zmin'],
                                                                     halo_params_dict['zmax'],
                                                                     halo_params_dict['m200min_SM'],
                                                                     halo_params_dict['m200max_SM'],
-                                                                    int(num_halos), seed = seed)
+                                                                    int(num_halos), seed = randint)
         
         try:
             self._size = len(self.M200)
@@ -94,7 +99,7 @@ class simulate_clusters:
         self.tqverb = tqverb
         
         self.alpha, self.gamma = alpha, gamma
-        self.seed, self._rng = seed, np.random.default_rng(seed)
+        self.rng, self.rng_ = self.rng_.spawn(2)
         
         if R200_Mpc is not None:
             self.R200_Mpc = R200_Mpc
@@ -104,7 +109,7 @@ class simulate_clusters:
                                                            angsize_density = '500c')[1:3]
                  for i in range(self._size)]).T
         
-        self.id_list = [f"{int(self.M200[i]/1e9):07}_{int(self.redshift_z[i]*100):03}_{self._rng.integers(10**6):06}"
+        self.id_list = [f"{int(self.M200[i]/1e9):07}_{int(self.redshift_z[i]*100):03}_{self.rng.integers(10**6):06}"
                         for i in range(self._size)]
         self.clusters.update(zip(self.id_list, [{"params": {'M200': self.M200[i],
                                                             'redshift_z': self.redshift_z[i],
@@ -167,22 +172,29 @@ class simulate_clusters:
         if add_CMB: self.ps = simtools.get_cls(ns = self.vars['ns'], cosmo = self.vars['cosmo'])
         if self.tqverb: print("making convolved T maps" + (" with CMB" if add_CMB else ""))
         _centerpix = self.image_size_pixels // 2
+        self.rng, self.rng_ = self.rng_.spawn(2)
+        seeds = self.rng.integers(2**32-1, size = self._size)
         for i in tqdm(range(self._size), disable = (not self.tqverb)):
             dTm, name = dT_maps[i], self.id_list[i]
             curdic = self.clusters[name]
             curdic['params']['dT_central'] = dTm[_centerpix,_centerpix]
             curdic['maps'] = {}
             beamsig_map = simtools.convolve_map_with_gaussian_beam(self.pixel_size_arcmin,
-                                                                   self.beam_size_arcmin, dTm)
+                                                                   self.beam_size_arcmin,
+                                                                   dTm)
             if add_CMB:
-                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dTm, self.ps,
+                conv_map, cmb_map = simtools.add_cmb_map_and_convolve(dTm,
+                                                                      self.ps,
                                                                       self.pixel_size_arcmin,
-                                                                      self.beam_size_arcmin)
+                                                                      self.beam_size_arcmin,
+                                                                      seed = int(seeds[i]))
             else:
                 conv_map, cmb_map = beamsig_map, np.zeros_like(beamsig_map)
             if not self.vars['noise_level'] == 0:
-                noise_map = noise.generate_noise_map(self.image_size_pixels, self.vars['noise_level'],
-                                                     self.pixel_size_arcmin)
+                noise_map = noise.generate_noise_map(self.image_size_pixels,
+                                                     self.vars['noise_level'],
+                                                     self.pixel_size_arcmin,
+                                                     seed = int(seeds[i]))
             else:
                 noise_map = np.zeros_like(conv_map)
             final_map = conv_map + noise_map

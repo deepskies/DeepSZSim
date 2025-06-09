@@ -59,8 +59,11 @@ def f_sz(freq_ghz, T_CMB_K):
 
     return fsz
 
-def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin, 
-                                 beam_size_fwhp_arcmin):
+def add_cmb_map_and_convolve(dT_map_uK,
+                             ps,
+                             pix_size_arcmin,
+                             beam_size_fwhp_arcmin,
+                             seed):
     '''
     Parameters:
     ----------
@@ -83,7 +86,9 @@ def add_cmb_map_and_convolve(dT_map_uK, ps, pix_size_arcmin,
                         dT_map_uK.shape[1]+2*padding_value)
     #print(expanded_shape)
     cmb_map = make_cmb_map(shape=expanded_shape, 
-                                pix_size_arcmin=pix_size_arcmin, ps=ps)
+                           pix_size_arcmin=pix_size_arcmin,
+                           ps=ps,
+                           seed = seed)
     if type(dT_map_uK) is u.Quantity:
         cmb_map = cmb_map *u.uK
     dT_map_expanded = np.pad(dT_map_uK, (padding_value,padding_value),  
