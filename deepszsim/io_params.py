@@ -82,7 +82,7 @@ class config_obj:
             print("not a valid attribute")
 
 
-    def write_params_yaml_new():
+    def write_params_yaml_new(self):
         """
         write updated yaml file to disk
         incorporate run id
@@ -92,7 +92,7 @@ class config_obj:
             yaml_file.write( dump )
 
             
-    def _generate_run_id(random_digits=6):
+    def _generate_run_id(self, random_digits=6):
         '''
         '''
 
@@ -117,7 +117,7 @@ class config_obj:
         return (cosmo,sigma8,ns)
 
 
-    def _quick_yaml_load(infile):
+    def _quick_yaml_load(self, infile):
         """
         simply load yaml files without remembering the syntax or yaml.safe_load command
         Parameters
