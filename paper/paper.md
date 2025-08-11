@@ -113,7 +113,7 @@ From these inputs, pressure profiles, Compton-y profiles, and tSZ signal maps ar
 
 ![Example outputs for the `DeepSZsim` package for a set of masses, redshifts, and noise configurations.\label{fig:sz}](figures/SZCluster_Examples.png)
 
-We present examples of the primary outputs from `DeepSZSim` in Figure \autoref{fig:sz}. 
+We present examples of the primary outputs from `DeepSZSim` in \autoref{fig:sz}. 
 
 # Acknowledgements
 
