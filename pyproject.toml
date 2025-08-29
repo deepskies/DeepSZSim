@@ -30,3 +30,6 @@ include-package-data = true
 
 [tool.setuptools.package-data]
 "deepszsim" = ["Settings/*.yaml"]
+
+[tool.poetry]
+readme = "README.md"
