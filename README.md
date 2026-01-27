@@ -5,7 +5,7 @@ Code for producing fast simulations of the SZ effect for galaxy halos of varying
 ## Code Overview
 
 The code is structured as depicted here: ![DeepSZSim workflow](paper/figures/DeepSZSim_Workflow.png)
-The CMB simulations are handled by [DeepCMBSim](https://www.github.com/deepskies/deepcmbsim), based on [CAMB](https://camb.info), and further by [pixell](https://github.com/simonsobs/pixell). The SZ cluster simluations are done in `make_sz_cluster.py` and instrumental effects are added in `filters.py` and `noise.py`.  
+The CMB simulations are handled by [DeepCMBSim](https://www.github.com/deepskies/deepcmbsim), based on [CAMB](https://github.com/cmbant/CAMB) [(info)](https://camb.info), and further by [pixell](https://github.com/simonsobs/pixell). The SZ cluster simluations are done in `make_sz_cluster.py` and instrumental effects are added in `filters.py` and `noise.py`.  
 
 Documentation is available via [readthedocs](https://deepszsim.readthedocs.io/en/latest/).
 
@@ -31,7 +31,7 @@ pip install .
 ```
 (With `micromamba` the `env` is omitted and a new environment is instead created with `micromamba create -f environment.yml`)
 
-The simulated CMB signal relies on `camb` and `pixell`, cosmology relies on `colossus`, and utilities for saving rely on `h5py`. These are specified in the `pyproject.toml` file.
+The simulated CMB signal relies on `camb` and `pixell`, cosmology relies on `colossus` [(info)](https://bdiemer.bitbucket.io/colossus/), and utilities for saving rely on `h5py`. These are specified in the `pyproject.toml` file.
 
 ### Usage
 
@@ -43,7 +43,7 @@ A full list of potential inputs is documented in `settings/config.yaml` and you 
 
 ### Tests
 
-Tests are provided in the `tests` directory. They are automatically run via CircleCI on pushes to the repository in this [workflow](https://github.com/deepskies/DeepSZSim/actions/runs/14297088348/workflow). Users can verify tests and coverage locally with `python -m pytest tests/*`.
+Tests are provided in the `tests` directory. They are automatically run via CircleCI on pushes to the repository in this [workflow](https://github.com/deepskies/DeepSZSim/actions/runs/14297088348/workflow). Users can verify tests and coverage locally with `python -m pytest tests/*`. The tests verify the following functionalities: map and math tools (beam convolution, compton-y map creation, angular diameter distance calculation) and SZ functions (cosmology parameter generation, pressure profile and parameter generation, pressure profile conversion).  
 
 ### Example
 
