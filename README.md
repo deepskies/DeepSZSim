@@ -64,7 +64,7 @@ To access the clusters in this set, you can refer to the cluster ID, which itsel
 For further examples, see the notebooks [[1](./notebooks/demo_full_pipeline.ipynb)] [[2](./notebooks/demo_simulation.ipynb)]. To run these locally, you will need to install as described in the [Installation](#installation) section, and then do
 ```commandline
 python -m ipykernel install --user --name szsims --display-name "deepszsim"
-cd notebooks
+cd docs/source/notebooks
 Jupyter notebook
 ```
 
