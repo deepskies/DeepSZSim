@@ -10,3 +10,5 @@ Check out the `github <https://www.github.com/DeepSkies/DeepSZSim/>`_ for instal
    :caption: Contents:
 
    deepszsim
+   ../../notebooks/demo_full_pipeline.ipynb
+   ../../notebooks/demo_simulation.ipynb
