@@ -43,7 +43,7 @@ A full list of potential inputs is documented in `settings/config.yaml` and you 
 
 ### Tests
 
-Tests are provided in the `tests` directory. They are automatically run via CircleCI on pushes to the repository in this [workflow](https://github.com/deepskies/DeepSZSim/actions/runs/14297088348/workflow). Users can verify tests and coverage locally with `python -m pytest tests/*`. The tests verify the following functionalities: map and math tools (beam convolution, compton-y map creation, angular diameter distance calculation) and SZ functions (cosmology parameter generation, pressure profile and parameter generation, pressure profile conversion).  
+Tests are provided in the `tests` directory. Github actions runs a test to make sure key scientific libraries can be installed [(workflows)](https://github.com/deepskies/DeepSZSim/tree/main/.github/workflows). Users can verify tests and coverage locally with `python -m pytest tests/*`. The tests verify the following functionalities: map and math tools (beam convolution, compton-y map creation, angular diameter distance calculation) and SZ functions (cosmology parameter generation, pressure profile and parameter generation, pressure profile conversion).  
 
 ### Example
 
