@@ -7,7 +7,6 @@ name = "deepszsim"
 version = "0.1.2"
 description = "code for fast simulations of galaxy clusters"
 authors = [{name = "Eve Vavagiakis", email = "ev66@cornell.edu"}]
-license = {text="LICENSE.txt"}
 requires-python = ">= 3.9, <3.12"
 dependencies = [
   "camb >= 1.4.0",
