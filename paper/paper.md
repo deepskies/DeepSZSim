@@ -14,7 +14,7 @@ authors:
   - name: Samuel D. McDermott
     orcid: 0000-0001-5513-1938
     equal-contrib: true
-    affiliation: "3"
+    affiliation: "3, 9"
   - name: Humna Awan
     orcid: 0000-0003-2296-7717
     equal-contrib: true
@@ -57,6 +57,8 @@ affiliations:
    index: 7
  - name: Fermi National Accelerator Laboratory, Batavia, IL 60510, USA
    index: 8
+ - name: Enterprise AI Research, Center for AI and Insights, The Vanguard Group
+   index: 9
 date: 12 July 2024
 bibliography: paper.bib
 
